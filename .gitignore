@@ -1,0 +1,17 @@
+*.pyc
+*.so
+*cpm*
+.pythonexternallibpath
+packages/modulesloading.py
+packages/modulesplotsloading.py
+models/esblta.py
+models/esbltaylor/Makefile
+models/esbltaylor/esbltaylor.py
+models/inverse_rayshooting/Makefile
+models/inverse_rayshooting/invraylocal.py
+models/inverse_rayshooting/psbl.py
+models/ESBLloop.py
+
+.idea/
+default/
+models/drawloop/
