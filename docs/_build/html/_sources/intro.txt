@@ -1,0 +1,4 @@
+Introduction
+============
+
+Ceci est une introduction au programme.

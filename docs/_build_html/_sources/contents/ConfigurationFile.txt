@@ -1,0 +1,17 @@
+Configuration
+=============
+
+The configuration files
+-----------------------
+
+To be done.
+
+The file ``setup.ini``
+----------------------
+
+This file includes several sections that are read by the code.
+
+The ``Archive`` section
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Every time that the code is run, an archive is created in the data directory. lksdfl
