@@ -26,7 +26,7 @@ def quadmag(s,q,rho,gamma,zeta0):
     Wk[2] = -1./(1.+q)*(1./z0**2+q/(z0+s)**2)
     Wk[3] = 2./(1.+q)*(1./z0**3+q/(z0+s)**3)
     Wk[4] = -6./(1.+q)*(1./z0**4+q/(z0+s)**4)
-    return quadrupole(Wk,rho,gamma)
+    return quadrupole(Wk, rho, gamma)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def hexamag(s,q,rho,gamma,zeta0):
@@ -42,7 +42,7 @@ def hexamag(s,q,rho,gamma,zeta0):
     Wk[4] = -6./(1.+q)*(1./z0**4+q/(z0+s)**4)
     Wk[5] = 24./(1.+q)*(1./z0**5+q/(z0+s)**5)
     Wk[6] = -120./(1.+q)*(1./z0**6+q/(z0+s)**6)
-    return hexadecapole(Wk,rho,gamma)
+    return hexadecapole(Wk, rho, gamma)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 def quadrupole(Wk,rho,gamma):

@@ -38,7 +38,7 @@ def magnifcalc(t, param, Ds=None, tb=None):
     x = x - GL1
 ### Compute magnification
     zeta0 = np.complex(x, y)
-    return quadmag(s,q,rho,gamma,zeta0)
+    return quadmag(s, q, rho, gamma, zeta0)
 # --------------------------------------------------------------------
 def binrot(theta, x_old, y_old):
     """Rotation by an angle alpha.
