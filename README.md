@@ -1,3 +1,5 @@
 # muLAn
 
-**Please read NOTICE.txt.**
+Installation of muLAn soon here. 
+
+muLAn documentation soon available. 
