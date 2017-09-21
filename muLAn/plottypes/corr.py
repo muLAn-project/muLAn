@@ -17,13 +17,13 @@ while i < len(text) - 1:
     i = i + 1
 full_path = a
 
-filename = full_path + '../' + '.pythonexternallibpath'
-file = open(filename, 'r')
-for line in file:
-    path_lib_ext = line
-file.close()
-if path_lib_ext != 'None':
-    sys.path.insert(0, path_lib_ext[:-1])
+#filename = full_path + '../' + '.pythonexternallibpath'
+#file = open(filename, 'r')
+#for line in file:
+#    path_lib_ext = line
+#file.close()
+#if path_lib_ext != 'None':
+#    sys.path.insert(0, path_lib_ext[:-1])
 # ----------------------------------------------------------------------
 #   Standard packages
 # ----------------------------------------------------------------------
