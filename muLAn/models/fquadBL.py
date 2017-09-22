@@ -13,20 +13,20 @@ from multipole import quadmag
 def magnifcalc(t, param, Ds=None, tb=None):
     """Return the quadrupolar approximation of the magnification."""
 ### Get parameters
-    t0 = params['t0']
-    u0 = params['u0']
-    tE = params['tE']
-    rho = params['rho']
-    gamma = params['gamma']
-    q = params['q']
-    piEN = params['piEN']
-    piEE = params['piEE']
-    alpha0 = params['alpha']
-    s0 = params['s']
-    dalpha = params['dalpha']
-    ds = params['ds']
+    t0 = param['t0']
+    u0 = param['u0']
+    tE = param['tE']
+    rho = param['rho']
+    gamma = param['gamma']
+    q = param['q']
+    piEN = param['piEN']
+    piEE = param['piEE']
+    alpha = param['alpha']
+    s = param['s'] # no orbital motion s0 -> s
+    dalpha = param['dalpha']
+    ds = param['ds']
 ### Lens orbital motion
-    alpha, s = lens_rotation(alpha0, s0, dalpha, ds, t, tb)
+#    alpha, s = lens_rotation(alpha0, s0, dalpha, ds, t, tb)
 ### Parallax
     DsN = Ds['N']
     DsE = Ds['E']
@@ -37,8 +37,8 @@ def magnifcalc(t, param, Ds=None, tb=None):
     GL1 = s * q / (1 + q)
     x = x - GL1
 ### Compute magnification
-    zeta0 = np.complex(x, y)
-    return quadmag(s, q, rho, gamma, zeta0)
+    zeta0 = x + 1j*y
+    return [quadmag(s, q, rho, gamma, zeta0[i]) for i in range(len(x))]
 # --------------------------------------------------------------------
 def binrot(theta, x_old, y_old):
     """Rotation by an angle alpha.
