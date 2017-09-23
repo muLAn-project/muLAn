@@ -21,12 +21,12 @@ def magnifcalc(t, param, Ds=None, tb=None):
     q = param['q']
     piEN = param['piEN']
     piEE = param['piEE']
-    alpha = param['alpha']
-    s = param['s'] # no orbital motion s0 -> s
+    alpha0 = param['alpha']
+    s0 = param['s']
     dalpha = param['dalpha']
     ds = param['ds']
 ### Lens orbital motion
-#    alpha, s = lens_rotation(alpha0, s0, dalpha, ds, t, tb)
+    alpha, s = lens_rotation(alpha0, s0, dalpha, ds, t, tb)
 ### Parallax
     DsN = Ds['N']
     DsE = Ds['E']
@@ -34,11 +34,10 @@ def magnifcalc(t, param, Ds=None, tb=None):
     beta = u0 + piEN * DsE - piEE * DsN
     x, y = binrot(alpha, tau, beta)
 ### Conversion center of mass to Cassan (2008)
-    GL1 = s * q / (1 + q)
-    x = x - GL1
+    x = x - s*q/(1.+q)
 ### Compute magnification
     zeta0 = x + 1j*y
-    return [hexamag(s, q, rho, gamma, zeta0[i]) for i in range(len(x))]
+    return [hexamag(s[i], q, rho, gamma, zeta0[i]) for i in range(len(x))]
 # --------------------------------------------------------------------
 def binrot(theta, x_old, y_old):
     """Rotation by an angle alpha.
