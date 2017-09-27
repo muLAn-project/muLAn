@@ -1,4 +1,4 @@
-# muLAn
+# muLAn: 
 
 Installation of muLAn:
 
@@ -25,7 +25,7 @@ $ pip install Cython
 
 $ pip install muLAn/
 
-3) Basi use:
+3) Basic use of muLAn to model microlensing events:
 
 In the event directory, run:
 
