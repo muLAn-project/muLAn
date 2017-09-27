@@ -2,7 +2,11 @@
 
 Installation of muLAn:
 
-$ In directory muLAn/
-pip install muLAn/
+$ git clone https://github.com/muLAn-project/muLAn.git
+$ cd muLAn/
+
+$ pip install muLAn/
+or
+
 
 muLAn documentation soon available. 
