@@ -6,24 +6,22 @@
 # ====================================================================
 import sys
 import numpy as np
-from muLAn.models.contourmag.contourmag import contourmag
-#from contourmag.contourmag import contourmag
+from muLAn.models.vbb.vbb import vbbmagU
 # ====================================================================
 #   Functions
 # ====================================================================
 def magnifcalc(t, param, Ds=None, tb=None):
-    """Return the quadrupolar approximation of the magnification."""
+    """Return the VBB method finite-source uniform magnification."""
 ### Get parameters
     t0 = param['t0']
     u0 = param['u0']
     tE = param['tE']
     rho = param['rho']
-    gamma = param['gamma']
     q = param['q']
     piEN = param['piEN']
     piEE = param['piEE']
     alpha0 = param['alpha']
-    s0 = param['s'] # no orbital motion s0 -> s
+    s0 = param['s']
     dalpha = param['dalpha']
     ds = param['ds']
 ### Lens orbital motion
@@ -38,7 +36,7 @@ def magnifcalc(t, param, Ds=None, tb=None):
     x = -x
 ### Compute magnification
     accuracy = 1.e-2 # Absolute mag accuracy (mag+/-accuracy)
-    return [contourmag(s[i], q, rho, gamma, x[i], y[i], accuracy) for i in range(len(x))]
+    return [vbbmagU(s[i], q, rho, x[i], y[i], accuracy) for i in range(len(x))]
 # --------------------------------------------------------------------
 def binrot(theta, x_old, y_old):
     """Rotation by an angle alpha.
