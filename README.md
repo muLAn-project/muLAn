@@ -1,5 +1,8 @@
 # muLAn
 
-Installation of muLAn soon here. 
+Installation of muLAn:
+
+$ In directory muLAn/
+pip install muLAn/
 
 muLAn documentation soon available. 
