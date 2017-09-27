@@ -23,3 +23,19 @@ $ pip install Cython
 
 $ pip install muLAn/
 
+3) Basi use:
+
+In the event directory, run:
+
+$ python test.py
+
+where test.py contains:
+
+from muLAn import mulan
+
+mulan.run()
+
+
+More inforation and examples to come!
+
+The muLAn project team
