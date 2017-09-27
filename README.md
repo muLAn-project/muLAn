@@ -4,6 +4,8 @@ Installation of muLAn:
 
 1) Basic installation:
 
+You will need to download and install separately the _pyAstronomy_ package (version 0.10.1)
+
 $ git clone https://github.com/muLAn-project/muLAn.git
 
 $ cd muLAn/
