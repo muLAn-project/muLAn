@@ -53,6 +53,8 @@ The software muLAn includes external routines distributed with their
 own copyrights and under their own licenses. Below are listed these
 files and the corresponding NOTICE text file, when provided.
 
+THE FOLLOWING SECTION IS NOT UP-TO-DATE!!
+
     1. General Complex Polynomial Root Solver and Its Further
     '''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Optimization for Binary Microlenses
