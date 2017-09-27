@@ -58,7 +58,6 @@ if 'develop' in sys.argv or any(a.startswith('bdist') for a in sys.argv):
 setuptools_args = {}
 
 install_requires = setuptools_args['install_requires'] = [
-                                                          # 'sklearn',
                                                           'scikit-learn>=0.19.0',
                                                           'argparse>=1.1',
                                                           'astropy>=1.3.2',
