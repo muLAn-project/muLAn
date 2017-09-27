@@ -1,241 +1,211 @@
 # -*-coding:Utf-8 -*
-# =============================================================================
-# MIT License
-# 
-# Copyright (c) 2014-2017 The muLAn project team
-# Copyright (c) 2014-2017 Clément Ranc & Arnaud Cassan
-# 
-# See the LICENCE file
-# =============================================================================
+# -----------------------------------------------------------------------------
+# This file will be removed in a next version - kept for compatibility
+# -----------------------------------------------------------------------------
+try:
+    import sys
+    import os
+except:
+    print "ERROR: The standard packages 'sys' and 'os' are required."
 
-# --------------------------------------------------------------------
-# Packages
-# --------------------------------------------------------------------
-import os
-import sys
-import importlib
-# --------------------------------------------------------------------
-# Fonctions
-# --------------------------------------------------------------------
-def add_topythonpath(path):
-    if len(path)>0:
-        sys.path.insert(0, path)
-# --------------------------------------------------------------------
-def check_slash(path):
-    if len(path) > 0:
-        if path[-1] != '/':
-            path = '{:s}/'.format(path)
-    return path
-# --------------------------------------------------------------------
-def gettxt_inifile(fn, kw, sep=':'):
-    try:
-        file = open(fn, 'r')
-        result = [line.strip().split(sep)[1].strip() for line in
-                file if line.strip().split(sep)[0].strip() == kw][-1]
-        file.close()
-    except IOError:
-        sys.exit('File {:s} not found.'.format(fn))
+#   Initialisation without any packages loaded but sys and os
+# -----------------------------------------------------------------------------
+full_path = os.path.realpath(__file__)
+text = full_path.split('/')
+a = ''
+i = 0
+while i < len(text)-1:
+   a = a + text[i] + '/'
+   i = i + 1
+full_path = a
 
-    return result
-# --------------------------------------------------------------------
-def getpath_event():
-    """Return the path of the event directory.
+full_path_code = ''
+path_lib_ext = 'None'
 
-    :return: path of event directory
-    :rtype: string
-    """
-    path = os.path.realpath(__file__)
-    return '{:s}/'.format('/'.join(path.split('/')[:-1]))
-# --------------------------------------------------------------------
-def getpath_mulan(path_event):
-    """Return root path of muLAn program.
+filename = full_path + 'advancedsetup.ini'
+file = open(filename, 'r')
+for line in file:
+    line = line.replace('\n', '')
+    line = [a.strip() for a in line.split(':')]
 
-    :param path_event: path of the event
-    :type path_event: string
-    :return: root path of muLAn
-    :rtype: string
-    """
-    fn_as = '{:s}advancedsetup.ini'.format(path_event)
-    path = gettxt_inifile(fn_as, 'Code')
-    path = check_slash(path)
-    return path
-# --------------------------------------------------------------------
-def getpath_localpackages(path_event):
-    fn_as = '{:s}advancedsetup.ini'.format(path_event)
-    path = gettxt_inifile(fn_as, 'PathLocalPythonPackages')
-    path = check_slash(path)
-    return path
-# --------------------------------------------------------------------
-def getint_verbose(path_event):
-    fn_as = '{:s}setup.ini'.format(path_event)
-    v = int(gettxt_inifile(fn_as, 'Verbose'))
-    return v
-# --------------------------------------------------------------------
-def print_welcome(path, verbose=1):
-    if verbose > 0:
-        fn_logo = path + 'Logo.txt'
-        try:
-            file = open(fn_logo, 'r')
-            logo = ''.join([line for line in file])
-            file.close()
-        except IOError:
-            sys.exit('File {:s} not found.'.format(fn_logo))
+    if len(line) > 1:
+        if ((line[0])[0] != '#') & ((line[0])[0] != ';')  & (line[1] != ''):
 
-        fn_version = path + 'Version.txt'
-        try:
-            file = open(fn_version, 'r')
-            vnumber = ''.join([line for line in file])
-            file.close()
-        except IOError:
-            sys.exit('File {:s} not found.'.format(fn_version))
+            # External packages
+            if line[0] == 'PathLocalPythonPackages':
+                path_lib_ext = line[1]
+                if path_lib_ext[-1]!='/': path_lib_ext = path_lib_ext + '/'
+                sys.path.insert(0, path_lib_ext)
 
-        legend = '\033[90mMicro-Lensing Analysis software\033[0m\n'
-        version = '\033[90mVersion {:s}'.format(vnumber)
+            # Path to the code
+            if line[0] == 'Code':
+                full_path_code = line[1]
+                if full_path_code[-1]!='/': full_path_code = full_path_code + '/'
+file.close()
 
-        welcome = '\033[1m\033[34m{:s}\033[0m{:s}{:s}\033[0m'.format(logo, legend, version)
-        print welcome
-# --------------------------------------------------------------------
-def bash_command(cmd):
-    proc = subprocess.Popen(cmd, shell=True, executable="/bin/bash")
+if full_path_code == '': sys.exit('I do not find a path for muLAn.')
+
+#   Load the logo
+# -----------------------------------------------------------------------------
+logo = ''
+filename = full_path_code + 'Logo.txt'
+file = open(filename, 'r')
+for line in file:
+    logo = logo + line
+file.close()
+
+logo = logo + '\033[2mMicro-Lensing Analysis software\033[0m\n'
+logo = logo + '\033[2mVersion '
+
+filename = full_path_code + 'Version.txt'
+file = open(filename, 'r')
+for line in file:
+    logo = logo + line
+    break
+file.close()
+
+logo = logo + '\033[0m'
+
+print logo
+
+#   Test of the required packages
+# -----------------------------------------------------------------------------
+packages_required = []
+filename = full_path_code + 'PackageVersions.txt'
+file = open(filename, 'r')
+for line in file:
+    line = line.replace('\n', '')
+    line = [a.strip() for a in line.split(',')]
+
+    if len(line) > 1:
+        packages_required.append(line)
+file.close()
+
+text = 'import sys\n'
+for i in xrange(len(packages_required)):
+    if (packages_required[i][1] == 'None') | (packages_required[i][1] == ''):
+        text = text\
+                + 'try:\n'\
+                + '    import ' + packages_required[i][0] + '\n'\
+                + 'except:\n'\
+                + "    sys.exit('The required package " + packages_required[i][0]\
+                + " is not installed.')\n"
+    else:
+        text = text\
+                + 'try:\n'\
+                + '    import ' + packages_required[i][0] + '\n'\
+                + '    version = ' + packages_required[i][0] + '.__version__\n'\
+                + '    version2 = [int(a) for a in version.split(".")]\n'\
+                + '    version_ref = "' + packages_required[i][1] + '"\n'\
+                + '    version_ref2 = [int(a) for a in version_ref.split(".")]\n'\
+                + '    text_retard = "User Warning: the version of '\
+                + packages_required[i][0] + ' should be >= '\
+                + packages_required[i][1] + '. The active version is " + version + "."\n'\
+                + '    text_avance = "User Warning: the optimal version of '\
+                + packages_required[i][0] + ' is '\
+                + packages_required[i][1] + '. The active version is " + version + "."\n'\
+                + '    if version_ref2[0]>version2[0]: print text_retard\n'\
+                + '    elif version_ref2[0]<version2[0]: print text_avance\n'\
+                + '    else:\n'\
+                + '        if version_ref2[1]>version2[1]: print text_retard\n'\
+                + '        elif version_ref2[1]<version2[1]: print text_avance\n'\
+                + '        else:\n'\
+                + '            if version_ref2[2]>version2[2]: print text_retard\n'\
+                + '            elif version_ref2[2]<version2[2]: print text_avance\n'\
+                + 'except:\n'\
+                + "    sys.exit('The required package " + packages_required[i][0]\
+                + " is not installed.')\n"
+
+filename = full_path + '.packages_check.py'
+file = open(filename, 'w')
+file.write(text)
+file.close()
+execfile(filename)
+os.remove(filename)
+# ----------------------------------------------------------------------
+#   Packages
+# ----------------------------------------------------------------------
+import subprocess
+# ----------------------------------------------------------------------
+#   Functions
+# ----------------------------------------------------------------------
+def bash_command(text):
+    proc = subprocess.Popen(text, shell=True, executable="/bin/bash")
     proc.wait()
-# --------------------------------------------------------------------
-def check_packages(path_mulan, verbose=0):
-    try:
-        from distutils.version import LooseVersion
-    except ImportError:
-        txt = '\033[1m\033[31mThe required package distutils is not installed.\033[0m'
-        txt += '\nPlease install it or run the command'
-        txt += '\n   $ pip install -r Requirements.txt'
-        txt += '\nfrom the following directory'
-        txt += '\n   ' + path_mulan
-        txt += '\nto install all the required packages.'
-        txt += '\n\033[1m\033[31mmuLAn stopped.\033[0m'
-        sys.exit(txt)
-
-    fn_requirements = '{:s}Requirements.txt'.format(path_mulan)
-    try:
-        file = open(fn_requirements, 'r')
-        result = [line.replace('\n', '').replace(' ', '').strip()
-                  for line in file if line.replace('\n', '') != '']
-        file.close()
-    except IOError:
-        sys.exit('File {:s} not found.'.format(fn_requirements))
-
-    packages = []
-    versions = []
-    for a in result:
-        end = len([True for l in a if l.isalpha()])
-        if end > 0:
-            packages.append(a[:end])
-            versions.append(a[end:].replace('=', '').replace('>', '').replace('<', ''))
-            if versions[-1] == '': versions[-1] = 'None'
-
-    for p, v in zip(packages, versions):
-        try:
-            if p=='GetDist':
-                mod = importlib.import_module(p.lower())
-            else:
-                mod = importlib.import_module(p)
-        except ImportError:
-            txt = '\033[1m\033[31mThe required package {:s} is not installed.\033[0m'.format(p)
-            txt += '\nPlease install it or run the command'
-            txt += '\n   $ pip install -r Requirements.txt'
-            txt += '\nfrom the following directory'
-            txt += '\n   ' + path_mulan
-            txt += '\nto install all the required packages.'
-            txt += '\n\033[1m\033[31mmuLAn stopped.\033[0m'
-            sys.exit(txt)
-
-        try:
-            v_computer = mod.__version__
-        except:
-            v_computer = 'None'
-
-        if (v_computer != 'None') & (v != 'None'):
-            if LooseVersion(v) > LooseVersion(v_computer):
-                txt = 'An earlier version of the package {:s} is required.'.format(p)
-                txt += '\n   Installed: {:s}   Required: {:s}'.format(v_computer, v)
-                txt += '\n\033[1m\033[31mmuLAn stopped.\033[0m'
-                sys.exit(txt)
-            if (LooseVersion(v) < LooseVersion(v_computer)) & verbose > 0:
-                txt = 'An earlier version of the package {:s} is installed.'.format(p)
-                txt += '\n   Installed: {:s}   Required: {:s}'.format(v_computer, v)
-                print txt
 # ----------------------------------------------------------------------
-def run_mulan(path_event, options):
-    mul = importlib.import_module('sequential')
-    mul.run_sequence(path_event, options)
+def start(full_path, full_path_code, path_lib_ext):
+    # Python local libraries
+    filename = full_path + '.pythonexternallibpath'
+    file = open(filename, 'w')
+    file.write(path_lib_ext)
+    file.close()
+
+    filename = full_path_code + '.pythonexternallibpath'
+    file = open(filename, 'w')
+    file.write(path_lib_ext)
+    file.close()
+
+    # Run code
+    filename = full_path_code + 'main.py'
+    text = 'python ' + filename + ' ' + full_path
+    bash_command(text)
+
+    # Remove files
+    filename = full_path + '.pythonexternallibpath'
+    if os.path.exists(filename): os.remove(filename)
+    filename = full_path_code + '.pythonexternallibpath'
+    if os.path.exists(filename): os.remove(filename)
+    filename = full_path + '.emergencystop'
+    if os.path.exists(filename): os.remove(filename)
+
+    # Free memory
+    del filename, text, file
 # ----------------------------------------------------------------------
-def stop(path_event):
+def stop(full_path):
     # Safe Emergency Stop
-    if os.path.exists(path_event + '.emergencystop'):
-        os.remove(path_event + '.emergencystop')
-        file = open(path_event + '.emergencystop', 'w')
+    if os.path.exists(full_path + '.emergencystop'):
+        os.remove(full_path + '.emergencystop')
+        file = open(full_path + '.emergencystop', 'w')
         file.write('1')
         file.close()
-    # Remove .lock file
-    fn_lock = '{:s}.lock'.format(path_event)
-    if os.path.exists(fn_lock):
-        os.remove(fn_lock)
-# --------------------------------------------------------------------
-def sort(path_event):
-    # Sort exploration results
-    order_ChainsResults = importlib.import_module('order_ChainsResults')
-    order_ChainsResults.order(path_event)
-# --------------------------------------------------------------------
-# Main
-# --------------------------------------------------------------------
+# ----------------------------------------------------------------------
+def order(full_path, full_path_code, path_lib_ext):
+    # Python local libraries
+    filename = full_path + '.pythonexternallibpath'
+    file = open(filename, 'w')
+    file.write(path_lib_ext)
+    file.close()
+
+    filename = full_path_code + '.pythonexternallibpath'
+    file = open(filename, 'w')
+    file.write(path_lib_ext)
+    file.close()
+
+    # Run stand-alone package order_ChainsResults
+    filename = full_path_code + 'packages/order_ChainsResults.py'
+    text = 'python ' + filename + ' ' + full_path
+    bash_command(text)
+
+    # Remove files
+    # filename = full_path + '.pythonexternallibpath'
+    # if os.path.exists(filename): os.remove(filename)
+    # filename = full_path_code + '.pythonexternallibpath'
+    # if os.path.exists(filename): os.remove(filename)
+    # filename = full_path + '.emergencystop'
+    # if os.path.exists(filename): os.remove(filename)
+
+    # Free memory
+    del filename, text, file
+# ----------------------------------------------------------------------
 if (__name__ == "__main__"):
-    # Find paths
-    path_event = getpath_event()
-    verbose = getint_verbose(path_event)
-    path_mulan = getpath_mulan(path_event)
-    print_welcome(path_mulan, verbose=verbose)
-    # Add local packages
-    path_localpackages = getpath_localpackages(path_event)
-    add_topythonpath(path_localpackages)
-    module_path = '{:s}packages'.format(path_mulan)
-    add_topythonpath(module_path)
-    # Check packages
-    ##removed## check_packages(path_mulan, verbose=verbose)
-
-    # Load standard packages (after adding path to local packages)
-    argparse = importlib.import_module('argparse')
-    subprocess = importlib.import_module('subprocess')
-    np = importlib.import_module('numpy')
-
-    # Command line options
-    text = 'The command line options below overwrite the configuration file.'
-    parser = argparse.ArgumentParser(prog='python mulan.py', description=text)
-    parser.add_argument('-a', '--archive', nargs=1, type=str, default=['None'], help='Replace <ARCHIVE> by the name of the archive.')
-    parser.add_argument('-f', '--fit', action='store_true', help='Ask muLAn to fit the data.')
-    parser.add_argument('--nchains', nargs=1, type=int, default=[-1], help='Replace <NCHAINS> by the number of chains.')
-    parser.add_argument('--ncores', nargs=1, type=int, default=[-1], help='Replace <NCORES> by the number of cores.')
-    parser.add_argument('-o', '--optimize', action='store_true', help='Optimize inputs/outputs using pickle package when possible.')
-    parser.add_argument('-p', '--plot', nargs=1, type=str, default=['None'], help='Ask muLAn to plot the model '
-            + 'number <PLOT> (default: best fitting model). For several models, use coma separator without space '
-            + '(e.g. -p 1,5,7) or a dash without space for a range of models (e.g. -p 1-5).')
-    parser.add_argument('--resume', action='store_true', help='Resume an exploration.')
-    parser.add_argument('-s', '--sort', action='store_true', help='Sort the samples and create a table.')
-    parser.add_argument('-sn', '--sortno', action='store_true', help='Skip sort stage when running muLAn.')
-    parser.add_argument('--stop', action='store_true', help='Stop the exploration and save properly the results.')
-    parser.add_argument('-v', '--verbose', nargs=1, type=int, choices=range(0, 6), default=[-1], help='Choose a verbose level.')
-    opts = parser.parse_args()
-    options = dict()
-    [options.update({key: getattr(opts, key)}) for key in vars(opts)]
-    [options.update({key: np.atleast_1d(options[key])[0]}) for key in options if len(np.atleast_1d(options[key]))==1]
-    if options['verbose'] > -1:
-        verbose = options['verbose']
-
-    # Add muLAn packages and modules
-    sys.path.insert(0, path_mulan)
-
-    # Run muLAn
-    if options['sort']:
-        sort(path_event)
-    if options['stop']:
-        stop(path_event)
-
-    cond = not options['sort'] and not options['stop']
-    if cond:
-        run_mulan(path_event, options)
+    if len(sys.argv) > 1:
+        todo = sys.argv[1]
+        if todo == 'start':
+            start(full_path, full_path_code, path_lib_ext)
+        elif todo == 'stop':
+            stop(full_path)
+        elif todo == 'order':
+            order(full_path, full_path_code, path_lib_ext)
+    else:
+        print "Please use keyword 'start' or 'stop'. 'Start' mode is used."
+        start(full_path, full_path_code, path_lib_ext)
