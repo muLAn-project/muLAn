@@ -1,4 +1,4 @@
-# muLAn: 
+# muLAn: gravitational MICROlensing Analysis code
 
 Installation of muLAn:
 
@@ -33,9 +33,9 @@ $ python test.py
 
 where test.py contains:
 
-from muLAn import mulan
+  *from muLAn import mulan*
 
-mulan.run()
+  *mulan.run()*
 
 
 More inforation and examples to come!
