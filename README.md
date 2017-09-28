@@ -6,14 +6,10 @@ Installation of muLAn:
 
 You will need to download and install separately the _pyAstronomy_ package (version 0.10.1)
 
-$ git clone https://github.com/muLAn-project/muLAn.git
-
-$ cd muLAn/
-
-$ pip install muLAn/
-
-Use --user for installing in your environment
-
+<pre><code>
+git clone https://github.com/muLAn-project/muLAn.git
+pip install --user muLAn/
+</code></pre>
 
 2) Installation in a conda environment:
 
