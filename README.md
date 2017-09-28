@@ -1,6 +1,6 @@
 # muLAn: gravitational MICROlensing Analysis code
 
-<a href="https://travis-ci.org/muLAn-project/muLAn"><img src="https://travis-ci.org/muLAn-project/muLAn.svg?branch=master"></a>
+<!-- Commentaire <a href="https://travis-ci.org/muLAn-project/muLAn"><img src="https://travis-ci.org/muLAn-project/muLAn.svg?branch=master"></a> --> 
 
 To install the current development version of <b>muLAn</b> from source: 
 
