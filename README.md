@@ -1,37 +1,17 @@
 # muLAn: gravitational MICROlensing Analysis code
 
-Installation of muLAn:
-
-1) Basic installation:
-
-You will need to download and install separately the _pyAstronomy_ package (version 0.10.1)
+To install the current development version of <b>muLAn</b> from source: 
 
 <pre><code>git clone https://github.com/muLAn-project/muLAn.git
 pip install --user muLAn/</code></pre>
 
-2) Installation in a conda environment:
+Note that <b>muLAn</b> depends on <b>pyAstronomy</b> (version 0.10.1 or later) that you can be found <a href="http://www.hs.uni-hamburg.de/DE/Ins/Per/Czesla/PyA/PyA/index.html">here</a>.
 
-$ conda create -n yourenv python=2.7
-
-$ source activate yourenv
-
-$ pip install Cython
-
-$ pip install muLAn/
-
-3) Basic use of muLAn to model microlensing events:
+Basic use of <b>muLAn</b>:
 
 In the event directory, run:
 
-$ python test.py
-
-where test.py contains:
-
-  *from muLAn import mulan*
-
-  *mulan.run()*
-
-
-More inforation and examples to come!
+<pre><code>from muLAn import mulan
+mulan.run()</code></pre>
 
 The muLAn project team
