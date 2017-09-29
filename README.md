@@ -16,4 +16,4 @@ In the event directory, run:
 <pre><code>from muLAn import mulan
 mulan.run()</code></pre>
 
-The muLAn project team
+The <b>muLAn</b> project team
