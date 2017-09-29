@@ -13,8 +13,9 @@ Getting Started
 
 ### Dependencies
 
-This package depends on the following non-standard packages:
+This package depends in particular on the following packages:
 
+- `Cython`
 - `pyAstronomy` (version >= 0.10.1,  <a href="http://www.hs.uni-hamburg.de/DE/Ins/Per/Czesla/PyA/PyA/index.html">link</a>)
 - `GetDist` (version >= 0.2.6)
 
