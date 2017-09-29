@@ -5,4 +5,3 @@ install:
     - python setup.py install
 script:
     - echo "No test yet"
-
