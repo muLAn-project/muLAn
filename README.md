@@ -1,4 +1,4 @@
-# muLAn: gravitational MICROlensing Analysis code
+muLAn: gravitational MICROlensing Analysis code
 ======
 
 <!-- Commentaire <a href="https://travis-ci.org/muLAn-project/muLAn"><img src="https://travis-ci.org/muLAn-project/muLAn.svg?branch=master"></a> --> 
