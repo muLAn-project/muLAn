@@ -1,19 +1,55 @@
 # muLAn: gravitational MICROlensing Analysis code
+======
 
 <!-- Commentaire <a href="https://travis-ci.org/muLAn-project/muLAn"><img src="https://travis-ci.org/muLAn-project/muLAn.svg?branch=master"></a> --> 
 
-To install the current development version of <b>muLAn</b> from source: 
+Goals
+-----
 
-<pre><code>git clone https://github.com/muLAn-project/muLAn.git
-pip install --user muLAn/</code></pre>
+<b>muLAn</b> is an easy and flexile software to model gravitational microlensing events
 
-Note that <b>muLAn</b> depends on <b>pyAstronomy</b> (version 0.10.1 or later). You can find it <a href="http://www.hs.uni-hamburg.de/DE/Ins/Per/Czesla/PyA/PyA/index.html">here</a>.
+Getting Started
+---------------
 
-Basic use of <b>muLAn</b>:
+### Dependencies
 
-In the event directory, run:
+This package depends on the following non-standard packages:
 
-<pre><code>from muLAn import mulan
-mulan.run()</code></pre>
+- `pyAstronomy` (version >= 0.10.1,  <a href="http://www.hs.uni-hamburg.de/DE/Ins/Per/Czesla/PyA/PyA/index.html">link</a>)
+- `GetDist` (version >= 0.2.6)
 
-The <b>muLAn</b> project team
+### Installation
+
+To install the current development version of <b>muLAn</b> package from source:
+
+```
+$ git clone https://github.com/muLAn-project/muLAn.git
+$ pip install --user muLAn/
+```
+
+### Loading
+
+```python
+from muLAn import mulan
+```
+
+### Launcing muLAn
+
+In the directory of the event to be anayzed, run:
+```python
+from muLAn import mulan
+mulan.run()
+```
+
+Examples
+--------
+
+See the documentation section.
+
+License
+-------
+
+This software is licensed under the MIT license. See the [LICENSE](LICENSE) file
+for details.
+
+<FONT COLOR=#0B0B61>The <b>muLAn</b> project Team</FONT>
