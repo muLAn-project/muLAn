@@ -52,4 +52,3 @@ License
 This software is licensed under the MIT license. See the [LICENSE](LICENSE) file
 for details.
 
-<FONT COLOR=#0B0B61>The <b>muLAn</b> project Team</FONT>
