@@ -6,7 +6,7 @@ muLAn: gravitational MICROlensing Analysis code
 Goals
 -----
 
-<b>muLAn</b> is an easy and flexile software to model gravitational microlensing events
+<b>muLAn</b> is an easy-to-use and flexile software to model gravitational microlensing events
 
 Getting Started
 ---------------
