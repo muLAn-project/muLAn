@@ -185,7 +185,6 @@ def run(): # AJOUT fonction principale
     ici = os.getcwd()
     path_event = os.path.realpath(ici)+'/'
     verbose = getint_verbose(path_event)
-    print verbose
     path_mulan = getpath_mulan(path_event)
     print_welcome(path_mulan, verbose=verbose)
     # Add local packages
