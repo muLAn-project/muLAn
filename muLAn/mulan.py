@@ -159,29 +159,32 @@ def run_mulan(path_event, options):
     mul = importlib.import_module('sequential')
     mul.run_sequence(path_event, options)
 # ----------------------------------------------------------------------
-def stop(path_event):
-    # Safe Emergency Stop
-    if os.path.exists(path_event + '.emergencystop'):
-        os.remove(path_event + '.emergencystop')
-        file = open(path_event + '.emergencystop', 'w')
-        file.write('1')
-        file.close()
-    # Remove .lock file
-    fn_lock = '{:s}.lock'.format(path_event)
-    if os.path.exists(fn_lock):
-        os.remove(fn_lock)
-# --------------------------------------------------------------------
 def sort(path_event):
     # Sort exploration results
     order_ChainsResults = importlib.import_module('order_ChainsResults')
     order_ChainsResults.order(path_event)
 # ----------------------------------------------------------------------
-def run(): # AJOUT fonction principale
-# --------------------------------------------------------------------
-# Main : a priori ne sera pas utilise
-# --------------------------------------------------------------------
-#if (__name__ == "__main__"):
-    # Find paths
+from muLAn.packages.order_ChainsResults import order
+def sortmodels():
+    ici = os.getcwd()
+    path_event = os.path.realpath(ici)+'/'
+    order(path_event)
+# ----------------------------------------------------------------------
+def stop():
+    # Safe Emergency Stop
+    ici = os.getcwd()
+    path_event = os.path.realpath(ici)+'/'
+    if os.path.exists(path_event + '.emergencystop'):
+        os.remove(path_event + '.emergencystop')
+        file = open(path_event + '.emergencystop', 'w')
+        file.write('1')
+        file.close()
+    fn_lock = '{:s}.lock'.format(path_event) # Remove .lock file
+    if os.path.exists(fn_lock):
+        os.remove(fn_lock)
+# ----------------------------------------------------------------------
+def run():
+    # Event (local) path
     ici = os.getcwd()
     path_event = os.path.realpath(ici)+'/'
     verbose = getint_verbose(path_event)
@@ -200,7 +203,7 @@ def run(): # AJOUT fonction principale
     subprocess = importlib.import_module('subprocess')
     np = importlib.import_module('numpy')
 
-    # Command line options
+    # Command line options - TO BE REMOVED IN FORTHCOMING VERSION
     text = 'The command line options below overwrite the configuration file.'
     parser = argparse.ArgumentParser(prog='python mulan.py', description=text)
     parser.add_argument('-a', '--archive', nargs=1, type=str, default=['None'], help='Replace <ARCHIVE> by the name of the archive.')
@@ -226,11 +229,6 @@ def run(): # AJOUT fonction principale
     # Add muLAn packages and modules
     sys.path.insert(0, path_mulan)
 
-    # Run muLAn
-    if options['sort']:
-        sort(path_event)
-    if options['stop']:
-        stop(path_event)
 
     cond = not options['sort'] and not options['stop']
     if cond:
