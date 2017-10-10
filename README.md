@@ -6,7 +6,7 @@ muLAn: gravitational MICROlensing Analysis code
 Goals
 -----
 
-<b>muLAn</b> is an easy-to-use and flexile software to model gravitational microlensing events
+**muLAn** is an easy-to-use and flexile software to model gravitational microlensing events
 
 Getting Started
 ---------------
@@ -21,7 +21,7 @@ This package depends in particular on the following packages:
 
 ### Installation
 
-To install the current development version of <b>muLAn</b> package from source:
+To install the current development version of **muLAn** package from source:
 
 ```
 $ git clone https://github.com/muLAn-project/muLAn.git
@@ -30,16 +30,30 @@ $ pip install --user muLAn/
 
 ### Loading
 
+The python script has to be executed in the directory of the microlensing event to be analyzed:
+
 ```python
 from muLAn import mulan
 ```
 
-### Launcing muLAn
+### muLAn basic commands
 
-In the directory of the event to be anayzed, run:
+- Launch **muLAn** (based on `setup.ini` options, see documentation):
+
 ```python
-from muLAn import mulan
 mulan.run()
+```
+
+- Clean stop (waiting for all current sub-processes to finish):
+
+```python
+mulan.stop()
+```
+
+- Collect all Markov chains and re-order them with best fit first (necessary after unexpected stop, e.g. wall time exceeded):
+
+```python
+mulan.sortmodels()
 ```
 
 Examples
