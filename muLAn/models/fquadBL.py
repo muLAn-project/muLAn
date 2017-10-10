@@ -37,7 +37,7 @@ def magnifcalc(t, param, Ds=None, tb=None):
     x = x - s*q/(1.+q)
 ### Compute magnification
     zeta0 = x + 1j*y
-    return [quadmag(s[i], q, rho, gamma, zeta0[i]) for i in range(len(x))]
+    return np.array([quadmag(s[i], q, rho, gamma, zeta0[i]) for i in range(len(x))])
 # --------------------------------------------------------------------
 def binrot(theta, x_old, y_old):
     """Rotation by an angle alpha.

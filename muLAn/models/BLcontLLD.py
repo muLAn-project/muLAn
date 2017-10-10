@@ -37,7 +37,7 @@ def magnifcalc(t, param, Ds=None, tb=None):
     x = -x
 ### Compute magnification
     accuracy = 1.e-2 # Absolute mag accuracy (mag+/-accuracy)
-    return [vbbmagLLD(s[i], q, rho, gamma, x[i], y[i], accuracy) for i in range(len(x))]
+    return np.array([vbbmagLLD(s[i], q, rho, gamma, x[i], y[i], accuracy) for i in range(len(x))])
 # --------------------------------------------------------------------
 def binrot(theta, x_old, y_old):
     """Rotation by an angle alpha.

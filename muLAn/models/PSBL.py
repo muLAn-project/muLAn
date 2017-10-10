@@ -34,7 +34,7 @@ def magnifcalc(t, param, Ds=None, tb=None):
     x = x - s*q/(1.+q)
 ### Compute magnification
     zeta0 = x + 1j*y
-    return [monopole(s[i], q, zeta0[i]) for i in range(len(x))]
+    return np.array([monopole(s[i], q, zeta0[i]) for i in range(len(x))])
 # --------------------------------------------------------------------
 def monopole(s, q, zeta0):
     z0 = solve_lens_poly(s, q, zeta0) # convention Cassan (2008)
