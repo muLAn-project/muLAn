@@ -2,17 +2,54 @@
 # ====================================================================
 
 # ====================================================================
-# Standard packages
+#   Packages
 # ====================================================================
 import sys
 import numpy as np
 # ====================================================================
-# Non-standard packages
-# ====================================================================
-import esbltaylor.esbltaylor as esbltaylorbuilt
-# ====================================================================
 #   Functions
 # ====================================================================
+def magnifcalc(t, param, Ds=None, tb=None):
+    """Return the quadrupolar approximation of the magnification."""
+### Get parameters
+    t0 = param['t0']
+    u0 = param['u0']
+    tE = param['tE']
+    q = param['q']
+    piEN = param['piEN']
+    piEE = param['piEE']
+    alpha0 = param['alpha']
+    s0 = param['s']
+    dalpha = param['dalpha']
+    ds = param['ds']
+### Lens orbital motion
+    alpha, s = lens_rotation(alpha0, s0, dalpha, ds, t, tb)
+### Parallax
+    DsN = Ds['N']
+    DsE = Ds['E']
+    tau = (t-t0)/tE + piEN * DsN + piEE * DsE
+    beta = u0 + piEN * DsE - piEE * DsN
+    x, y = binrot(alpha, tau, beta)
+### Conversion center of mass to Cassan (2008)
+    x = x - s*q/(1.+q)
+### Compute magnification
+    zeta0 = x + 1j*y
+    return [monopole(s[i], q, zeta0[i]) for i in range(len(x))]
+# --------------------------------------------------------------------
+def monopole(s, q, zeta0):
+    z0 = solve_lens_poly(s, q, zeta0) # convention Cassan (2008)
+    W1 = 1./(1.+q)*(1./z0+q/(z0+s))
+    z0 = z0[np.abs(z0-W1.conjugate()-zeta0)<0.000001]
+    W2 = -1./(1.+q)*(1./z0**2+q/(z0+s)**2)
+    mu0 = 1./(1.-np.abs(W2)**2)
+    A0 = np.sum(np.abs(mu0))
+    return A0
+# --------------------------------------------------------------------
+def solve_lens_poly(s,q,zeta):
+    """Solve binary lens equation [convention Cassan (2008)]."""
+    coefs = [(1+q)**2*(s+zeta.conjugate())*zeta.conjugate(),(1+q)*(s*(q-abs(zeta)**2*(1+q))+(1+q)*((1+2*s**2)-abs(zeta)**2+2*s*zeta.conjugate())*zeta.conjugate()),(1+q)*(s**2*q-s*(1+q)*zeta+(2*s+s**3*(1+q)+s**2*(1+q)*zeta.conjugate())*zeta.conjugate()-2*abs(zeta)**2*(1+q)*(1+s**2+s*zeta.conjugate())),-(1+q)*(s*q+s**2*(q-1)*zeta.conjugate()+(1+q+s**2*(2+q))*zeta+abs(zeta)**2*(2*s*(2+q)+s**2*(1+q)*(s+zeta.conjugate()))),-s*(1+q)*((2+s**2)*zeta+2*s*abs(zeta)**2)-s**2*q,-s**2*zeta]
+    return np.roots(coefs)
+# --------------------------------------------------------------------
 def binrot(theta, x_old, y_old):
     """Rotation by an angle alpha.
 
@@ -52,102 +89,4 @@ def lens_rotation(alpha0, s0, dalpha, ds, t, tb):
     alpha = alpha0 - (t - tb) * dalpha / Cte_yr_d
     s = s0 + (t-tb) * ds / Cte_yr_d
     return alpha, s
-# --------------------------------------------------------------------
-def magnifcalc(t, param, Ds=None, tb=None, **kwargs_method):
-    # Compute the amplification
-    kwargs = dict()
-    kwargs.update(kwargs_method)
-    kwargs.update({'params': param})
-    kwargs.update({'dates': t})
-    kwargs.update({'tb': tb})
-    kwargs.update({'Ds': Ds})
-    kwargs.update({'degree': 0})
-    amp, flag = magnifcalc_wrap(**kwargs)
-    return amp
-# --------------------------------------------------------------------
-def magnifcalc_wrap(**kwargs):
-
-    try:
-        params = kwargs['params']
-    except KeyError:
-        chat = "No parameters received in magnifcalc(...) from test_import."
-        sys.exit(chat)
-    try:
-        t = kwargs['dates']
-    except KeyError:
-        chat = "No dates received in magnifcalc(...) from test_import."
-        sys.exit(chat)
-    try:
-        tb = kwargs['tb']
-    except KeyError:
-        tb = params['t0']
-    try:
-        Ds = kwargs['Ds']
-    except KeyError:
-        Ds = dict({'N' : np.zeros(len(t)), 'E' : np.zeros(len(t))})
-    try:
-        degree = kwargs['degree']
-    except KeyError:
-        degree = 0
-    try:
-        err = float(kwargs['TriggerNextMethod'.lower()])
-    except KeyError:
-        err = 1e-3
-    try:
-        ray_sigma = float(kwargs['PrecisionGoalRayshooting'.lower()])
-    except KeyError:
-        ray_sigma = 1e-2
-    try:
-        ray_rect_pix = int(kwargs['LocalMarginRayshooting'.lower()])
-    except KeyError:
-        ray_rect_pix = 1
-
-    t0 = params['t0']
-    u0 = params['u0']
-    tE = params['tE']
-    rho = params['rho']
-    gamma = params['gamma']
-    q = params['q']
-    piEN = params['piEN']
-    piEE = params['piEE']
-    alpha0 = params['alpha']
-    s0 = params['s']
-    dalpha = params['dalpha']
-    ds = params['ds']
-
-    # Correction of the separation/angle due to lens orbital motion
-    alpha, s = lens_rotation(alpha0, s0, dalpha, ds, t, tb)
-
-    # Correction of the trajectory due to parallax
-    DsN = Ds['N']
-    DsE = Ds['E']
-    tau = (t-t0)/tE + piEN * DsN + piEE * DsE
-    beta = u0 + piEN * DsE - piEE * DsN
-    x, y = binrot(alpha, tau, beta)
-
-    # Center of mass to Cassan (2008)
-    GL1 = s * q / (1 + q)
-    x = x - GL1
-
-    # Compute magnification using PSBL
-    list = [[q, rho, gamma, degree, err, ray_sigma, ray_rect_pix], s.tolist(), x.tolist(), y.tolist()]
-    magnif = esbltaylorbuilt.magnifcalc(list)
-
-    return np.array(magnif[0]), np.array(magnif[1])
-
-
-# ====================================================================
-# Main function
-# ====================================================================
-if __name__=="__main__":
-    print 'Please use with muLAn.'
-
-
-
-
-
-
-
-
-
 

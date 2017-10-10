@@ -6,7 +6,7 @@
 #                point-source evaluation.
 #     Mon. Not. R. Astron. 468, 3993 (2017)
 # ====================================================================
-# Standard packages
+#   Packages
 # ====================================================================
 import numpy as np
 # ====================================================================
@@ -14,10 +14,10 @@ import numpy as np
 # ====================================================================
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def quadmag(s,q,rho,gamma,zeta0):
+def quadmag(s, q, rho, gamma, zeta0):
     """Compute the quadrupolar magnification."""
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    z0 = solve_lens_poly(s,q,zeta0) # convention Cassan (2008)
+    z0 = solve_lens_poly(s, q, zeta0) # convention Cassan (2008)
     W1 = 1./(1.+q)*(1./z0+q/(z0+s))
     z0 = z0[np.abs(z0-W1.conjugate()-zeta0)<0.000001]
     nr = len(z0)
@@ -28,10 +28,10 @@ def quadmag(s,q,rho,gamma,zeta0):
     return quadrupole(Wk, rho, gamma)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def hexamag(s,q,rho,gamma,zeta0):
+def hexamag(s, q, rho, gamma, zeta0):
     """Compute the hexadecapolar magnification."""
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    z0 = solve_lens_poly(s,q,zeta0) # convention Cassan (2008)
+    z0 = solve_lens_poly(s, q, zeta0) # convention Cassan (2008)
     W1 = 1./(1.+q)*(1./z0+q/(z0+s))
     z0 = z0[np.abs(z0-W1.conjugate()-zeta0)<0.000001]
     nr = len(z0)
@@ -44,7 +44,7 @@ def hexamag(s,q,rho,gamma,zeta0):
     return hexadecapole(Wk, rho, gamma)
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def quadrupole(Wk,rho,gamma):
+def quadrupole(Wk, rho, gamma):
     """Quadrupole expansion of the finite-source magnification."""
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Monopole
@@ -75,7 +75,7 @@ def quadrupole(Wk,rho,gamma):
     return A2
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def hexadecapole(Wk,rho,gamma):
+def hexadecapole(Wk, rho, gamma):
     """Quadrupole and Hexadecapole expansions of the finite-source magnification"""
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ### Monopole
@@ -132,14 +132,14 @@ def hexadecapole(Wk,rho,gamma):
     return A4
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def akl(mu,W2,Qkl):
+def akl(mu, W2, Qkl):
     '''Compute the a(p-n,n) values from Q(p-n,n).'''
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     akl = mu*(Qkl.conjugate()+W2.conjugate()*Qkl)
     return akl
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-def solve_lens_poly(s,q,zeta):
+def solve_lens_poly(s, q, zeta):
     """Solve binary lens equation [convention Cassan (2008)]."""
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     coefs = [(1+q)**2*(s+zeta.conjugate())*zeta.conjugate(),(1+q)*(s*(q-abs(zeta)**2*(1+q))+(1+q)*((1+2*s**2)-abs(zeta)**2+2*s*zeta.conjugate())*zeta.conjugate()),(1+q)*(s**2*q-s*(1+q)*zeta+(2*s+s**3*(1+q)+s**2*(1+q)*zeta.conjugate())*zeta.conjugate()-2*abs(zeta)**2*(1+q)*(1+s**2+s*zeta.conjugate())),-(1+q)*(s*q+s**2*(q-1)*zeta.conjugate()+(1+q+s**2*(2+q))*zeta+abs(zeta)**2*(2*s*(2+q)+s**2*(1+q)*(s+zeta.conjugate()))),-s*(1+q)*((2+s**2)*zeta+2*s*abs(zeta)**2)-s**2*q,-s**2*zeta]
