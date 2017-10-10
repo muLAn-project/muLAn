@@ -21,11 +21,21 @@ This package depends in particular on the following packages:
 
 ### Installation
 
-To install the current development version of **muLAn** package from source:
-
+Install one of the available relesases (recommended), or install the current development version of **muLAn** package from source:
 ```
-$ git clone https://github.com/muLAn-project/muLAn.git
-$ pip install --user muLAn/
+git clone https://github.com/muLAn-project/muLAn.git
+```
+
+To install **muLAn** in your user python environment: 
+```
+pip install --user muLAn/
+```
+
+We however recommend to use an [Anaconda](https://anaconda.org) user environment:
+```
+conda create -n muLAn-0.8 python=2.7
+source activate muLAn-0.8
+pip install muLAn/
 ```
 
 ### Loading
