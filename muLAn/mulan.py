@@ -18,6 +18,16 @@ import muLAn
 # --------------------------------------------------------------------
 # Fonctions
 # --------------------------------------------------------------------
+def getlogo():
+    logo =\
+            "                 _       ___        \n"\
+          + "                | |     / _ \       \n"\
+          + " _ __ ___  _   _| |    / /_\ \_ __  \n"\
+          + "| '_ ` _ \| | | | |    |  _  | '_ \ \n"\
+          + "| | | | | | |_| | |____| | | | | | |\n"\
+          + "|_| |_| |_|\__,_\_____/\_| |_/_| |_|\n"
+    return logo
+# --------------------------------------------------------------------
 def add_topythonpath(path):
     if len(path)>0:
         sys.path.insert(0, path)
@@ -72,18 +82,10 @@ def getint_verbose(path_event):
     v = int(gettxt_inifile(fn_as, 'Verbose'))
     return v
 # --------------------------------------------------------------------
-def print_welcome(path, verbose=1):
-    if verbose > 0:
-        fn_logo = path + 'Logo.txt'
-        try:
-            file = open(fn_logo, 'r')
-            logo = ''.join([line for line in file])
-            file.close()
-        except IOError:
-            sys.exit('File {:s} not found.'.format(fn_logo))
-
+def print_welcome(verbose=1):
+        logo = getlogo()
         legend = '\033[90mMicro-Lensing Analysis software\033[0m\n'
-        version = '\033[90mVersion '+muLAn.__version__
+        version = '\033[90mVersion {:s}'.format(muLAn.__version__)
 
         welcome = '\033[1m\033[34m{:s}\033[0m{:s}{:s}\033[0m'.format(logo, legend, version)
         print welcome
@@ -189,7 +191,8 @@ def run():
     path_event = os.path.realpath(ici)+'/'
     verbose = getint_verbose(path_event)
     path_mulan = getpath_mulan(path_event)
-    print_welcome(path_mulan, verbose=verbose)
+    # print ici, path_mulan
+    print_welcome(verbose=verbose)
     # Add local packages
     path_localpackages = getpath_localpackages(path_event)
     add_topythonpath(path_localpackages)
