@@ -187,7 +187,7 @@ def stop():
     if os.path.exists(fn_lock):
         os.remove(fn_lock)
 # ----------------------------------------------------------------------
-def run():
+def run(options=dict()):
     # Event (local) path
     ici = os.getcwd()
     path_event = os.path.realpath(ici)+'/'
@@ -217,7 +217,6 @@ def run():
     parser.add_argument('--stop', action='store_true', help='Stop the exploration and save properly the results.')
     parser.add_argument('-v', '--verbose', nargs=1, type=int, choices=range(0, 6), default=[-1], help='Choose a verbose level.')
     opts = parser.parse_args()
-    options = dict()
     [options.update({key: getattr(opts, key)}) for key in vars(opts)]
     [options.update({key: np.atleast_1d(options[key])[0]}) for key in options if len(np.atleast_1d(options[key]))==1]
     if options['verbose'] > -1:
