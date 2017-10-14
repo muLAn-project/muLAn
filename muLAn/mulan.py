@@ -15,6 +15,7 @@ import os
 import sys
 import importlib
 import muLAn
+import muLAn.packages.sequential as sequential 
 # --------------------------------------------------------------------
 # Fonctions
 # --------------------------------------------------------------------
@@ -158,8 +159,9 @@ def check_packages(path_mulan, verbose=0):
                 print txt
 # ----------------------------------------------------------------------
 def run_mulan(path_event, options):
-    mul = importlib.import_module('sequential')
-    mul.run_sequence(path_event, options)
+    # mul = importlib.import_module('sequential')
+    # mul.run_sequence(path_event, options)
+    sequential.run_sequence(path_event, options)
 # ----------------------------------------------------------------------
 def sort(path_event):
     # Sort exploration results
@@ -194,12 +196,10 @@ def run():
     # print ici, path_mulan
     print_welcome(verbose=verbose)
     # Add local packages
-    path_localpackages = getpath_localpackages(path_event)
-    add_topythonpath(path_localpackages)
-    module_path = '{:s}packages'.format(path_mulan)
-    add_topythonpath(module_path)
-    # Check packages
-    ##removed## check_packages(path_mulan, verbose=verbose)
+    # path_localpackages = getpath_localpackages(path_event)
+    # add_topythonpath(path_localpackages)
+    # module_path = '{:s}packages'.format(path_mulan)
+    # add_topythonpath(module_path)
 
     # Load standard packages (after adding path to local packages)
     argparse = importlib.import_module('argparse')
