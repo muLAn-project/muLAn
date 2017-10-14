@@ -626,12 +626,8 @@ def run_sequence(path_event, options):
 
                     del interpol_method[key_list[i]]
 
-        # ----------------------------------------------------------------------
-        #   Load all the models that will be used
-        # ----------------------------------------------------------------------
-#        def prepar_importation(model2load):
-#            modules = model2load
-
+        # Load models of magnification
+        # ----------------------------
         models_modules = dict()
         if(len(model2load)) > 0:
             for i in xrange(len(model2load)):
@@ -639,6 +635,8 @@ def run_sequence(path_event, options):
                 importlib.import_module(text)
                 models_modules.update({model2load[i]: getattr(mulanmodels, model2load[i])})
 
+        # Load minimization algorithms
+        # ----------------------------
         modules_mini = np.array([cfgsetup.get('Modelling', 'Method')])
         minim_algo = np.array([])
         if len(modules_mini) > 0:
@@ -646,51 +644,6 @@ def run_sequence(path_event, options):
                 text = 'muLAn.models.{:s}'.format(modules_mini[i])
                 importlib.import_module(text)
                 minim_algo = np.append(minim_algo, getattr(mulanmodels, modules_mini[i]))
-
-#            modules_mini = np.array([cfgsetup.get('Modelling', 'Method')])
-#            path = cfgsetup.get('FullPaths', 'Code') + 'packages/'
-#            modulesloading_file = open(path + 'modulesloading.py', 'w')
-#
-#            text = "# -*-coding:Utf-8 -*\n"
-#            text = text + "import sys\n"
-#            text = text + "sys.path.insert(0, '" + cfgsetup.get('FullPaths', 'Code') \
-#                   + "models')\n"
-#
-#            for i in xrange(len(modules)):
-#                text = text + "import " + modules[i] + " as " + modules[i]
-#                text = text + "\n"
-#
-#            for i in xrange(len(modules_mini)):
-#                text = text + "import " + modules_mini[i] + " as " + modules_mini[i]
-#                text = text + "\n"
-#
-#            text = text + "def main():\n"
-#            text = text + "\tmodels_files = [" + modules[0] + "]\n"
-#
-#            if len(modules) > 1:
-#                for i in xrange(len(modules) - 1):
-#                    text = text + "\tmodels_files.append(" + modules[i + 1] + ")\n"
-#
-#            text = text + "\tminim_files = [" + modules_mini[0] + "]\n"
-#
-#            if len(modules_mini) > 1:
-#                for i in xrange(len(modules_mini) - 1):
-#                    text = text + "\tminim_files.append(" + modules_mini[i + 1] + ")\n"
-#
-#            text = text + "\treturn models_files, minim_files\n"
-#
-#            modulesloading_file.write(text)
-#            modulesloading_file.close()
-#
-#
-#        model2load = np.unique(model2load)
-#        prepar_importation(model2load)
-#        sys.path.insert(0, cfgsetup.get('FullPaths', 'Code') + 'packages/')
-#        import modulesloading as load_modules
-#
-#        models_modules, minim_algo = load_modules.main()
-#
-#        models_modules = {model2load[i]: models_modules[i] for i in xrange(len(model2load))}
 
         # ------------------------------------------------------------------
         #   Explore the parameters space
