@@ -909,35 +909,6 @@ def run_sequence(path_event, options):
         # List of plots
         plots2load_brut = unpack_options(cfgsetup, 'Plotting', 'Type')
 
-
-        def prepar_importation_plottypes(plots2load):
-            modules = np.unique(plots2load)
-
-            path = cfgsetup.get('FullPaths', 'Code') + 'packages/'
-            modulesloading_file = open(path + 'modulesplotsloading.py', 'w')
-
-            text = "# -*-coding:Utf-8 -*\n"
-            text = text + "import sys\n"
-            text = text + "sys.path.insert(0, '" + cfgsetup.get('FullPaths', 'Code') \
-                   + "plottypes')\n"
-
-            for i in xrange(len(modules)):
-                text = text + "import " + modules[i] + " as " + modules[i]
-                text = text + "\n"
-
-            text = text + "def load():\n"
-            text = text + "\tmodules_files = [" + modules[0] + "]\n"
-
-            if len(modules) > 1:
-                for i in xrange(len(modules) - 1):
-                    text = text + "\tmodules_files.append(" + modules[i + 1] + ")\n"
-
-            text = text + "\treturn modules_files\n"
-
-            modulesloading_file.write(text)
-            modulesloading_file.close()
-
-
         # Load plot types 
         # ---------------
         plots2load = np.unique(plots2load_brut)
@@ -947,17 +918,6 @@ def run_sequence(path_event, options):
                 text = 'muLAn.plottypes.{:s}'.format(plots2load[i])
                 importlib.import_module(text)
                 plottypes_list.update({plots2load[i]: getattr(mulanplots, plots2load[i])})
-        print plottypes_list
-        sys.exit()
-
-#        plots2load = np.unique(plots2load_brut)
-#        prepar_importation_plottypes(plots2load)
-#        sys.path.insert(0, cfgsetup.get('FullPaths', 'Code') + 'packages/')
-#        import modulesplotsloading as modulesplotsloading
-#
-#        plottypes_list = modulesplotsloading.load()
-#
-#        plottypes_list = {plots2load[i]: plottypes_list[i] for i in xrange(len(plots2load))}
 
         # Recursively run the plots routines
         for i in xrange(len(plots2load_brut)):
