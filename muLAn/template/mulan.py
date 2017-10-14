@@ -12,12 +12,12 @@
 # Packages
 # --------------------------------------------------------------------
 import argparse
-import subprocess
 import numpy as np
 import muLAn.mulan as mulan
 
-
-
+# --------------------------------------------------------------------
+# Main
+# --------------------------------------------------------------------
 if __name__ == '__main__':
 
     # Command line options
@@ -43,6 +43,7 @@ if __name__ == '__main__':
     if options['verbose'] > -1:
         verbose = options['verbose']
 
+    # Actions
     if options['stop']:
         mulan.stop()
 
@@ -51,8 +52,4 @@ if __name__ == '__main__':
 
     if (not options['sort'] and not options['stop']):
         mulan.run(options=options)
-
-
-
-
 
