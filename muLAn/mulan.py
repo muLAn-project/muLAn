@@ -193,13 +193,7 @@ def run():
     path_event = os.path.realpath(ici)+'/'
     verbose = getint_verbose(path_event)
     path_mulan = getpath_mulan(path_event)
-    # print ici, path_mulan
     print_welcome(verbose=verbose)
-    # Add local packages
-    # path_localpackages = getpath_localpackages(path_event)
-    # add_topythonpath(path_localpackages)
-    # module_path = '{:s}packages'.format(path_mulan)
-    # add_topythonpath(module_path)
 
     # Load standard packages (after adding path to local packages)
     argparse = importlib.import_module('argparse')
