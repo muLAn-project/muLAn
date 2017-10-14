@@ -95,69 +95,6 @@ def bash_command(cmd):
     proc = subprocess.Popen(cmd, shell=True, executable="/bin/bash")
     proc.wait()
 # --------------------------------------------------------------------
-def check_packages(path_mulan, verbose=0):
-    try:
-        from distutils.version import LooseVersion
-    except ImportError:
-        txt = '\033[1m\033[31mThe required package distutils is not installed.\033[0m'
-        txt += '\nPlease install it or run the command'
-        txt += '\n   $ pip install -r Requirements.txt'
-        txt += '\nfrom the following directory'
-        txt += '\n   ' + path_mulan
-        txt += '\nto install all the required packages.'
-        txt += '\n\033[1m\033[31mmuLAn stopped.\033[0m'
-        sys.exit(txt)
-
-    fn_requirements = '{:s}Requirements.txt'.format(path_mulan)
-    try:
-        file = open(fn_requirements, 'r')
-        result = [line.replace('\n', '').replace(' ', '').strip()
-                  for line in file if line.replace('\n', '') != '']
-        file.close()
-    except IOError:
-        sys.exit('File {:s} not found.'.format(fn_requirements))
-
-    packages = []
-    versions = []
-    for a in result:
-        end = len([True for l in a if l.isalpha()])
-        if end > 0:
-            packages.append(a[:end])
-            versions.append(a[end:].replace('=', '').replace('>', '').replace('<', ''))
-            if versions[-1] == '': versions[-1] = 'None'
-
-    for p, v in zip(packages, versions):
-        try:
-            if p=='GetDist':
-                mod = importlib.import_module(p.lower())
-            else:
-                mod = importlib.import_module(p)
-        except ImportError:
-            txt = '\033[1m\033[31mThe required package {:s} is not installed.\033[0m'.format(p)
-            txt += '\nPlease install it or run the command'
-            txt += '\n   $ pip install -r Requirements.txt'
-            txt += '\nfrom the following directory'
-            txt += '\n   ' + path_mulan
-            txt += '\nto install all the required packages.'
-            txt += '\n\033[1m\033[31mmuLAn stopped.\033[0m'
-            sys.exit(txt)
-
-        try:
-            v_computer = mod.__version__
-        except:
-            v_computer = 'None'
-
-        if (v_computer != 'None') & (v != 'None'):
-            if LooseVersion(v) > LooseVersion(v_computer):
-                txt = 'An earlier version of the package {:s} is required.'.format(p)
-                txt += '\n   Installed: {:s}   Required: {:s}'.format(v_computer, v)
-                txt += '\n\033[1m\033[31mmuLAn stopped.\033[0m'
-                sys.exit(txt)
-            if (LooseVersion(v) < LooseVersion(v_computer)) & verbose > 0:
-                txt = 'An earlier version of the package {:s} is installed.'.format(p)
-                txt += '\n   Installed: {:s}   Required: {:s}'.format(v_computer, v)
-                print txt
-# ----------------------------------------------------------------------
 def run_mulan(path_event, options):
     # mul = importlib.import_module('sequential')
     # mul.run_sequence(path_event, options)
