@@ -18,7 +18,7 @@ from general_tools import *
 import muLAn.models.ephemeris as ephemeris
 import muLAn.models as mulanmodels
 import muLAn.plottypes as mulanplots
-import order_ChainsResults as order
+import muLAn.packages.sortmodels as mulansort
 
 # ====================================================================
 # Fonctions
@@ -896,7 +896,7 @@ def run_sequence(path_event, options):
     if not options['sortno']:
         text = "Post-process the output files..."
         communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
-        order.order(cfgsetup.get('FullPaths', 'Event'))
+        mulansort.order(cfgsetup.get('FullPaths', 'Event'))
 
     # ----------------------------------------------------------------------
     #   Plots
