@@ -17,6 +17,7 @@ from astropy.coordinates import SkyCoord
 from general_tools import *
 import muLAn.models.ephemeris as ephemeris
 import muLAn.models as mulanmodels
+import muLAn.plottypes as mulanplots
 import order_ChainsResults as order
 
 # ====================================================================
@@ -937,14 +938,26 @@ def run_sequence(path_event, options):
             modulesloading_file.close()
 
 
+        # Load plot types 
+        # ---------------
         plots2load = np.unique(plots2load_brut)
-        prepar_importation_plottypes(plots2load)
-        sys.path.insert(0, cfgsetup.get('FullPaths', 'Code') + 'packages/')
-        import modulesplotsloading as modulesplotsloading
+        plottypes_list = dict()
+        if(len(plots2load)) > 0:
+            for i in xrange(len(plots2load)):
+                text = 'muLAn.plottypes.{:s}'.format(plots2load[i])
+                importlib.import_module(text)
+                plottypes_list.update({plots2load[i]: getattr(mulanplots, plots2load[i])})
+        print plottypes_list
+        sys.exit()
 
-        plottypes_list = modulesplotsloading.load()
-
-        plottypes_list = {plots2load[i]: plottypes_list[i] for i in xrange(len(plots2load))}
+#        plots2load = np.unique(plots2load_brut)
+#        prepar_importation_plottypes(plots2load)
+#        sys.path.insert(0, cfgsetup.get('FullPaths', 'Code') + 'packages/')
+#        import modulesplotsloading as modulesplotsloading
+#
+#        plottypes_list = modulesplotsloading.load()
+#
+#        plottypes_list = {plots2load[i]: plottypes_list[i] for i in xrange(len(plots2load))}
 
         # Recursively run the plots routines
         for i in xrange(len(plots2load_brut)):
