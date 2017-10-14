@@ -1,6 +1,7 @@
 *.pyc
 *.so
 *cpm*
+*.swp
 .pythonexternallibpath
 packages/modulesloading.py
 packages/modulesplotsloading.py
