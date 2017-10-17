@@ -13,6 +13,7 @@ models/inverse_rayshooting/invraylocal.py
 models/inverse_rayshooting/psbl.py
 models/ESBLloop.py
 
+docs/\_build*
 .idea/
 default/
 models/drawloop/
