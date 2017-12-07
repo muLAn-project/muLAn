@@ -4,6 +4,7 @@
 *.swp
 .pythonexternallibpath
 packages/modulesloading.py
+docs/_*
 packages/modulesplotsloading.py
 models/esblta.py
 models/esbltaylor/Makefile
