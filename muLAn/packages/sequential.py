@@ -39,10 +39,11 @@ def run_sequence(path_event, options):
     cfgsetup.set('FullPaths', 'Event', path_event)
 
     # Check the paths
-    if cfgsetup.get('FullPaths', 'Code')[-1] != '/':
-        cfgsetup.set('FullPaths', 'Code', cfgsetup.get('FullPaths', 'Code') + '/')
-    if cfgsetup.get('FullPaths', 'Event')[-1] != '/':
-        cfgsetup.set('FullPaths', 'Event', cfgsetup.get('FullPaths', 'Event') + '/')
+    if cfgsetup.get('FullPaths', 'Code').replace(" ", "") != "":
+        if cfgsetup.get('FullPaths', 'Code')[-1] != '/':
+            cfgsetup.set('FullPaths', 'Code', cfgsetup.get('FullPaths', 'Code') + '/')
+        if cfgsetup.get('FullPaths', 'Event')[-1] != '/':
+            cfgsetup.set('FullPaths', 'Event', cfgsetup.get('FullPaths', 'Event') + '/')
     if cfgsetup.get('RelativePaths', 'Data')[-1] != '/':
         cfgsetup.set('RelativePaths', 'Data', cfgsetup.get('RelativePaths', 'Data') + '/')
     if cfgsetup.get('RelativePaths', 'Plots')[-1] != '/':
