@@ -852,6 +852,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             time_serie['residus_flux'] = time_serie['flux'] - time_serie['flux_model']
             time_serie['mgf_data'] = (time_serie['flux'] - time_serie['fb']) / time_serie['fs']
             time_serie['mgf_data_err'] = time_serie['err_flux'] / time_serie['fs']
+            time_serie['res_mgf'] = time_serie['mgf_data'] - time_serie['amp']
             time_serie['chi2pp'] = np.power(time_serie['residus'] / time_serie['err_magn'], 2.0)
             time_serie['chi2pp_flux'] = np.power(time_serie['residus_flux'] / time_serie['err_flux'], 2.0)
             chi2 = np.sum(time_serie['chi2pp'])
@@ -1255,8 +1256,8 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 os.makedirs(path_outputs)
 
             for j in xrange(len(observatories_com)):
-                text = "#{0:>17s} {1:>6s} {2:>9s} {3:>12s} {4:>10s} {5:>9s} {6:>6s} {7:>9s}\n".format(
-                        "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2")
+                text = "#{0:>17s} {1:>6s} {2:>9s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>9s} {6:>6s} {7:>9s}\n".format(
+                        "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf")
                 filename = path_outputs + observatories_com[j].upper() + ".dat"
 
                 condj = np.where(time_serie['obs'] == observatories[j])
@@ -1265,7 +1266,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
                 for jj in xrange(len(time_serie_SC['dates'])):
                     text = text +\
-                            "{0:18.12f} {1:6.3f} {2:9.3e} {3:12.3e} {4:10.3e} {5:9.3f} {6:6.3f} {7:9.3e} {8:6.3f}".format(
+                            "{0:18.12f} {1:6.3f} {2:9.3e} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:9.3f} {6:6.3f} {7:9.3e}".format(
                             time_serie_SC['dates'][jj],
                             time_serie_SC['mag_align'][jj],
                             time_serie_SC['err_magn_orig'][jj],
@@ -1274,12 +1275,18 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                             time_serie_SC['background'][jj],
                             time_serie_SC['seeing'][jj],
                             time_serie_SC['chi2pp'][jj],
-                            time_serie_SC['amp'][jj])
+                            time_serie_SC['mgf_data'][jj],
+                            time_serie_SC['mgf_data_err'][jj],
+                            time_serie_SC['res_mgf'][jj]
+                            )
                     text = text + "\n"
 
                 file = open(filename, 'w')
                 file.write(text)
                 file.close()
+
+
+
 
             # ..................................................................
             #    Plot light curve : plc
@@ -1357,6 +1364,16 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         id_colour = id_colour + 1
                     else:
                         id_colour = 0
+
+
+
+
+
+
+
+
+
+
 
                 # Magnitude
                 fig_curr.circle('dates', 'mag_align', size=8, color='colour',
