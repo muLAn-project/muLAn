@@ -43,6 +43,7 @@ from scipy import interpolate
 import subprocess
 import numpy as np
 from sklearn.mixture import GaussianMixture
+from scipy.optimize import fsolve
 import pandas as pd
 import bokeh.layouts as blyt
 import bokeh.plotting as bplt
@@ -1144,51 +1145,60 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
         #    Sigma clipping
         # ------------------------------------------------------------------
         # Determine the best rescaling factors
-#        if (cfgsetup.getint("Modelling", "Verbose") > 4) & (nb_param_fit > 0):
-#            text = "\n\033[1m\033[7m{:>2s}{:<25s}{:1s}{:>10s}{:1s}{:>5s}{:1s}{:>10s}{:1s}{:>5s}{:1s}{:>10s}{:1s}{:>5s}{:2s}\033[0m".format(
-#                    "", "Site", "", "RF1(loop3)", "", "Rej.", "", "RF1(loop5)", "", "Rej.", "", "RF1(loop7)", "", "Rej.", "")
-#            print text
-#
-#            text = ""
-#            for j in xrange(len(observatories_com)):
-#                # Pre-defied rescaling factors
-#                f1 = float(unpack_options(cfgsetup, 'Observatories', observatories[0])[0].replace('(', ''))
-#                f2 = float(unpack_options(cfgsetup, 'Observatories', observatories[0])[1].replace(')', ''))
-#                if abs(f1-1.0) > 1e-10:
-#                    text = "{:>2s}{:<25s}{:<30s}\n".format("", observatories_com[j].upper(), "RF 1 not equal to 1.0.")
-#                    continue
-#                # Select the observatory
-#                condj = np.where(time_serie['obs'] == observatories[j])
-#                time_serie_SC = copy.deepcopy(time_serie)
-#                [time_serie_SC.update({key: time_serie_SC[key][condj]}) for key in time_serie_SC]
-#                # Compute the degree of freedom ddl
-#                nb_data = len(time_serie_SC['dates'])
-#                if nb_data > nb_param_fit:
-#                    ddl = nb_data - nb_param_fit
-#                else:
-#                    ddl = nb_data
-#
-#                # Compute the rescaling factor f1 from the value of f2
-#                rejected_points_id = np.array([])
-#                nb_reject_sc = 0
-#                nb_loops = 7
-#                text = text + "{:>2s}{:<25s}".format("", observatories_com[j].upper())
-#                for i in xrange(nb_loops):
-#                    mean = np.mean(time_serie_SC['err_magn'])
-#                    sdt = np.std(time_serie_SC['err_magn'])
-#                    toremove = np.where(np.abs(time_serie_SC['err_magn'] - mean) > 3.0 * sdt)
-#                    nb_reject_sc = nb_reject_sc + len(toremove[0])
-#                    if len(toremove[0]) > 0:
-#                        rejected_points_id = np.append(rejected_points_id, time_serie_SC['id'][toremove])
-#                        [time_serie_SC.update({key : np.delete(time_serie_SC[key], toremove)}) for key in time_serie_SC]
-#
-#                    if (i==2) | (i==4) | (i==6):
-#                        f1_op = np.sqrt(np.sum(time_serie_SC['chi2pp']) * (1.0 / ddl - (f2 ** 2) * np.sum(np.power(time_serie_SC['residus'], -2.0))))
-#                        text = text + "{:>10.3f}{:1s}{:>5d}{:1s}".format(
-#                                f1_op, "", nb_reject_sc, "")
-#
-#                text = text + "\n"
-#            print text
+        if (cfgsetup.getint("Modelling", "Verbose") > 4) & (nb_param_fit > 0):
+            text = "\n\033[1m\033[7m{:>2s}{:<25s}{:1s}{:>10s}{:1s}{:>5s}{:1s}{:>10s}{:1s}{:>5s}{:1s}{:>10s}{:1s}{:>5s}{:2s}\033[0m".format(
+                    "", "Site", "", "RF1(loop3)", "", "Rej.", "", "RF1(loop5)", "", "Rej.", "", "RF1(loop7)", "", "Rej.", "")
+            print text
+
+            def func(f1, table, f2, ddl):
+                x = np.sum(np.power(table['residus'], 2)/(np.power(f1*table['err_magn'], 2) + f2**2))
+                x = x / ddl - 1.0
+                return x
+
+
+            text = ""
+            for j in xrange(len(observatories_com)):
+                # Pre-defied rescaling factors
+                f1 = float(unpack_options(cfgsetup, 'Observatories', observatories[0])[0].replace('(', ''))
+                f2 = float(unpack_options(cfgsetup, 'Observatories', observatories[0])[1].replace(')', ''))
+                if abs(f1-1.0) > 1e-10:
+                    text = "{:>2s}{:<25s}{:<30s}\n".format("", observatories_com[j].upper(), "RF 1 not equal to 1.0.")
+                    continue
+                # Select the observatory
+                condj = np.where(time_serie['obs'] == observatories[j])
+                time_serie_SC = copy.deepcopy(time_serie)
+                [time_serie_SC.update({key: time_serie_SC[key][condj]}) for key in time_serie_SC]
+                # Compute the degree of freedom ddl
+                nb_data = len(time_serie_SC['dates'])
+                if nb_data > nb_param_fit:
+                    ddl = nb_data - nb_param_fit
+                else:
+                    ddl = nb_data
+
+                # Compute the rescaling factor f1 from the value of f2
+                rejected_points_id = np.array([])
+                nb_reject_sc = 0
+                nb_loops = 7
+                text = text + "{:>2s}{:<25s}".format("", observatories_com[j].upper())
+                for i in xrange(nb_loops):
+                    mean = np.mean(time_serie_SC['err_magn'])
+                    sdt = np.std(time_serie_SC['err_magn'])
+                    toremove = np.where(np.abs(time_serie_SC['err_magn'] - mean) > 3.0 * sdt)
+                    nb_reject_sc = nb_reject_sc + len(toremove[0])
+                    if len(toremove[0]) > 0:
+                        rejected_points_id = np.append(rejected_points_id, time_serie_SC['id'][toremove])
+                        [time_serie_SC.update({key : np.delete(time_serie_SC[key], toremove)}) for key in time_serie_SC]
+
+                    if (i==2) | (i==4) | (i==6):
+                        try:
+                            f1_op = fsolve(func, 1.0, args=(time_serie_SC, f2, ddl))
+                        except:
+                            f1_op = 0.0
+                        text = text + "{:>10.3f}{:1s}{:>5d}{:1s}".format(
+                                f1_op[0], "", nb_reject_sc, "")
+
+                text = text + "\n"
+            print text
 
 
         # ---------------------------------------------------------------------
@@ -1365,15 +1375,25 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                     else:
                         id_colour = 0
 
+                # Write output files for the models
+                text = "#{0:>17s} {1:>9s} {2:>6s}\n".format("Date", "Mgf", "Magn")
+                filename = path_outputs + locations[i].upper() + ".dat"
 
+                time_serie_SC = copy.deepcopy(model_time_serie[i])
+                [time_serie_SC.update({key: time_serie_SC[key]}) for key in time_serie_SC]
 
+                for jj in xrange(len(time_serie_SC['dates'])):
+                    text = text +\
+                            "{0:18.12f} {1:9.3f} {2:6.3f}".format(
+                            time_serie_SC['dates'][jj],
+                            time_serie_SC['amp'][jj],
+                            time_serie_SC['magnitude'][jj]
+                            )
+                    text = text + "\n"
 
-
-
-
-
-
-
+                file = open(filename, 'w')
+                file.write(text)
+                file.close()
 
                 # Magnitude
                 fig_curr.circle('dates', 'mag_align', size=8, color='colour',
