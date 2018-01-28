@@ -7,6 +7,7 @@
 import os
 import sys
 import glob
+import importlib
 import numpy as np
 import ConfigParser as cp
 from astropy.coordinates import SkyCoord
@@ -14,8 +15,10 @@ from astropy.coordinates import SkyCoord
 # Local packages
 # ----------------------------------------------------------------------
 from general_tools import *
-import models.ephemeris as ephemeris
-import order_ChainsResults as order
+import muLAn.models.ephemeris as ephemeris
+import muLAn.models as mulanmodels
+import muLAn.plottypes as mulanplots
+import muLAn.packages.sortmodels as mulansort
 
 # ====================================================================
 # Fonctions
@@ -36,10 +39,11 @@ def run_sequence(path_event, options):
     cfgsetup.set('FullPaths', 'Event', path_event)
 
     # Check the paths
-    if cfgsetup.get('FullPaths', 'Code')[-1] != '/':
-        cfgsetup.set('FullPaths', 'Code', cfgsetup.get('FullPaths', 'Code') + '/')
-    if cfgsetup.get('FullPaths', 'Event')[-1] != '/':
-        cfgsetup.set('FullPaths', 'Event', cfgsetup.get('FullPaths', 'Event') + '/')
+    if cfgsetup.get('FullPaths', 'Code').replace(" ", "") != "":
+        if cfgsetup.get('FullPaths', 'Code')[-1] != '/':
+            cfgsetup.set('FullPaths', 'Code', cfgsetup.get('FullPaths', 'Code') + '/')
+        if cfgsetup.get('FullPaths', 'Event')[-1] != '/':
+            cfgsetup.set('FullPaths', 'Event', cfgsetup.get('FullPaths', 'Event') + '/')
     if cfgsetup.get('RelativePaths', 'Data')[-1] != '/':
         cfgsetup.set('RelativePaths', 'Data', cfgsetup.get('RelativePaths', 'Data') + '/')
     if cfgsetup.get('RelativePaths', 'Plots')[-1] != '/':
@@ -624,55 +628,24 @@ def run_sequence(path_event, options):
 
                     del interpol_method[key_list[i]]
 
-        # ----------------------------------------------------------------------
-        #   Load all the models that will be used
-        # ----------------------------------------------------------------------
-        def prepar_importation(model2load):
-            modules = model2load
-            modules_mini = np.array([cfgsetup.get('Modelling', 'Method')])
-            path = cfgsetup.get('FullPaths', 'Code') + 'packages/'
-            modulesloading_file = open(path + 'modulesloading.py', 'w')
+        # Load models of magnification
+        # ----------------------------
+        models_modules = dict()
+        if(len(model2load)) > 0:
+            for i in xrange(len(model2load)):
+                text = 'muLAn.models.{:s}'.format(model2load[i])
+                importlib.import_module(text)
+                models_modules.update({model2load[i]: getattr(mulanmodels, model2load[i])})
 
-            text = "# -*-coding:Utf-8 -*\n"
-            text = text + "import sys\n"
-            text = text + "sys.path.insert(0, '" + cfgsetup.get('FullPaths', 'Code') \
-                   + "models')\n"
-
-            for i in xrange(len(modules)):
-                text = text + "import " + modules[i] + " as " + modules[i]
-                text = text + "\n"
-
+        # Load minimization algorithms
+        # ----------------------------
+        modules_mini = np.array([cfgsetup.get('Modelling', 'Method')])
+        minim_algo = np.array([])
+        if len(modules_mini) > 0:
             for i in xrange(len(modules_mini)):
-                text = text + "import " + modules_mini[i] + " as " + modules_mini[i]
-                text = text + "\n"
-
-            text = text + "def main():\n"
-            text = text + "\tmodels_files = [" + modules[0] + "]\n"
-
-            if len(modules) > 1:
-                for i in xrange(len(modules) - 1):
-                    text = text + "\tmodels_files.append(" + modules[i + 1] + ")\n"
-
-            text = text + "\tminim_files = [" + modules_mini[0] + "]\n"
-
-            if len(modules_mini) > 1:
-                for i in xrange(len(modules_mini) - 1):
-                    text = text + "\tminim_files.append(" + modules_mini[i + 1] + ")\n"
-
-            text = text + "\treturn models_files, minim_files\n"
-
-            modulesloading_file.write(text)
-            modulesloading_file.close()
-
-
-        model2load = np.unique(model2load)
-        prepar_importation(model2load)
-        sys.path.insert(0, cfgsetup.get('FullPaths', 'Code') + 'packages/')
-        import modulesloading as load_modules
-
-        models_modules, minim_algo = load_modules.main()
-
-        models_modules = {model2load[i]: models_modules[i] for i in xrange(len(model2load))}
+                text = 'muLAn.models.{:s}'.format(modules_mini[i])
+                importlib.import_module(text)
+                minim_algo = np.append(minim_algo, getattr(mulanmodels, modules_mini[i]))
 
         # ------------------------------------------------------------------
         #   Explore the parameters space
@@ -924,7 +897,7 @@ def run_sequence(path_event, options):
     if not options['sortno']:
         text = "Post-process the output files..."
         communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
-        order.order(cfgsetup.get('FullPaths', 'Event'))
+        mulansort.order(cfgsetup.get('FullPaths', 'Event'))
 
     # ----------------------------------------------------------------------
     #   Plots
@@ -937,43 +910,15 @@ def run_sequence(path_event, options):
         # List of plots
         plots2load_brut = unpack_options(cfgsetup, 'Plotting', 'Type')
 
-
-        def prepar_importation_plottypes(plots2load):
-            modules = np.unique(plots2load)
-
-            path = cfgsetup.get('FullPaths', 'Code') + 'packages/'
-            modulesloading_file = open(path + 'modulesplotsloading.py', 'w')
-
-            text = "# -*-coding:Utf-8 -*\n"
-            text = text + "import sys\n"
-            text = text + "sys.path.insert(0, '" + cfgsetup.get('FullPaths', 'Code') \
-                   + "plottypes')\n"
-
-            for i in xrange(len(modules)):
-                text = text + "import " + modules[i] + " as " + modules[i]
-                text = text + "\n"
-
-            text = text + "def load():\n"
-            text = text + "\tmodules_files = [" + modules[0] + "]\n"
-
-            if len(modules) > 1:
-                for i in xrange(len(modules) - 1):
-                    text = text + "\tmodules_files.append(" + modules[i + 1] + ")\n"
-
-            text = text + "\treturn modules_files\n"
-
-            modulesloading_file.write(text)
-            modulesloading_file.close()
-
-
+        # Load plot types 
+        # ---------------
         plots2load = np.unique(plots2load_brut)
-        prepar_importation_plottypes(plots2load)
-        sys.path.insert(0, cfgsetup.get('FullPaths', 'Code') + 'packages/')
-        import modulesplotsloading as modulesplotsloading
-
-        plottypes_list = modulesplotsloading.load()
-
-        plottypes_list = {plots2load[i]: plottypes_list[i] for i in xrange(len(plots2load))}
+        plottypes_list = dict()
+        if(len(plots2load)) > 0:
+            for i in xrange(len(plots2load)):
+                text = 'muLAn.plottypes.{:s}'.format(plots2load[i])
+                importlib.import_module(text)
+                plottypes_list.update({plots2load[i]: getattr(mulanplots, plots2load[i])})
 
         # Recursively run the plots routines
         for i in xrange(len(plots2load_brut)):

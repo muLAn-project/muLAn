@@ -43,6 +43,7 @@ from scipy import interpolate
 import subprocess
 import numpy as np
 from sklearn.mixture import GaussianMixture
+from scipy.optimize import fsolve
 import pandas as pd
 import bokeh.layouts as blyt
 import bokeh.plotting as bplt
@@ -64,7 +65,7 @@ from matplotlib.ticker import FixedLocator, FormatStrFormatter
 # ----------------------------------------------------------------------
 #  Non-standard packages
 # ----------------------------------------------------------------------
-import models.ephemeris as ephemeris
+import muLAn.models.ephemeris as ephemeris
 
 
 # import models.esblparall as esblparall
@@ -680,11 +681,10 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             rang_best_model = np.where(samples_file['dchi2'] == 0)[0][0]
             rang_2plot = [rang_best_model]
     else:
-        rang_best_model = [0]
+        rang_best_model = 0
 
     # Plots
     for idmod in xrange(len(rang_2plot)):
-
         if flag_fix:
             best_model = dict({})
             best_model.update({'t0': samples_file['t0'][rang_2plot[idmod]]})
@@ -716,9 +716,11 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 {'fullid': samples_file['fullid'][rang_2plot[idmod]]})
         else:
             best_model = dict({})
+            #samples_file = dict()
             labels = ['t0', 'u0', 'tE', 'rho', 'gamma', 'piEN', 'piEE', 's', 'q', 'alpha', 'dalpha', 'ds']
             for lab in labels:
                 best_model.update({lab: float(unpack_options(cfgsetup, 'Modelling', lab)[3])})
+                samples_file.update({lab: np.atleast_1d(float(unpack_options(cfgsetup, 'Modelling', lab)[3]))})
 
             best_model.update({'chi2': 0})
             best_model.update({'chi2/dof': 0})
@@ -849,6 +851,9 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             #     'flux_model']) / time_serie['err_flux'], 2)
             time_serie['residus'] = time_serie['magnitude'] - (18.0 - 2.5 * np.log10(time_serie['flux_model']))
             time_serie['residus_flux'] = time_serie['flux'] - time_serie['flux_model']
+            time_serie['mgf_data'] = (time_serie['flux'] - time_serie['fb']) / time_serie['fs']
+            time_serie['mgf_data_err'] = time_serie['err_flux'] / time_serie['fs']
+            time_serie['res_mgf'] = time_serie['mgf_data'] - time_serie['amp']
             time_serie['chi2pp'] = np.power(time_serie['residus'] / time_serie['err_magn'], 2.0)
             time_serie['chi2pp_flux'] = np.power(time_serie['residus_flux'] / time_serie['err_flux'], 2.0)
             chi2 = np.sum(time_serie['chi2pp'])
@@ -949,6 +954,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             text = "\n  {:78s}\n".format("Best-fitting parameters")
             file.write(text)
 
+            #print samples_file
             piE = np.sqrt(np.power(samples_file['piEN'][rang_best_model], 2) + np.power(samples_file['piEE'][rang_best_model],2))
             gamma = np.sqrt((samples_file['ds'][rang_best_model]/samples_file['s'][rang_best_model])**2 + samples_file['dalpha'][rang_best_model]**2)
             text = "{:>10} = {:.6f}\n".format("q", samples_file['q'][rang_best_model]) + "{:>10} = {:.6f}\n".format("s", samples_file['s'][rang_best_model]) + "{:>10} = {:.6f}\n".format("tE", samples_file['tE'][rang_best_model]) + "{:>10} = {:.6f}\n".format("rho", samples_file['rho'][rang_best_model]) + "{:>10} = {:.6f}\n".format("piEN", samples_file['piEN'][rang_best_model]) + "{:>10} = {:.6f}\n".format("piEE", samples_file['piEE'][rang_best_model]) + "{:>10} = {:.6f}\n".format("piE", piE) + "{:>10} = {:.6f}\n".format("t0", samples_file['t0'][rang_best_model]) + "{:>10} = {:.6f}\n".format("u0", samples_file['u0'][rang_best_model]) + "{:>10} = {:.6f}\n".format("alpha", samples_file['alpha'][rang_best_model]) + "{:>10} = {:.6f}\n".format("dalpha", samples_file['dalpha'][rang_best_model]) + "{:>10} = {:.6f}\n".format("ds", samples_file['ds'][rang_best_model]) + "{:>10} = {:.6f}\n".format("gammaL", gamma) + "{:>10} = {:.6f}\n".format("tp", cfgsetup.getfloat("Modelling", "tp")) + "{:>10} = {:.6f}\n".format("tb", cfgsetup.getfloat("Modelling", "tb"))
@@ -1144,6 +1150,12 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                     "", "Site", "", "RF1(loop3)", "", "Rej.", "", "RF1(loop5)", "", "Rej.", "", "RF1(loop7)", "", "Rej.", "")
             print text
 
+            def func(f1, table, f2, ddl):
+                x = np.sum(np.power(table['residus'], 2)/(np.power(f1*table['err_magn'], 2) + f2**2))
+                x = x / ddl - 1.0
+                return x
+
+
             text = ""
             for j in xrange(len(observatories_com)):
                 # Pre-defied rescaling factors
@@ -1178,9 +1190,12 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         [time_serie_SC.update({key : np.delete(time_serie_SC[key], toremove)}) for key in time_serie_SC]
 
                     if (i==2) | (i==4) | (i==6):
-                        f1_op = np.sqrt(np.sum(time_serie_SC['chi2pp']) * (1.0 / ddl - (f2 ** 2) * np.sum(np.power(time_serie_SC['residus'], -2.0))))
+                        try:
+                            f1_op = fsolve(func, 1.0, args=(time_serie_SC, f2, ddl))
+                        except:
+                            f1_op = 0.0
                         text = text + "{:>10.3f}{:1s}{:>5d}{:1s}".format(
-                                f1_op, "", nb_reject_sc, "")
+                                f1_op[0], "", nb_reject_sc, "")
 
                 text = text + "\n"
             print text
@@ -1250,32 +1265,38 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             if not os.path.exists(path_outputs):
                 os.makedirs(path_outputs)
 
-            if nb_param_fit > 0:
-                for j in xrange(len(observatories_com)):
-                    text = "#{0:>17s} {1:>6s} {2:>9s} {3:>12s} {4:>10s} {5:>9s} {6:>6s} {7:>9s}\n".format(
-                            "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2")
-                    filename = path_outputs + observatories_com[j].upper() + ".dat"
+            for j in xrange(len(observatories_com)):
+                text = "#{0:>17s} {1:>6s} {2:>9s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>9s} {6:>6s} {7:>9s}\n".format(
+                        "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf")
+                filename = path_outputs + observatories_com[j].upper() + ".dat"
 
-                    condj = np.where(time_serie['obs'] == observatories[j])
-                    time_serie_SC = copy.deepcopy(time_serie)
-                    [time_serie_SC.update({key: time_serie_SC[key][condj]}) for key in time_serie_SC]
+                condj = np.where(time_serie['obs'] == observatories[j])
+                time_serie_SC = copy.deepcopy(time_serie)
+                [time_serie_SC.update({key: time_serie_SC[key][condj]}) for key in time_serie_SC]
 
-                    for jj in xrange(len(time_serie_SC['dates'])):
-                        text = text +\
-                               "{0:18.12f} {1:6.3f} {2:9.3e} {3:12.3e} {4:10.3e} {5:9.3f} {6:6.3f} {7:9.3e}".format(
-                                time_serie_SC['dates'][jj],
-                                time_serie_SC['mag_align'][jj],
-                                time_serie_SC['err_magn_orig'][jj],
-                                time_serie_SC['err_magn'][jj],
-                                time_serie_SC['residus'][jj],
-                                time_serie_SC['background'][jj],
-                                time_serie_SC['seeing'][jj],
-                                time_serie_SC['chi2pp'][jj])
-                        text = text + "\n"
+                for jj in xrange(len(time_serie_SC['dates'])):
+                    text = text +\
+                            "{0:18.12f} {1:6.3f} {2:9.3e} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:9.3f} {6:6.3f} {7:9.3e}".format(
+                            time_serie_SC['dates'][jj],
+                            time_serie_SC['mag_align'][jj],
+                            time_serie_SC['err_magn_orig'][jj],
+                            time_serie_SC['err_magn'][jj],
+                            time_serie_SC['residus'][jj],
+                            time_serie_SC['background'][jj],
+                            time_serie_SC['seeing'][jj],
+                            time_serie_SC['chi2pp'][jj],
+                            time_serie_SC['mgf_data'][jj],
+                            time_serie_SC['mgf_data_err'][jj],
+                            time_serie_SC['res_mgf'][jj]
+                            )
+                    text = text + "\n"
 
-                    file = open(filename, 'w')
-                    file.write(text)
-                    file.close()
+                file = open(filename, 'w')
+                file.write(text)
+                file.close()
+
+
+
 
             # ..................................................................
             #    Plot light curve : plc
@@ -1353,6 +1374,26 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         id_colour = id_colour + 1
                     else:
                         id_colour = 0
+
+                # Write output files for the models
+                text = "#{0:>17s} {1:>9s} {2:>6s}\n".format("Date", "Mgf", "Magn")
+                filename = path_outputs + locations[i].upper() + ".dat"
+
+                time_serie_SC = copy.deepcopy(model_time_serie[i])
+                [time_serie_SC.update({key: time_serie_SC[key]}) for key in time_serie_SC]
+
+                for jj in xrange(len(time_serie_SC['dates'])):
+                    text = text +\
+                            "{0:18.12f} {1:9.3f} {2:6.3f}".format(
+                            time_serie_SC['dates'][jj],
+                            time_serie_SC['amp'][jj],
+                            time_serie_SC['magnitude'][jj]
+                            )
+                    text = text + "\n"
+
+                file = open(filename, 'w')
+                file.write(text)
+                file.close()
 
                 # Magnitude
                 fig_curr.circle('dates', 'mag_align', size=8, color='colour',

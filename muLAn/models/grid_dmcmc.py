@@ -34,11 +34,13 @@ import pickle
 import glob
 import shutil
 import datetime
+import importlib
 import subprocess
 import numpy as np
 from scipy import stats
 from scipy import interpolate
 from sklearn import linear_model
+import muLAn.models as mulanmodels
 # ----------------------------------------------------------------------
 #   CLASS
 # ----------------------------------------------------------------------
@@ -284,10 +286,16 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
            interpol_method, tb, cfgsetup):
     # print theta[2]
 
-    import modulesloading as load_modules
+    #import modulesloading as load_modules
 
-    models, y = load_modules.main()
-    models = {models_names[i] : models[i] for i in xrange(len(models_names))}
+    #models, y = load_modules.main()
+    #models = {models_names[i] : models[i] for i in xrange(len(models_names))}
+
+    models = dict()
+    for i in xrange(len(models_names)):
+        text = 'muLAn.models.{:s}'.format(models_names[i])
+        importlib.import_module(text)
+        models.update({models_names[i]: getattr(mulanmodels, models_names[i])})
 
     # print res
     # -----------

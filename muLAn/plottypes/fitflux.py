@@ -64,8 +64,7 @@ from matplotlib.ticker import FixedLocator, FormatStrFormatter
 # ----------------------------------------------------------------------
 #  Non-standard packages
 # ----------------------------------------------------------------------
-import models.ephemeris as ephemeris
-
+import muLAn.models.ephemeris as ephemeris
 
 # import models.esblparall as esblparall
 # import packages.plotconfig as plotconfig
