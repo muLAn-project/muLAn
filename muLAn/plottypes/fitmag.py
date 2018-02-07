@@ -1266,30 +1266,44 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 os.makedirs(path_outputs)
 
             for j in xrange(len(observatories_com)):
-                text = "#{0:>17s} {1:>6s} {2:>9s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>9s} {6:>6s} {7:>9s}\n".format(
-                        "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf")
+                
+                idx = [jj for jj in xrange(len(observatories_com)) if observatories_com[j]==obs_properties['key'][jj]][0]
+                flag_fom = obs_properties['fluxoumag'][idx]
+
+                if flag_fom.lower()=='magnitude':
+                    text = "#{0:>17s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {7:>9s} {11:>6s} {12:>20s} {2:>20s}\n".format(
+                            "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf", "ID", "Input_Magn")
+
+                elif flag_fom.lower()=='flux':
+                    text = "#{0:>17s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {7:>9s} {11:>6s} {12:>20s} {2:>20s}\n".format(
+                            "Date", "Magn", "Err_Flux", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf", "ID", "Input_Flux")
+
                 filename = path_outputs + observatories_com[j].upper() + ".dat"
 
                 condj = np.where(time_serie['obs'] == observatories[j])
                 time_serie_SC = copy.deepcopy(time_serie)
                 [time_serie_SC.update({key: time_serie_SC[key][condj]}) for key in time_serie_SC]
 
-                for jj in xrange(len(time_serie_SC['dates'])):
-                    text = text +\
-                            "{0:18.12f} {1:6.3f} {2:9.3e} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:9.3f} {6:6.3f} {7:9.3e}".format(
-                            time_serie_SC['dates'][jj],
-                            time_serie_SC['mag_align'][jj],
-                            time_serie_SC['err_magn_orig'][jj],
-                            time_serie_SC['err_magn'][jj],
-                            time_serie_SC['residus'][jj],
-                            time_serie_SC['background'][jj],
-                            time_serie_SC['seeing'][jj],
-                            time_serie_SC['chi2pp'][jj],
-                            time_serie_SC['mgf_data'][jj],
-                            time_serie_SC['mgf_data_err'][jj],
-                            time_serie_SC['res_mgf'][jj]
-                            )
-                    text = text + "\n"
+                if flag_fom.lower()=='magnitude':
+                    for jj in xrange(len(time_serie_SC['dates'])):
+                        text = text +\
+                                "{0:18.12f} {1:6.3f} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:12.5f} {6:12.5f} {7:9.3e} {11:6d} {12:20.12f} {2:20.12f}".format(
+                                time_serie_SC['dates'][jj],
+                                time_serie_SC['mag_align'][jj],
+                                time_serie_SC['err_magn_orig'][jj],
+                                time_serie_SC['err_magn'][jj],
+                                time_serie_SC['residus'][jj],
+                                time_serie_SC['background'][jj],
+                                time_serie_SC['seeing'][jj],
+                                time_serie_SC['chi2pp'][jj],
+                                time_serie_SC['mgf_data'][jj],
+                                time_serie_SC['mgf_data_err'][jj],
+                                time_serie_SC['res_mgf'][jj],
+                                time_serie_SC['id'][jj],
+                                time_serie_SC['magnitude'][jj]
+                                )
+                        text = text + "\n"
+
 
                 file = open(filename, 'w')
                 file.write(text)
