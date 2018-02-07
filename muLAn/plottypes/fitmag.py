@@ -1641,6 +1641,22 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                                 alpha=0.5)
                 fig_curr.circle(GL1.real, GL1.imag, size=5, color='orange', alpha=1)
                 fig_curr.circle(GL2.real, GL2.imag, size=5, color='orange', alpha=1)
+
+                # Write output files
+                text = "#{:>19s} {:>20s}\n".format("x", "y")
+                filename = path_outputs + "caustic.dat"
+
+                for jj in xrange(len(caustic.real)):
+                    text = text +\
+                            "{:20.12f} {:20.12f}".format(
+                            caustic.real[jj],
+                            caustic.imag[jj]
+                            )
+                    text = text + "\n"
+
+                file = open(filename, 'w')
+                file.write(text)
+                file.close()
             else:
                 fig_curr.circle(0, 0, size=5, color='orange', alpha=1)
 
