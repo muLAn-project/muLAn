@@ -1409,7 +1409,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         id_colour = 0
 
                 # Write output files for the models
-                text = "#{0:>17s} {1:>9s} {2:>6s}\n".format("Date", "Mgf", "Magn")
+                text = "#{0:>17s} {1:>9s} {2:>6s} {3:>7s} {4:>7s}\n".format("Date", "Mgf", "Magn", "x", "y")
                 filename = path_outputs + locations[i].upper() + ".dat"
 
                 time_serie_SC = copy.deepcopy(model_time_serie[i])
