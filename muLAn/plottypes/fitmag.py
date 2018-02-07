@@ -1613,6 +1613,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
             if q > 1e-9:
                 if n_caustics > 0:
+                    numerous_caustics = []
                     for i in xrange(n_caustics):
                         # > Courbes critiques et caustiques
                         delta = 2.0 * np.pi / (nb_pts_caus - 1.0)
@@ -1627,6 +1628,8 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         fig_curr.circle(caustic.real, caustic.imag, size=0.5, color=color_caustics[0], alpha=0.5)
                         print color_caustics
                         color_caustics = np.roll(color_caustics, -1)
+                        
+                        numerous_caustics.append(caustic)
 
                 # > Courbes critiques et caustiques
                 delta = 2.0 * np.pi / (nb_pts_caus - 1.0)
@@ -1643,7 +1646,13 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 fig_curr.circle(GL2.real, GL2.imag, size=5, color='orange', alpha=1)
 
                 # Write output files
-                text = "#{:>19s} {:>20s}\n".format("x", "y")
+                text = "#{:>19s} {:>20s}".format("x", "y")
+                if n_caustics > 0:
+                    for i in xrange(n_caustics):
+                            text = text +\
+                                    " x({0:17.6f}) y({0:17.6f})".format(time_caustic[i])
+                text = text + "\n"
+
                 filename = path_outputs + "caustic.dat"
 
                 for jj in xrange(len(caustic.real)):
@@ -1652,6 +1661,14 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                             caustic.real[jj],
                             caustic.imag[jj]
                             )
+
+                    if n_caustics > 0:
+                        for i in xrange(n_caustics):
+                                text = text +\
+                                        " {:20.12f} {:20.12f}".format(
+                                        numerous_caustics[i].real[jj],
+                                        numerous_caustics[i].imag[jj]
+                                        )
                     text = text + "\n"
 
                 file = open(filename, 'w')
