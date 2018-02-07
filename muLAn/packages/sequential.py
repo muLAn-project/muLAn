@@ -507,6 +507,7 @@ def run_sequence(path_event, options):
 
         time_serie.update({'flux': np.power(10, 0.4*(18.0-time_serie['magnitude']))})
         time_serie.update({'err_flux': np.abs((np.log(10) / 2.5) * time_serie['err_magn'] * time_serie['flux'])})
+        time_serie.update({'err_flux_orig': np.abs((np.log(10) / 2.5) * time_serie['err_magn_orig'] * time_serie['flux'])})
         time_serie.update({'amp': np.full(time_serie['dates'].shape[0], -1, dtype='f8')})
         time_serie.update({'fs': np.full(time_serie['dates'].shape[0], -999, dtype='f8')})
         time_serie.update({'fb': np.full(time_serie['dates'].shape[0], -999, dtype='f8')})
@@ -540,13 +541,21 @@ def run_sequence(path_event, options):
                 else:
                     idx = (np.abs(file['date'] - time_serie['dates'][i])).argmin()
                 time_serie['flux'][i] = file['flux'][idx]
-                time_serie['err_flux'][i] = file['err_flux'][idx]
+                time_serie['err_flux_orig'][i] = file['err_flux'][idx]
+
+                # Rescale the error-bars [see Wyrzykowski et al. (2009)]
+                gamma = float(unpack_options(cfgsetup, 'Observatories', a)[0][1:])
+                epsilon = float(unpack_options(cfgsetup, 'Observatories', a)[1][:-1])
+
+                time_serie['err_flux'][i] = np.sqrt(np.power(gamma * file['err_flux'][idx], 2) + np.power((np.log(10) * epsilon * file['flux'][idx]) / 2.5, 2))
 
                 try:
                     time_serie['magnitude'][i] = 18.0 - 2.5 * np.log10(file['flux'][idx])
-                    time_serie['err_magn'][i] = np.abs(2.5 * file['err_flux'][idx] / (file['flux'][idx]))
+                    time_serie['err_magn_orig'][i] = np.abs(2.5 * file['err_flux'][idx] / (file['flux'][idx] * np.log(10)))
+                    time_serie['err_magn'][i] = np.sqrt(np.power(gamma * time_serie['err_magn_orig'][i], 2) + epsilon ** 2)
                 except:
                     time_serie['magnitude'][i] = 0.0
+                    time_serie['err_magn_orig'][i] = 0.0
                     time_serie['err_magn'][i] = 0.0
 
         # print time_serie['dates'].shape, time_serie['magnitude'].shape, time_serie['obs'].shape
