@@ -1304,6 +1304,25 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                                 )
                         text = text + "\n"
 
+                elif flag_fom.lower()=='flux':
+                    for jj in xrange(len(time_serie_SC['dates'])):
+                        text = text +\
+                                "{0:18.12f} {1:6.3f} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:12.5f} {6:12.5f} {7:9.3e} {11:6d} {12:20.12f} {2:20.12f}".format(
+                                time_serie_SC['dates'][jj],
+                                time_serie_SC['mag_align'][jj],
+                                time_serie_SC['err_flux_orig'][jj],
+                                time_serie_SC['err_magn'][jj],
+                                time_serie_SC['residus'][jj],
+                                time_serie_SC['background'][jj],
+                                time_serie_SC['seeing'][jj],
+                                time_serie_SC['chi2pp'][jj],
+                                time_serie_SC['mgf_data'][jj],
+                                time_serie_SC['mgf_data_err'][jj],
+                                time_serie_SC['res_mgf'][jj],
+                                time_serie_SC['id'][jj],
+                                time_serie_SC['flux'][jj]
+                                )
+                        text = text + "\n"
 
                 file = open(filename, 'w')
                 file.write(text)
