@@ -1417,10 +1417,12 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
                 for jj in xrange(len(time_serie_SC['dates'])):
                     text = text +\
-                            "{0:18.12f} {1:9.3f} {2:6.3f}".format(
+                            "{0:18.12f} {1:9.3f} {2:6.3f} {3:7.3f} {4:7.3f}".format(
                             time_serie_SC['dates'][jj],
                             time_serie_SC['amp'][jj],
-                            time_serie_SC['magnitude'][jj]
+                            time_serie_SC['magnitude'][jj],
+                            time_serie_SC['x'][jj],
+                            time_serie_SC['y'][jj]
                             )
                     text = text + "\n"
 
