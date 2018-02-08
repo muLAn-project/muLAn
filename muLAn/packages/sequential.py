@@ -905,10 +905,11 @@ def run_sequence(path_event, options):
     # ----------------------------------------------------------------------
     #   Order models
     # ----------------------------------------------------------------------
-    if not options['sortno']:
-        text = "Post-process the output files..."
-        communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
-        mulansort.order(cfgsetup.get('FullPaths', 'Event'))
+    if 'sortno' in options:
+        if not options['sortno']:
+            text = "Post-process the output files..."
+            communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
+            mulansort.order(cfgsetup.get('FullPaths', 'Event'))
 
     # ----------------------------------------------------------------------
     #   Plots
