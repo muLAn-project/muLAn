@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 
 class muLAnFig():
-    """muLAn plot for publication
+    """Create a figure from muLAn outputs
         
         Calling muLAnFig
         ================
