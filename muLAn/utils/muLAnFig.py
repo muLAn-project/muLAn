@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
-"""muLAnFig: Generate figure from muLAn outputs"""
+"""muLAnFig: a tool to create a figure from muLAn outputs"""
 
 # Copyright (c) 2014-2018 Clément Ranc & Arnaud Cassan
 # Distributed under the terms of the MIT license
+#
+# This module is part of software:
+#       muLAn: gravitational MICROlensing Analysis code
+#       https://github.com/muLAn-project/muLAn
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -12,7 +16,7 @@ class muLAnFig():
     """muLAn plot for publication
         
         Calling muLAnFig
-        =================
+        ================
         mlf = muLAnFig(data=None, lctraj=None, caus=None, trange=None, lcrange=None, resrange=None, labelpos=None, labelsize=10, figsize=(10,6))
         
         Parameters
