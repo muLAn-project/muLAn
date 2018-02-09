@@ -164,9 +164,11 @@ class muLAnFig():
         caus = list()
         return caus
 
+def figure(**kwargs):
+    """muLan make figure tool"""
+    mlf = muLAnFig(**kwargs)
+    return mlf
 
 if __name__ == '__main__':
     help(muLAnFig)
-
-
 
