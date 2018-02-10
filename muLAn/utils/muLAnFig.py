@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-class muLAnFig():
+class figure():
     """Create a figure from muLAn outputs
         
         Calling muLAnFig
@@ -30,6 +30,12 @@ class muLAnFig():
     def __init__(self, data=None, lctraj=None, caus=None, trange=None, lcrange=None, resrange=None, labelpos=None, labelsize=10, figsize=(10,6)):
         """Create the main plot of the figure"""
         print "\033[1m Creating main figure layout...\033[0m"
+        # figure layout
+        plt.close('all')
+        plt.rc('text', usetex=True)
+        plt.rc('font', family='serif')
+        self.fig, (LC, RES) = plt.subplots(2, sharex=True, figsize=figsize, gridspec_kw={'height_ratios':[3, 1]})
+        plt.subplots_adjust(left=0.1, bottom=0.1, right=0.97, top=0.97, wspace=None, hspace=0.)
         # test whether to select outputs from muLAn's .ini files
         if not data:
             data = _getdata()
@@ -42,12 +48,6 @@ class muLAnFig():
         self.caus = caus
         self._lccompt = 1
         self._causcompt = 1
-        # figure layout
-        plt.close('all')
-        plt.rc('text', usetex=True)
-        plt.rc('font', family='serif')
-        self.fig, (LC, RES) = plt.subplots(2, sharex=True, figsize=figsize, gridspec_kw = {'height_ratios':[3, 1]})
-        plt.subplots_adjust(left=0.1, bottom=0.1, right=0.97, top=0.97, wspace=None, hspace=0.)
         if trange: RES.set_xlim([trange[0], trange[1]])
         if resrange: RES.set_ylim([resrange[0], resrange[1]])
         if lcrange: LC.set_ylim([lcrange[0], lcrange[1]])
@@ -164,10 +164,10 @@ class muLAnFig():
         caus = list()
         return caus
 
-def figure(**kwargs):
-    """muLan make figure tool"""
-    mlf = muLAnFig(**kwargs)
-    return mlf
+#def figure(**kwargs):
+#    """muLan make figure tool"""
+#    mlf = muLAnFig(**kwargs)
+#    return mlf
 
 if __name__ == '__main__':
     help(muLAnFig)
