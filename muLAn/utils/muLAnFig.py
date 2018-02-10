@@ -28,10 +28,10 @@ class figure():
         (coming soon)
         """
     def __init__(self, figsize=(10,6), labelposx=None, labelposy=None, labelsize=10):
-        """Create the main plot of the figure"""
+        """Create figure layout"""
         self._labelposx = labelposx
         self._labelposy = labelposy
-        self.labelsize = labelsize
+        self._labelsize = labelsize
         # figure layout
         plt.close('all')
         plt.rc('text', usetex=True)
@@ -40,7 +40,7 @@ class figure():
         plt.subplots_adjust(left=0.1, bottom=0.1, right=0.97, top=0.97, wspace=None, hspace=0.)
         
     def plot(self, data=None, lctraj=None, caus=None, trange=None, lcrange=None, resrange=None):
-        """Create main pannel"""
+        """Create main figure pannel"""
         print "\033[1m Creating main figure layout...\033[0m"
         # test whether to select outputs from muLAn's .ini files
         if not data:
@@ -86,7 +86,7 @@ class figure():
             self._RES.plot((np.min(hjd), np.max(hjd)), (0., 0.), 'k-', linewidth=0.4)
             self._RES.errorbar(hjd, resmag, errmag, fmt='o', color=color, markersize=4, alpha=0.3, linewidth=1)
             # display observatory names
-            self._LC.annotate(r'$\bullet$ ' + obsname, xy=(x, y.next()), xycoords='figure fraction', color=color, fontsize=self.labelsize)
+            self._LC.annotate(r'$\bullet$ ' + obsname, xy=(x, y.next()), xycoords='figure fraction', color=color, fontsize=self._labelsize)
 
     def addinset_lightcurve(self, layout, trange=None, lcrange=None):
         """Add a light curve zoom pannel to the plot
