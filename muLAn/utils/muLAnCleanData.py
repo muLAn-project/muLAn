@@ -55,7 +55,6 @@ class PointBrowser():
             the_list.sort()
             print (the_list)
             return
-        
         self.lastind += inc
         self.lastind = np.clip(self.lastind, 0, len(hjd) - 1)
         self.update()
@@ -63,20 +62,16 @@ class PointBrowser():
     def onpick(self, event):
         if event.artist != self.line:
             return True
-        
         N = len(event.ind)
         if not N:
             return True
-        
-        # The click position
+        # click position
         x = event.mouseevent.xdata
         y = event.mouseevent.ydata
-        
-        # Select the point closest to the position clicked
+        # select point closest to the position clicked
         distances = np.hypot(x - self.hjd[event.ind], y - self.mag[event.ind])
         indmin = distances.argmin()
         dataind = event.ind[indmin]
-        
         self.lastind = dataind
         self.update()
     
@@ -84,15 +79,6 @@ class PointBrowser():
         if self.lastind is None:
             return
         dataind = self.lastind
-        
-        # Clear and replot
-        #ax.cla()
-        #ax.plot([hjd[dataind]], [mag[dataind]], 'o', ms=12, alpha=0.5,
-        #                         color='yellow', visible=False)
-        
-        #ax.text(0.05, 0.9, 'idx=%s' % (idx[dataind]),
-        #         transform=ax.transAxes, va='top')
-        #ax.set_ylim(min(ys),max(ys))
         self.ax.plot(self.hjd, self.mag, 'k.')
         self.ax.plot(self.hjd[self.output], self.mag[self.output], 'r.')
         self.selected.set_visible(True)
@@ -108,6 +94,7 @@ def cleandata(datafile):
         points. Add a new point to the list by pressing 'a' or remove it by
         pressing 'r'. Print the list at any point by pressing 't'.
         """
+    print "\033[3m "+ self.plot.__doc__ + "\033[0m"
     # read data file
     try:
         idx, hjd, mag, merr, fwhm, bkg = np.loadtxt(datafile, unpack=True)
