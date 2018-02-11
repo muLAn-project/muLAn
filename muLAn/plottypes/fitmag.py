@@ -1266,30 +1266,63 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 os.makedirs(path_outputs)
 
             for j in xrange(len(observatories_com)):
-                text = "#{0:>17s} {1:>6s} {2:>9s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>9s} {6:>6s} {7:>9s}\n".format(
-                        "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf")
+                
+                idx = [jj for jj in xrange(len(observatories_com)) if observatories_com[j]==obs_properties['key'][jj]][0]
+                flag_fom = obs_properties['fluxoumag'][idx]
+
+                if flag_fom.lower()=='magnitude':
+                    text = "#{0:>17s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {7:>9s} {11:>6s} {12:>20s} {2:>20s}\n".format(
+                            "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf", "ID", "Input_Magn")
+
+                elif flag_fom.lower()=='flux':
+                    text = "#{0:>17s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {7:>9s} {11:>6s} {12:>20s} {2:>20s}\n".format(
+                            "Date", "Magn", "Err_Flux", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf", "ID", "Input_Flux")
+
                 filename = path_outputs + observatories_com[j].upper() + ".dat"
 
                 condj = np.where(time_serie['obs'] == observatories[j])
                 time_serie_SC = copy.deepcopy(time_serie)
                 [time_serie_SC.update({key: time_serie_SC[key][condj]}) for key in time_serie_SC]
 
-                for jj in xrange(len(time_serie_SC['dates'])):
-                    text = text +\
-                            "{0:18.12f} {1:6.3f} {2:9.3e} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:9.3f} {6:6.3f} {7:9.3e}".format(
-                            time_serie_SC['dates'][jj],
-                            time_serie_SC['mag_align'][jj],
-                            time_serie_SC['err_magn_orig'][jj],
-                            time_serie_SC['err_magn'][jj],
-                            time_serie_SC['residus'][jj],
-                            time_serie_SC['background'][jj],
-                            time_serie_SC['seeing'][jj],
-                            time_serie_SC['chi2pp'][jj],
-                            time_serie_SC['mgf_data'][jj],
-                            time_serie_SC['mgf_data_err'][jj],
-                            time_serie_SC['res_mgf'][jj]
-                            )
-                    text = text + "\n"
+                if flag_fom.lower()=='magnitude':
+                    for jj in xrange(len(time_serie_SC['dates'])):
+                        text = text +\
+                                "{0:18.12f} {1:6.3f} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:12.5f} {6:12.5f} {7:9.3e} {11:6d} {12:20.12f} {2:20.12f}".format(
+                                time_serie_SC['dates'][jj],
+                                time_serie_SC['mag_align'][jj],
+                                time_serie_SC['err_magn_orig'][jj],
+                                time_serie_SC['err_magn'][jj],
+                                time_serie_SC['residus'][jj],
+                                time_serie_SC['background'][jj],
+                                time_serie_SC['seeing'][jj],
+                                time_serie_SC['chi2pp'][jj],
+                                time_serie_SC['mgf_data'][jj],
+                                time_serie_SC['mgf_data_err'][jj],
+                                time_serie_SC['res_mgf'][jj],
+                                time_serie_SC['id'][jj],
+                                time_serie_SC['magnitude'][jj]
+                                )
+                        text = text + "\n"
+
+                elif flag_fom.lower()=='flux':
+                    for jj in xrange(len(time_serie_SC['dates'])):
+                        text = text +\
+                                "{0:18.12f} {1:6.3f} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:12.5f} {6:12.5f} {7:9.3e} {11:6d} {12:20.12f} {2:20.12f}".format(
+                                time_serie_SC['dates'][jj],
+                                time_serie_SC['mag_align'][jj],
+                                time_serie_SC['err_flux_orig'][jj],
+                                time_serie_SC['err_magn'][jj],
+                                time_serie_SC['residus'][jj],
+                                time_serie_SC['background'][jj],
+                                time_serie_SC['seeing'][jj],
+                                time_serie_SC['chi2pp'][jj],
+                                time_serie_SC['mgf_data'][jj],
+                                time_serie_SC['mgf_data_err'][jj],
+                                time_serie_SC['res_mgf'][jj],
+                                time_serie_SC['id'][jj],
+                                time_serie_SC['flux'][jj]
+                                )
+                        text = text + "\n"
 
                 file = open(filename, 'w')
                 file.write(text)
@@ -1376,7 +1409,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         id_colour = 0
 
                 # Write output files for the models
-                text = "#{0:>17s} {1:>9s} {2:>6s}\n".format("Date", "Mgf", "Magn")
+                text = "#{0:>17s} {1:>9s} {2:>6s} {3:>7s} {4:>7s}\n".format("Date", "Mgf", "Magn", "x", "y")
                 filename = path_outputs + locations[i].upper() + ".dat"
 
                 time_serie_SC = copy.deepcopy(model_time_serie[i])
@@ -1384,10 +1417,12 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
                 for jj in xrange(len(time_serie_SC['dates'])):
                     text = text +\
-                            "{0:18.12f} {1:9.3f} {2:6.3f}".format(
+                            "{0:18.12f} {1:9.3f} {2:6.3f} {3:7.3f} {4:7.3f}".format(
                             time_serie_SC['dates'][jj],
                             time_serie_SC['amp'][jj],
-                            time_serie_SC['magnitude'][jj]
+                            time_serie_SC['magnitude'][jj],
+                            time_serie_SC['x'][jj],
+                            time_serie_SC['y'][jj]
                             )
                     text = text + "\n"
 
@@ -1578,6 +1613,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
             if q > 1e-9:
                 if n_caustics > 0:
+                    numerous_caustics = []
                     for i in xrange(n_caustics):
                         # > Courbes critiques et caustiques
                         delta = 2.0 * np.pi / (nb_pts_caus - 1.0)
@@ -1592,6 +1628,8 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         fig_curr.circle(caustic.real, caustic.imag, size=0.5, color=color_caustics[0], alpha=0.5)
                         print color_caustics
                         color_caustics = np.roll(color_caustics, -1)
+                        
+                        numerous_caustics.append(caustic)
 
                 # > Courbes critiques et caustiques
                 delta = 2.0 * np.pi / (nb_pts_caus - 1.0)
@@ -1606,6 +1644,36 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                                 alpha=0.5)
                 fig_curr.circle(GL1.real, GL1.imag, size=5, color='orange', alpha=1)
                 fig_curr.circle(GL2.real, GL2.imag, size=5, color='orange', alpha=1)
+
+                # Write output files
+                text = "#{:>19s} {:>20s}".format("x", "y")
+                if n_caustics > 0:
+                    for i in xrange(n_caustics):
+                            text = text +\
+                                    " x({0:17.6f}) y({0:17.6f})".format(time_caustic[i])
+                text = text + "\n"
+
+                filename = path_outputs + "caustic.dat"
+
+                for jj in xrange(len(caustic.real)):
+                    text = text +\
+                            "{:20.12f} {:20.12f}".format(
+                            caustic.real[jj],
+                            caustic.imag[jj]
+                            )
+
+                    if n_caustics > 0:
+                        for i in xrange(n_caustics):
+                                text = text +\
+                                        " {:20.12f} {:20.12f}".format(
+                                        numerous_caustics[i].real[jj],
+                                        numerous_caustics[i].imag[jj]
+                                        )
+                    text = text + "\n"
+
+                file = open(filename, 'w')
+                file.write(text)
+                file.close()
             else:
                 fig_curr.circle(0, 0, size=5, color='orange', alpha=1)
 

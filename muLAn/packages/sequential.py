@@ -58,29 +58,31 @@ def run_sequence(path_event, options):
         cfgsetup.set('RelativePaths', 'ModelsHistory', cfgsetup.get('RelativePaths', 'ModelsHistory') + '/')
 
     # Take into account manual options
-    if options['plot'] != 'None':
-        cfgsetup.set('Controls', 'Modes', 'Plot')
-        cfgsetup.set('Plotting', 'Models', options['plot'])
-    if options['fit']:
-        cfgsetup.set('Controls', 'Modes', 'Fit')
-    cond = (options['fit']) and (options['plot'] != 'None')
-    if cond:
-        cfgsetup.set('Controls', 'Modes', 'Fit, Plot')
-        cfgsetup.set('Plotting', 'Models', options['plot'])
-    if options['archive'] != 'None':
-        cfgsetup.set('Controls', 'Archive', options['archive'])
-    if options['ncores'] > 0:
-        cfgsetup.set('FitSetupDMCMC', 'Threads', '{:d}'.format(options['ncores']))
-    if options['nchains'] > 0:
-        cfgsetup.set('FitSetupDMCMC', 'Chains', '{:d}'.format(options['nchains']))
-    if options['resume']:
-        cfgsetup.set('FitSetupDMCMC', 'Resume', 'True')
-    if options['verbose'] > -1:
-        cfgsetup.set('Modelling', 'Verbose', '{:d}'.format(options['verbose']))
-    if options['optimize']:
-        cfgsetup.set('Controls', 'Optimize', 'True')
-    else:
-        cfgsetup.set('Controls', 'Optimize', 'False')
+    if 'plot' in options:
+        if options['plot'] != 'None':
+            cfgsetup.set('Controls', 'Modes', 'Plot')
+            cfgsetup.set('Plotting', 'Models', options['plot'])
+    if 'fit' in options:
+        if options['fit']:
+            cfgsetup.set('Controls', 'Modes', 'Fit')
+        cond = (options['fit']) and (options['plot'] != 'None')
+        if cond:
+            cfgsetup.set('Controls', 'Modes', 'Fit, Plot')
+            cfgsetup.set('Plotting', 'Models', options['plot'])
+        if options['archive'] != 'None':
+            cfgsetup.set('Controls', 'Archive', options['archive'])
+        if options['ncores'] > 0:
+            cfgsetup.set('FitSetupDMCMC', 'Threads', '{:d}'.format(options['ncores']))
+        if options['nchains'] > 0:
+            cfgsetup.set('FitSetupDMCMC', 'Chains', '{:d}'.format(options['nchains']))
+        if options['resume']:
+            cfgsetup.set('FitSetupDMCMC', 'Resume', 'True')
+        if options['verbose'] > -1:
+            cfgsetup.set('Modelling', 'Verbose', '{:d}'.format(options['verbose']))
+        if options['optimize']:
+            cfgsetup.set('Controls', 'Optimize', 'True')
+        else:
+            cfgsetup.set('Controls', 'Optimize', 'False')
 
     # Controls
     modes = [a.lower() for a in unpack_options(cfgsetup, 'Controls', 'Modes')]
@@ -507,6 +509,7 @@ def run_sequence(path_event, options):
 
         time_serie.update({'flux': np.power(10, 0.4*(18.0-time_serie['magnitude']))})
         time_serie.update({'err_flux': np.abs((np.log(10) / 2.5) * time_serie['err_magn'] * time_serie['flux'])})
+        time_serie.update({'err_flux_orig': np.abs((np.log(10) / 2.5) * time_serie['err_magn_orig'] * time_serie['flux'])})
         time_serie.update({'amp': np.full(time_serie['dates'].shape[0], -1, dtype='f8')})
         time_serie.update({'fs': np.full(time_serie['dates'].shape[0], -999, dtype='f8')})
         time_serie.update({'fb': np.full(time_serie['dates'].shape[0], -999, dtype='f8')})
@@ -540,13 +543,21 @@ def run_sequence(path_event, options):
                 else:
                     idx = (np.abs(file['date'] - time_serie['dates'][i])).argmin()
                 time_serie['flux'][i] = file['flux'][idx]
-                time_serie['err_flux'][i] = file['err_flux'][idx]
+                time_serie['err_flux_orig'][i] = file['err_flux'][idx]
+
+                # Rescale the error-bars [see Wyrzykowski et al. (2009)]
+                gamma = float(unpack_options(cfgsetup, 'Observatories', a)[0][1:])
+                epsilon = float(unpack_options(cfgsetup, 'Observatories', a)[1][:-1])
+
+                time_serie['err_flux'][i] = np.sqrt(np.power(gamma * file['err_flux'][idx], 2) + np.power((np.log(10) * epsilon * file['flux'][idx]) / 2.5, 2))
 
                 try:
                     time_serie['magnitude'][i] = 18.0 - 2.5 * np.log10(file['flux'][idx])
-                    time_serie['err_magn'][i] = np.abs(2.5 * file['err_flux'][idx] / (file['flux'][idx]))
+                    time_serie['err_magn_orig'][i] = np.abs(2.5 * file['err_flux'][idx] / (file['flux'][idx] * np.log(10)))
+                    time_serie['err_magn'][i] = np.sqrt(np.power(gamma * time_serie['err_magn_orig'][i], 2) + epsilon ** 2)
                 except:
                     time_serie['magnitude'][i] = 0.0
+                    time_serie['err_magn_orig'][i] = 0.0
                     time_serie['err_magn'][i] = 0.0
 
         # print time_serie['dates'].shape, time_serie['magnitude'].shape, time_serie['obs'].shape
@@ -894,10 +905,11 @@ def run_sequence(path_event, options):
     # ----------------------------------------------------------------------
     #   Order models
     # ----------------------------------------------------------------------
-    if not options['sortno']:
-        text = "Post-process the output files..."
-        communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
-        mulansort.order(cfgsetup.get('FullPaths', 'Event'))
+    if 'sortno' in options:
+        if not options['sortno']:
+            text = "Post-process the output files..."
+            communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
+            mulansort.order(cfgsetup.get('FullPaths', 'Event'))
 
     # ----------------------------------------------------------------------
     #   Plots
