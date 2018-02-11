@@ -65,7 +65,7 @@ install_requires = setuptools_args['install_requires'] = [
                                                           'configparser>=3.5.0',
                                                           'emcee>=2.2.1',
                                                           'GetDist==0.2.6',
-                                                          'matplotlib==1.4.2',
+                                                          'matplotlib>=2.1.2',
                                                           'numpy>=1.12.1',
                                                           'pandas>=0.18.1',
                                                           'PyAstronomy>=0.10.1',

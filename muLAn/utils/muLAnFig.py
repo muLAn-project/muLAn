@@ -144,7 +144,7 @@ class figure():
         for causi, color in self.caus:
             print "   Reading caustic file:\033[3m", causi, "\033[0m"
             xc, yc = np.loadtxt(causi, unpack=True)
-            CAU.scatter(xc, yc, marker='o', c='red', s=0.2)
+            CAU.scatter(xc, yc, marker='.', c='red', s=0.1)
 
     def save(self, figname):
         """Save figure"""
