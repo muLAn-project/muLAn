@@ -81,7 +81,7 @@ class figure():
         # read and plot data and residuals
         for datai, color, obsname in self.data:
             print "   Reading data file:\033[3m", datai, "\033[0m"
-            hjd, mag, errmag, resmag, amp, erramp, resamp, bkg, seeing, chi, ID, toto, tata = np.loadtxt(datai, unpack=True)
+            ID, hjd, mag, errmag, resmag, amp, erramp, resamp, bkg, seeing, xs, ys, chi, toto, tata = np.loadtxt(datai, unpack=True)
             self._LC.errorbar(hjd, mag, errmag, fmt='o', color=color, markersize=4, alpha=0.3, linewidth=1)
             self._RES.plot((np.min(hjd), np.max(hjd)), (0., 0.), 'k-', linewidth=0.4)
             self._RES.errorbar(hjd, resmag, errmag, fmt='o', color=color, markersize=4, alpha=0.3, linewidth=1)
@@ -109,7 +109,7 @@ class figure():
         # read and plot observed data and residuals
         for datai, color, obsname in self.data:
             print "   Reading data file:\033[3m", datai, "\033[0m"
-            hjd, mag, errmag, resmag, amp, erramp, resamp, bkg, seeing, chi, ID, toto, tata = np.loadtxt(datai, unpack=True)
+            ID, hjd, mag, errmag, resmag, amp, erramp, resamp, bkg, seeing, xs, ys, chi, toto, tata = np.loadtxt(datai, unpack=True)
             ZLC.errorbar(hjd, mag, errmag, fmt='o', color=color, markersize=4, alpha=0.3, linewidth=1)
         # plot theoretical light curves
         for lctraji, color in self.lctraj:
