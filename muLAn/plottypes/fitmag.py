@@ -1271,11 +1271,11 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 flag_fom = obs_properties['fluxoumag'][idx]
 
                 if flag_fom.lower()=='magnitude':
-                    text = "#{0:>17s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {7:>9s} {11:>6s} {12:>20s} {2:>20s}\n".format(
+                    text = "#{11:>5s} {0:>18s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {7:>9s} {12:>20s} {2:>20s}\n".format(
                             "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf", "ID", "Input_Magn")
 
                 elif flag_fom.lower()=='flux':
-                    text = "#{0:>17s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {7:>9s} {11:>6s} {12:>20s} {2:>20s}\n".format(
+                    text = "#{11:>5s} {0:>18s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {7:>9s} {12:>20s} {2:>20s}\n".format(
                             "Date", "Magn", "Err_Flux", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf", "ID", "Input_Flux")
 
                 filename = path_outputs + observatories_com[j].upper() + ".dat"
@@ -1287,7 +1287,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 if flag_fom.lower()=='magnitude':
                     for jj in xrange(len(time_serie_SC['dates'])):
                         text = text +\
-                                "{0:18.12f} {1:6.3f} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:12.5f} {6:12.5f} {7:9.3e} {11:6d} {12:20.12f} {2:20.12f}".format(
+                                "{11:6d} {0:18.12f} {1:6.3f} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:12.5f} {6:12.5f} {7:9.3e} {12:20.12f} {2:20.12f}".format(
                                 time_serie_SC['dates'][jj],
                                 time_serie_SC['mag_align'][jj],
                                 time_serie_SC['err_magn_orig'][jj],
@@ -1307,7 +1307,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 elif flag_fom.lower()=='flux':
                     for jj in xrange(len(time_serie_SC['dates'])):
                         text = text +\
-                                "{0:18.12f} {1:6.3f} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:12.5f} {6:12.5f} {7:9.3e} {11:6d} {12:20.12f} {2:20.12f}".format(
+                                "{11:6d} {0:18.12f} {1:6.3f} {3:12.3e} {4:10.3e} {8:8.3f} {9:9.3e} {10:9.2e} {5:12.5f} {6:12.5f} {7:9.3e} {12:20.12f} {2:20.12f}".format(
                                 time_serie_SC['dates'][jj],
                                 time_serie_SC['mag_align'][jj],
                                 time_serie_SC['err_flux_orig'][jj],
