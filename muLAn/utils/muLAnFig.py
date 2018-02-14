@@ -9,11 +9,11 @@
 #       https://github.com/muLAn-project/muLAn
 
 import ConfigParser as cp
+import glob
 import numpy as np
 import muLAn.mulan as mulan
 import muLAn.packages.general_tools as gtools
 import matplotlib.pyplot as plt
-import os
 
 
 class figure():
@@ -36,7 +36,13 @@ class figure():
         self._labelposx = labelposx
         self._labelposy = labelposy
         self._labelsize = labelsize
-        self._getconfig()
+        try:
+            self._getconfig()
+        except:
+            self._cfgsetup = None
+            self._cfgobs = None
+            "Warning: Configuration files not loaded."
+
         # figure layout
         plt.close('all')
         plt.rc('text', usetex=True)
@@ -48,8 +54,8 @@ class figure():
         """Create main figure pannel"""
         print "\033[1m Creating main figure layout...\033[0m"
         # test whether to select outputs from muLAn's .ini files
-        if not data:
-            data = _getdata()
+        if (not data) and (self._cfgobs != None):
+            data = self._getdata()
         if not lctraj:
             traj = _getlctraj()
         if not caus:
@@ -162,9 +168,14 @@ class figure():
 
     def _getdata(self):
         """Get usefull data file names from muLAn's .ini files"""
-        # merci d'utiliser le format: list( tuple('file path', 'color', 'telescope'), ... )
-        # e.g.: [('Outputs/OGLE-I.dat', '#FFFF33', 'OGLE'), ...]
+
+        # Extract required information
         data = list()
+        for i in xrange(len(self._observatories)):
+            table = [a.strip() for a in self._cfgobs.get('ObservatoriesDetails', self._observatories[i]).split(',')]
+            fname = "{:s}{:s}.dat".format(self._pathoutputs, self._observatories[i].upper())
+            data.append((fname, "#" + table[1], table[0]))
+
         return data
 
     def _getlctraj(self):
@@ -182,7 +193,7 @@ class figure():
         return caus
 
     def _getconfig(self):
-        """Read the configuration files *.ini."""
+        """Load the configuration files *.ini."""
 
         # Path of the event
         path_event = mulan.getpath_event()
@@ -222,6 +233,27 @@ class figure():
             cfgsetup.set('RelativePaths', 'Archives', cfgsetup.get('RelativePaths', 'Archives') + '/')
         if cfgsetup.get('RelativePaths', 'ModelsHistory')[-1] != '/':
             cfgsetup.set('RelativePaths', 'ModelsHistory', cfgsetup.get('RelativePaths', 'ModelsHistory') + '/')
+
+        self._cfgsetup = cfgsetup
+        self._cfgobs = cfgobs
+
+        # Data file names
+        data2find = np.array(self._cfgobs.options('ObservatoriesDetails'))
+
+        # Cross-match with data to use
+        data2use = np.array(self._cfgsetup.options('Observatories'))
+        data2use = np.array([data2find[i] for i in xrange(len(data2find)) if np.any(data2use == data2find[i])])
+
+        # Cross-match with existing files
+        path = self._cfgsetup.get('FullPaths', 'Event') + self._cfgsetup.get('RelativePaths', 'Outputs')
+        data_filenames = glob.glob(path + '*')
+        observatories = [a.split('/')[-1] for a in data_filenames]
+        data_filenames = [data_filenames[i] for i in xrange(len(data_filenames)) if
+                          np.any(data2use == observatories[i].rpartition('.')[0].lower())]
+        observatories = [ob.rpartition('.')[0].lower() for ob in observatories if
+                         np.any(data2use == ob.rpartition('.')[0].lower())]
+        self._observatories = observatories
+        self._pathoutputs = path
 
 if __name__ == '__main__':
     help(muLAnFig)
