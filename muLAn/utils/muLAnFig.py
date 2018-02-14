@@ -8,8 +8,12 @@
 #       muLAn: gravitational MICROlensing Analysis code
 #       https://github.com/muLAn-project/muLAn
 
+import ConfigParser as cp
 import numpy as np
+import muLAn.mulan as mulan
+import muLAn.packages.general_tools as gtools
 import matplotlib.pyplot as plt
+import os
 
 
 class figure():
@@ -32,6 +36,7 @@ class figure():
         self._labelposx = labelposx
         self._labelposy = labelposy
         self._labelsize = labelsize
+        self._getconfig()
         # figure layout
         plt.close('all')
         plt.rc('text', usetex=True)
@@ -176,6 +181,47 @@ class figure():
         caus = list()
         return caus
 
+    def _getconfig(self):
+        """Read the configuration files *.ini."""
+
+        # Path of the event
+        path_event = mulan.getpath_event()
+
+        # Configuration files
+        fname_setup = "{:s}setup.ini".format(path_event)
+        fname_advanced = "{:s}advancedsetup.ini".format(path_event)
+        fname_obs = "{:s}observatories.ini".format(path_event)
+
+        # Load configuration files
+        cfgsetup = cp.SafeConfigParser()
+        cfgsetup.read([fname_setup, fname_advanced])
+        cfgobs = cp.SafeConfigParser()
+        cfgobs.read(path_event + 'observatories.ini')
+
+        text = "Load parameter files..."
+        gtools.communicate(cfgsetup, 1, text, opts=[gtools.printoption.level0], prefix=True, newline=True)
+
+        # Add the path to the configuration
+        cfgsetup.set('FullPaths', 'Event', path_event)
+
+        # Check the paths
+        if cfgsetup.get('FullPaths', 'Code').replace(" ", "") != "":
+            if cfgsetup.get('FullPaths', 'Code')[-1] != '/':
+                cfgsetup.set('FullPaths', 'Code', cfgsetup.get('FullPaths', 'Code') + '/')
+            if cfgsetup.get('FullPaths', 'Event')[-1] != '/':
+                cfgsetup.set('FullPaths', 'Event', cfgsetup.get('FullPaths', 'Event') + '/')
+        if cfgsetup.get('RelativePaths', 'Data')[-1] != '/':
+            cfgsetup.set('RelativePaths', 'Data', cfgsetup.get('RelativePaths', 'Data') + '/')
+        if cfgsetup.get('RelativePaths', 'Plots')[-1] != '/':
+            cfgsetup.set('RelativePaths', 'Plots', cfgsetup.get('RelativePaths', 'Plots') + '/')
+        if cfgsetup.get('RelativePaths', 'Chains')[-1] != '/':
+            cfgsetup.set('RelativePaths', 'Chains', cfgsetup.get('RelativePaths', 'Chains') + '/')
+        if cfgsetup.get('RelativePaths', 'Outputs')[-1] != '/':
+            cfgsetup.set('RelativePaths', 'Outputs', cfgsetup.get('RelativePaths', 'Outputs') + '/')
+        if cfgsetup.get('RelativePaths', 'Archives')[-1] != '/':
+            cfgsetup.set('RelativePaths', 'Archives', cfgsetup.get('RelativePaths', 'Archives') + '/')
+        if cfgsetup.get('RelativePaths', 'ModelsHistory')[-1] != '/':
+            cfgsetup.set('RelativePaths', 'ModelsHistory', cfgsetup.get('RelativePaths', 'ModelsHistory') + '/')
 
 if __name__ == '__main__':
     help(muLAnFig)
