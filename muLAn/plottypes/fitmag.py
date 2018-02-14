@@ -1275,7 +1275,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                             "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf", "ID", "Input_Magn", "x", "y")
 
                 elif flag_fom.lower()=='flux':
-                    text = "#{11:>5s} {0:>18s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {7:>9s} {12:>20s} {2:>20s}\n".format(
+                    text = "#{11:>5s} {0:>18s} {1:>6s} {3:>12s} {4:>10s} {8:>8s} {9:>9s} {10:>9s} {5:>12s} {6:>12s} {13:>10s} {14:>10s} {7:>9s} {12:>20s} {2:>20s}\n".format(
                             "Date", "Magn", "Err_Flux", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2", "Mgf-dat", "Err_Mgf", "Resi-Mgf", "ID", "Input_Flux")
 
                 filename = path_outputs + observatories_com[j].upper() + ".dat"
