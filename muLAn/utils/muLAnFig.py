@@ -11,7 +11,7 @@
 import ConfigParser as cp
 import glob
 import numpy as np
-import warnings
+from copy import copy
 import muLAn.mulan as mulan
 import muLAn.packages.general_tools as gtools
 import matplotlib.pyplot as plt
@@ -45,14 +45,12 @@ class figure():
             self._cfgsetup = None
             self._cfgobs = None
             print "\033[1m\033[35mnot found\033[0m (may lead to an error in non-manual mode)"
-#            warnings.warn("\033[35m\033[1mmuLAn configuration files not found (may lead to an error in non-manual mode)\033[0m", RuntimeWarning)
         try:
             print " Searching for muLAn best-fit parameters file...",
             self._getbestfitparams()
             print "\033[1m\033[32mfound\033[0m"
         except:
             print "\033[1m\033[35mnot found\033[0m (may lead to an error in non-manual mode)"
-#            warnings.warn("\033[35m\033[1mbest-fit parameters file not found (may lead to an error in non-manual mode)\033[0m", RuntimeWarning)
         # figure layout
         plt.close('all')
         plt.rc('text', usetex=True)
@@ -89,7 +87,8 @@ class figure():
         # plot theoretical light curves
         for lctraji, color in self.lctraj:
             print "   Reading theoretical light curve file:\033[3m", lctraji, "\033[0m"
-            hjd, amp, mag, xt, yt = np.loadtxt(lctraji, unpack=True)
+            hjdr, amp, magr, xt, yt = np.loadtxt(lctraji, unpack=True)
+            hjd, mag = self._optimizemc(hjdr, magr)
             self._LC.plot(hjd, mag, color=color, linewidth=1)
         # observatory names label positions
         if not self._labelposx: x = 0.7
@@ -133,7 +132,9 @@ class figure():
         # plot theoretical light curves
         for lctraji, color in self.lctraj:
             print "   Reading theoretical light curve file:\033[3m", lctraji, "\033[0m"
-            hjd, amp, mag, xt, yt = np.loadtxt(lctraji, unpack=True)
+            hjdr, amp, magr, xt, yt = np.loadtxt(lctraji, unpack=True)
+            hjd, mag = self._optimizemc(hjdr, magr)
+#            hjd, amp, mag, xt, yt = np.loadtxt(lctraji, unpack=True)
             ZLC.plot(hjd, mag, color=color, linewidth=1)
 
     def addinset_caustics(self, layout, caus=None, xrange=None, yrange=None):
@@ -196,6 +197,42 @@ class figure():
     def show(self):
         """Show figure"""
         plt.show()
+    
+    def _optimizemc(self, x, y, err=0.001):
+        """Optimize the sampling of the input curve"""
+        print "   ... optimizing sampling:",
+        N = len(x)
+        ts = np.zeros(N, dtype=np.float_)
+        As = np.zeros(N, dtype=np.float_)
+        # Algorithm
+        n = 0
+        i = 0
+        while n < N:
+            cond = True
+            As[n] = y[i]
+            ts[n] = x[i]
+            n += 1
+            p = 2
+            while p <= N-1-i: # 2≤p
+                if np.logical_not(cond):
+                    break
+                for k in np.arange(p-1)+1: # 1≤k≤p-1
+                    Alin = (x[i+k] - x[i]) * (y[i+p] - y[i]) / (x[i+p] - x[i]) + y[i]
+                    cond = np.abs(Alin - y[i+k]) <= err
+                    if np.logical_not(cond):
+                        i = i+p-1
+                        break
+                p += 1
+            if (p == N-i): break
+        ts[n-1] = x[i]
+        As[n-1] = y[i]
+        ts[n] = x[N-1]
+        As[n] = y[N-1]
+        xopt = copy(ts[0:n+1])
+        yopt = copy(As[0:n+1])
+        # verbose
+        print "\033[3mkeeping " + str(n + 1) + " points out of " + str(N) + "\033[0m"
+        return xopt, yopt
 
     def _getdata(self):
         """Get usefull data file names from muLAn's .ini files"""
