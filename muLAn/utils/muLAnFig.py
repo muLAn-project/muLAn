@@ -156,11 +156,13 @@ class figure():
         fname = "{:s}CAUSTIC.dat".format(self._pathoutputs)
         fcaustics = np.loadtxt(fname, unpack=False, dtype=np.float64)
         n_caus = fcaustics.shape[1] / 2
+        color_caus = np.array(['red', 'Orange', 'SeaGreen', 'LightSeaGreen', 'CornflowerBlue', 'DarkViolet'])
         for i in range(n_caus):
             print "   Plotting caustic:\033[3m", i, "\033[0m"
             xc = fcaustics.T[2*i]
             yc = fcaustics.T[2*i + 1]
-            CAU.scatter(xc, yc, marker='.', c='red', s=0.1)
+            CAU.scatter(xc, yc, marker='.', c=color_caus, s=0.1)
+            color_caus = np.roll(color_caus, -1)
 
     def save(self, figname):
         """Save figure"""
