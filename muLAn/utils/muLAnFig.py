@@ -43,6 +43,8 @@ class figure():
             self._cfgobs = None
             "Warning: Configuration files not loaded."
 
+        self._getbestfitparams()
+
         # figure layout
         plt.close('all')
         plt.rc('text', usetex=True)
@@ -279,6 +281,27 @@ class figure():
                          np.any(data2use == ob.rpartition('.')[0].lower())]
         self._observatories = observatories
         self._pathoutputs = path
+
+    def _getbestfitparams(self):
+        """Load the values of the best fit.""" 
+    
+        fname = "{:s}Results.txt".format(self._pathoutputs)
+        file_res = open(fname, 'r')
+        res = ""
+        for line in file_res:
+            res = res + line
+        file_res.close()
+
+        res = res.split("Best-fitting parameters")[1]
+        res = res.split("Site")[0]
+        res = res.replace("\n", "").split(" ")
+        res = [a for a in res if a != ""]
+        res = [a for a in res if a != "="]
+        res = np.reshape(res, (len(res)/2, 2))
+
+        bf = dict()
+        [bf.update({res.T[0][i]: float(res.T[1][i])}) for i in range(res.shape[0])]
+        self._bf = bf
 
 if __name__ == '__main__':
     help(muLAnFig)
