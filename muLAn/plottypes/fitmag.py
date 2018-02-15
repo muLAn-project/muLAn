@@ -1657,7 +1657,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                                     " x({0:17.6f}) y({0:17.6f})".format(time_caustic[i])
                 text = text + "\n"
 
-                filename = path_outputs + "caustic.dat"
+                filename = path_outputs + "CAUSTIC.dat"
 
                 for jj in xrange(len(caustic.real)):
                     text = text +\
