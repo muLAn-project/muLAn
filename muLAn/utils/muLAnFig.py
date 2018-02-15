@@ -151,10 +151,15 @@ class figure():
             print "   Reading trajectory file:\033[3m", lctraji, "\033[0m"
             hjd, amp, mag, xt, yt = np.loadtxt(lctraji, unpack=True)
             CAU.plot(xt, yt, color=color, linewidth=1)
+
         # plot caustics
-        for causi, color in self.caus:
-            print "   Reading caustic file:\033[3m", causi, "\033[0m"
-            xc, yc = np.loadtxt(causi, unpack=True)
+        fname = "{:s}CAUSTIC.dat".format(self._pathoutputs)
+        fcaustics = np.loadtxt(fname, unpack=False, dtype=np.float64)
+        n_caus = fcaustics.shape[1] / 2
+        for i in range(n_caus):
+            print "   Plotting caustic:\033[3m", i, "\033[0m"
+            xc = fcaustics.T[2*i]
+            yc = fcaustics.T[2*i + 1]
             CAU.scatter(xc, yc, marker='.', c='red', s=0.1)
 
     def save(self, figname):
