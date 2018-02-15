@@ -150,6 +150,16 @@ class figure():
             hjd, amp, mag, xt, yt = np.loadtxt(lctraji, unpack=True)
             CAU.plot(xt, yt, color=color, linewidth=1)
 
+        # Load caustic times
+        fname = "{:s}CAUSTIC.dat".format(self._pathoutputs)
+        fcaustics = open(fname, 'r')
+        for line in fcaustics: break
+        fcaustics.close()
+
+        times = line.replace(" ", "").replace("x", "").replace("y", "").replace("#", "").replace("(", "").replace("\n", "").split(")")
+        times = np.unique(times)
+        times[0] = 't0'
+
         # plot caustics
         fname = "{:s}CAUSTIC.dat".format(self._pathoutputs)
         fcaustics = np.loadtxt(fname, unpack=False, dtype=np.float64)
@@ -161,7 +171,7 @@ class figure():
             color_caus = np.array([self.caus])
 
         for i in range(n_caus):
-            print "   Plotting caustic:\033[3m", i, "\033[0m"
+            print "   Plotting caustic:\033[3m", times[i], "\033[0m"
             xc = fcaustics.T[2*i]
             yc = fcaustics.T[2*i + 1]
             CAU.scatter(xc, yc, marker='.', c=color_caus, s=0.1)
