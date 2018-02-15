@@ -54,10 +54,10 @@ class figure():
         """Create main figure pannel"""
         print "\033[1m Creating main figure layout...\033[0m"
         # test whether to select outputs from muLAn's .ini files
-        if (not data) and (self._cfgobs != None):
+        if (data == None) and (self._cfgobs != None):
             data = self._getdata()
-        if not lctraj:
-            traj = _getlctraj()
+        if (lctraj == None) and (self._cfgobs != None):
+            lctraj = self._getlctraj()
         if not caus:
             caus = _getcaus()
         self.data = data
@@ -180,10 +180,22 @@ class figure():
 
     def _getlctraj(self):
         """Get usefull light curve/trajetory file names from muLAn's .ini files"""
-        # merci d'utiliser le format: list( tuple('file path', 'color'), ... )
-        # e.g.: [('Outputs/EARTH.dat', '#FFFF33'), ...]
+
+        # Extract required information
         traj = list()
-        return traj
+        colors = np.array(['black', 'blue', 'orange'])
+        for i in xrange(len(self._observatories)):
+            table = [a.strip() for a in self._cfgobs.get('ObservatoriesDetails', self._observatories[i]).split(',')]
+            traj.append(table[4])
+        traj = np.unique(traj)
+
+        traj_final = list()
+        for a in traj:
+            fname = "{:s}{:s}.dat".format(self._pathoutputs, a.upper())
+            traj_final.append((fname, colors[0]))
+            colors = np.roll(colors, -1)
+
+        return traj_final
 
     def _getcaus(self):
         """Get usefull caustics file names from muLAn's .ini files"""
