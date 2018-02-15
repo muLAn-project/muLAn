@@ -11,6 +11,7 @@
 import ConfigParser as cp
 import glob
 import numpy as np
+import warnings
 import muLAn.mulan as mulan
 import muLAn.packages.general_tools as gtools
 import matplotlib.pyplot as plt
@@ -37,14 +38,21 @@ class figure():
         self._labelposy = labelposy
         self._labelsize = labelsize
         try:
+            print " Searching for muLAn outputs...",
             self._getconfig()
+            print "\033[1m\033[32mfound\033[0m"
         except:
             self._cfgsetup = None
             self._cfgobs = None
-            "Warning: Configuration files not loaded."
-
-        self._getbestfitparams()
-
+            print "\033[1m\033[35mnot found\033[0m (may lead to an error in non-manual mode)"
+#            warnings.warn("\033[35m\033[1mmuLAn configuration files not found (may lead to an error in non-manual mode)\033[0m", RuntimeWarning)
+        try:
+            print " Searching for muLAn best-fit parameters file...",
+            self._getbestfitparams()
+            print "\033[1m\033[32mfound\033[0m"
+        except:
+            print "\033[1m\033[35mnot found\033[0m (may lead to an error in non-manual mode)"
+#            warnings.warn("\033[35m\033[1mbest-fit parameters file not found (may lead to an error in non-manual mode)\033[0m", RuntimeWarning)
         # figure layout
         plt.close('all')
         plt.rc('text', usetex=True)
@@ -168,15 +176,16 @@ class figure():
         n_caus = fcaustics.shape[1] / 2
 
         if self.caus == None:
-            color_caus = np.array(['red', 'Orange', 'SeaGreen', 'LightSeaGreen', 'CornflowerBlue', 'DarkViolet'])
+            color_caus = ['red', 'Orange', 'SeaGreen', 'LightSeaGreen', 'CornflowerBlue', 'DarkViolet']
         else:
-            color_caus = np.array([self.caus])
+            color_caus = [color for cau, color in self.caus]
 
         for i in range(n_caus):
-            print "   Plotting caustic:\033[3m", times[i], "\033[0m"
+            print "   Plotting caustic " + str(i + 1) + "..."
+            #            print "   Plotting caustic:\033[3m", times[i], "\033[0m" ## bug in times[]
             xc = fcaustics.T[2*i]
             yc = fcaustics.T[2*i + 1]
-            CAU.scatter(xc, yc, marker='.', c=color_caus, s=0.1)
+            CAU.scatter(xc, yc, marker='.', c=color_caus[i], s=0.1)
             color_caus = np.roll(color_caus, -1)
 
     def save(self, figname):
@@ -236,8 +245,8 @@ class figure():
         cfgobs = cp.SafeConfigParser()
         cfgobs.read(path_event + 'observatories.ini')
 
-        text = "Load parameter files..."
-        gtools.communicate(cfgsetup, 1, text, opts=[gtools.printoption.level0], prefix=True, newline=True)
+#        text = "Load parameter files..."
+#        gtools.communicate(cfgsetup, 1, text, opts=[gtools.printoption.level0], prefix=True, newline=True)
 
         # Add the path to the configuration
         cfgsetup.set('FullPaths', 'Event', path_event)
