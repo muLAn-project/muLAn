@@ -22,18 +22,70 @@ class figure():
         
         Calling muLAnFig
         ================
-        mlf = muLAnFig(data=None, lctraj=None, caus=None, trange=None, lcrange=None, resrange=None, labelpos=None, labelsize=10, figsize=(10,6))
+        fig = muLAnFig.figure(figsize=(10,6), labelposx=0.8,
+            labelposy=[0.6, 0.9], labelsize=10)
         
         Parameters
         ----------
-        (coming soon)
+        figsize : tuple, optional
+            Figure size (x, y). Default is: figsize=(10,6).
+        labelposx: float, optional
+            Horizontal position of the labels of the observatories
+            names. Possible values are 0 (left) to 1 (right).
+            Default is: labelposx=0.8.
+        labelposy: sequence of float, optional
+            A 2-length sequence [ymin, ymax], which defines the
+            vertical range where the labels of the observatories names
+            will be displayed. Possible values are 0 (down) to 1 (up).
+            Default is: labelposy=[0.6, 0.9].
+        labelsize=10: float, optional
+            Font size of the labels of the observatories names.
+            Default is: labelsize=10
+        
+        User methods
+        ------------
+        addinset_caustics : see below
+        addinset_lightcurve : see below
+        save : see below
+        show : see below
+
+        Returns
+        -------
+        out : figure
+            Using show will open a matplotlib.pylab interactive plot.
+            Using save will store the figure in the disk. NB: do not
+            use show before save, the saved figure will be empty.
 
         Examples
         --------
-        (coming soon)
+        Examples in automatic mode (called from the EVENT/ working directory):
+        
+        >>> fig = muLAnFig.figure(figsize=(10,6), labelposx=0.83,
+                labelposy=[0.54, 0.94], labelsize=9)
+        >>> fig.plot(trange=[7100, 7200], lcrange=[12, 16.8],
+                resrange=[-0.38, 0.38])
+        >>> fig.addinset_caustics([0.17, 0.64, 0.2, 0.3], xrange=[-1.75, -1.55],
+                yrange=[-0.12, 0.13])
+        >>> fig.addinset_lightcurve([0.15, 0.65, 0.3, 0.3], trange=[7144, 7148],
+                lcrange=[12, 15.8])
+        >>> fig.save('Plots/Figure.pdf')
+        >>> fig.show()
+        
+        >>> fig = muLAnFig.figure()
+        >>> fig.addinset_caustics([0.2, 0.6, 0.2, 0.4])
+        >>> fig.show()
+        
+        Example in manual mode:
+        
+        >>> fig = muLAnFig.figure(labelposx=0.83, labelposy=[0.54, 0.94])
+        >>> fig.plot(data=[('data1.dat', '#000000', 'Tel1'),
+            ('data2.dat', '#FF00FF', 'Tel2')], lctraj=[('EARTH.dat', 'black')],
+            trange=[7100, 7200], lcrange=[12, 16.8], resrange=[-0.38, 0.38])
+        >>> fig.addinset_caustics([0.17, 0.64, 0.2, 0.3], caus=[('caustic.dat', 'red')])
+        >>> fig.save('Plots/Figure.pdf')
         """
-    def __init__(self, figsize=(10,6), labelposx=None, labelposy=None, labelsize=10):
-        """Create figure layout"""
+    def __init__(self, figsize=(10,6), labelposx=0.8, labelposy=[0.6, 0.9], labelsize=10):
+        """Inititalize figure layout and search for muLAn output files"""
         self._labelposx = labelposx
         self._labelposy = labelposy
         self._labelsize = labelsize
@@ -58,8 +110,34 @@ class figure():
         self.fig, (self._LC, self._RES) = plt.subplots(2, sharex=True, figsize=figsize, gridspec_kw={'height_ratios':[3, 1]})
         plt.subplots_adjust(left=0.1, bottom=0.1, right=0.97, top=0.97, wspace=None, hspace=0.)
         
-    def plot(self, data=None, lctraj=None, caus=None, trange=None, lcrange=None, resrange=None):
-        """Create main figure pannel"""
+    def plot(self, data=None, lctraj=None, trange=None, lcrange=None, resrange=None):
+        """Create main figure pannel
+            
+            Parameters
+            ----------
+            data: sequence of tuples, optional
+                A n-length sequence [..., ('data_i.dat', 'color_i', 'label_i'), ...],
+                where 'data_i.dat' is the ith data file, 'color_i' its color (name or
+                hexadecimal code), and 'label_i' the name to be displayed on the
+                figure labels. Default is: use muLAn outputs (data=None).
+            lctraj: sequence of tuples, optional
+                A n-length sequence [..., ('lctraj_i.dat', 'color_i'), ...], where
+                'lctraj_i.dat' is the ith trajectory + light curve file, and
+                'color_i' its color (name or hexadecimal code).
+                Default is: use muLAn outputs (lctraj=None).
+            trange: sequence of float, optional
+                A 2-length sequence [tmin, tmax], which defines
+                the range of dates to be plotted in the main plot.
+                Default is: automatic range (trange=None)
+            lcrange: sequence of float, optional
+                A 2-length sequence [magmin, magmax], which defines
+                the range of magnitudes to be plotted in the main plot.
+                Default is: automatic range (lcrange=None)
+            resrange: sequence of float, optional
+                A 2-length sequence [magmin, magmax], which defines
+                the range of magnitudes to be plotted in the residuals plot.
+                Default is: automatic range (resrange=None)
+            """
         print "\033[1m Creating main figure layout...\033[0m"
         # test whether to select outputs from muLAn's .ini files
         if (data == None) and (self._cfgobs != None):
@@ -68,7 +146,6 @@ class figure():
             lctraj = self._getlctraj()
         self.data = data
         self.lctraj = lctraj
-        self.caus = caus
         self._lccompt = 1
         self._causcompt = 1
         if trange: self._RES.set_xlim([trange[0], trange[1]])
@@ -111,11 +188,17 @@ class figure():
             
             Parameters
             ----------
-            (coming soon)
-            
-            Examples
-            --------
-            (coming soon)
+            layout: sequence of float
+                A 4-length sequence [left, bottom, width, height], which
+                defines the position and shape of the inset.
+            trange: sequence of float, optional
+                A 2-length sequence [tmin, tmax], which defines
+                the range of dates to be plotted in the inset plot.
+                Default is: automatic range (trange=None)
+            lcrange: sequence of float, optional
+                A 2-length sequence [magmin, magmax], which defines
+                the range of magnitudes to be plotted in the inset plot.
+                Default is: automatic range (lcrange=None)
             """
         print "\033[1m Creating light curve inset " + str(self._lccompt) + "...\033[0m"
         self._lccompt += 1
@@ -142,11 +225,21 @@ class figure():
             
             Parameters
             ----------
-            (coming soon)
-
-            Examples
-            --------
-            (coming soon)
+            layout: sequence of float
+                A 4-length sequence [left, bottom, width, height], which
+                defines the position and shape of the inset.
+            caus: sequence of tuples, optional
+                A n-length sequence [..., ('caus_i.dat', 'color_i'), ...], where
+                'caus_i.dat' is the ith caustic file, and 'color_i' its color (name or
+                hexadecimal code). Default is: use muLAn outputs (caus=None).
+            xrange: sequence of float, optional
+                A 2-length sequence [xmin, xmax], which defines
+                the horizontal range for the caustic plot.
+                Default is: automatic range (xange=None)
+            yrange: sequence of float, optional
+                A 2-length sequence [ymin, ymax], which defines
+                the vertical range for the caustic plot.
+                Default is: automatic range (yrange=None)
             """
         print "\033[1m Creating caustics inset "+ str(self._causcompt) + "...\033[0m"
         self._causcompt += 1
@@ -176,10 +269,10 @@ class figure():
         fcaustics = np.loadtxt(fname, unpack=False, dtype=np.float64)
         n_caus = fcaustics.shape[1] / 2
 
-        if self.caus == None:
+        if caus == None:
             color_caus = ['red', 'Orange', 'SeaGreen', 'LightSeaGreen', 'CornflowerBlue', 'DarkViolet']
         else:
-            color_caus = [color for cau, color in self.caus]
+            color_caus = [color for cau, color in caus]
 
         for i in range(n_caus):
             print "   Plotting caustic " + str(i + 1) + "..."
