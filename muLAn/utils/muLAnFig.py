@@ -58,8 +58,6 @@ class figure():
             data = self._getdata()
         if (lctraj == None) and (self._cfgobs != None):
             lctraj = self._getlctraj()
-        if not caus:
-            caus = _getcaus()
         self.data = data
         self.lctraj = lctraj
         self.caus = caus
@@ -156,7 +154,12 @@ class figure():
         fname = "{:s}CAUSTIC.dat".format(self._pathoutputs)
         fcaustics = np.loadtxt(fname, unpack=False, dtype=np.float64)
         n_caus = fcaustics.shape[1] / 2
-        color_caus = np.array(['red', 'Orange', 'SeaGreen', 'LightSeaGreen', 'CornflowerBlue', 'DarkViolet'])
+
+        if self.caus == None:
+            color_caus = np.array(['red', 'Orange', 'SeaGreen', 'LightSeaGreen', 'CornflowerBlue', 'DarkViolet'])
+        else:
+            color_caus = np.array([self.caus])
+
         for i in range(n_caus):
             print "   Plotting caustic:\033[3m", i, "\033[0m"
             xc = fcaustics.T[2*i]
@@ -203,13 +206,6 @@ class figure():
             colors = np.roll(colors, -1)
 
         return traj_final
-
-    def _getcaus(self):
-        """Get usefull caustics file names from muLAn's .ini files"""
-        # merci d'utiliser le format: list( tuple('file path', 'color'), ... )
-        # e.g.: [('Outputs/caustics_t1.dat', '#FFFF33'), ...]
-        caus = list()
-        return caus
 
     def _getconfig(self):
         """Load the configuration files *.ini."""
