@@ -254,29 +254,40 @@ class figure():
             hjd, amp, mag, xt, yt = np.loadtxt(lctraji, unpack=True)
             CAU.plot(xt, yt, color=color, linewidth=1)
 
-        # Load caustic times
-        fname = "{:s}CAUSTIC.dat".format(self._pathoutputs)
-        fcaustics = open(fname, 'r')
-        for line in fcaustics: break
-        fcaustics.close()
 
-        times = line.replace(" ", "").replace("x", "").replace("y", "").replace("#", "").replace("(", "").replace("\n", "").split(")")
-        times = np.unique(times)
-        times[0] = 't0'
 
-        # plot caustics
+        # Load caustics
         fname = "{:s}CAUSTIC.dat".format(self._pathoutputs)
         fcaustics = np.loadtxt(fname, unpack=False, dtype=np.float64)
         n_caus = fcaustics.shape[1] / 2
 
+        # Load caustic times
+        if n_caus > 1:
+            fname = "{:s}CAUSTIC.dat".format(self._pathoutputs)
+            fcaustics = open(fname, 'r')
+            for line in fcaustics: break
+            fcaustics.close()
+            times = line.replace(" ", "").replace("x", "").replace("y", "").replace("#", "").replace("(", "").replace("\n", "").split(")")
+            times = np.unique(times)
+            try:
+                times[0] = 't0 = {:.6f}'.format(self._bf['t0'])
+            except AttributeError:
+                times[0] = "t0"
+        else:
+            try:
+                times = np.atleast_1d(['t0 = {:.6f}'.format(self._bf['t0'])])
+            except AttributeError:
+                times = np.atleast_1d(['t0'])
+
+        # Plot caustics
         if caus == None:
             color_caus = ['red', 'Orange', 'SeaGreen', 'LightSeaGreen', 'CornflowerBlue', 'DarkViolet']
         else:
             color_caus = [color for cau, color in caus]
 
         for i in range(n_caus):
-            print "   Plotting caustic " + str(i + 1) + "..."
-            #            print "   Plotting caustic:\033[3m", times[i], "\033[0m" ## bug in times[]
+            # print "   Plotting caustic " + str(i + 1) + "..."
+            print "   Plotting caustic:\033[3m", times[i], "\033[0m"
             xc = fcaustics.T[2*i]
             yc = fcaustics.T[2*i + 1]
             CAU.scatter(xc, yc, marker='.', c=color_caus[i], s=0.1)
