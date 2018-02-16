@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>muLAn: gravitational MicroLensing Analysis code &mdash; MuLAn v0.8.22 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="MuLAn v0.8.22 documentation" href="#"/>
+        <link rel="next" title="Getting Started" href="contents/introduction.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="#" class="icon icon-home"> MuLAn
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="contents/introduction.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contents/tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contents/configfiles.html">Configuration files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contents/plotroutines.html">Plotting tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contents/statistics.html">Statistical tools</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">MuLAn</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#">Docs</a> &raquo;</li>
+        
+      <li>muLAn: gravitational MicroLensing Analysis code</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="mulan-gravitational-microlensing-analysis-code">
+<h1>muLAn: gravitational MicroLensing Analysis code<a class="headerlink" href="#mulan-gravitational-microlensing-analysis-code" title="Permalink to this headline">¶</a></h1>
+<p><strong>muLAn</strong> is an easy-to-use and flexible software to model gravitational
+microlensing events. Why using muLAn?</p>
+<ul class="simple">
+<li>The code combines the-state-of-the-art numerical methods to compute
+the magnification. These algorithms are direclty plugged into muLAn
+from their original versions.</li>
+<li>The code uses several methods to explore the parameters space: a
+grid search method, a differential MCMC algorithm based on the package
+EMCEE, and a combination of these two methods are implemented.</li>
+<li>The code is designed to allow a fast integration of any additional
+numerical method independently developed. muLAn provides a powerfull
+tool to compare several algorithms on a same light curve.</li>
+<li>The code has been designed to be easy-to-use and easy-to-install by
+any interested astrophysicist. In particular, muLAn may be run
+through a python sript like any python package, or through command
+line instructions in a terminal.</li>
+<li>The code and the documentation are tested and maintained by several
+researchers.</li>
+</ul>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contents/introduction.html">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contents/introduction.html#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/introduction.html#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/introduction.html#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/introduction.html#first-example">First example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contents/tutorial.html">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contents/tutorial.html#data">Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/tutorial.html#configuration-file">Configuration file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/tutorial.html#numerical-methods">Numerical methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/tutorial.html#finding-a-good-model-and-uncertainties">Finding a good model and uncertainties</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/tutorial.html#visualizing-results">Visualizing results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/tutorial.html#statistical-tests">Statistical tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contents/configfiles.html">Configuration files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contents/configfiles.html#basic-parameters">Basic parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/configfiles.html#advanced-parameters">Advanced parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/configfiles.html#observatory-properties-and-data-definition">Observatory properties and data definition</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contents/plotroutines.html">Plotting tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contents/plotroutines.html#automatic-data-alignment">Automatic data alignment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/plotroutines.html#light-curves-and-caustics">Light curves and caustics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents/plotroutines.html#correlations">Correlations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contents/statistics.html">Statistical tools</a></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contents/introduction.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014-2017, Clément Ranc &amp; contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.8.22',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

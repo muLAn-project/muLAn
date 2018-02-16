@@ -1,0 +1,479 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Configuration files &mdash; MuLAn v0.8.22 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="MuLAn v0.8.22 documentation" href="../index.html"/>
+        <link rel="next" title="Plotting tools" href="plotroutines.html"/>
+        <link rel="prev" title="Tutorial" href="tutorial.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MuLAn
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration files</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#basic-parameters">Basic parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#list-of-the-sections">List of the sections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#full-explained-example">Full Explained Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#advanced-parameters">Advanced parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">List of the sections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Full Explained Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#observatory-properties-and-data-definition">Observatory properties and data definition</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">List of the sections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Full Explained Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="plotroutines.html">Plotting tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical tools</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MuLAn</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Configuration files</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/contents/configfiles.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="configuration-files">
+<h1>Configuration files<a class="headerlink" href="#configuration-files" title="Permalink to this headline">¶</a></h1>
+<p><strong>muLAn</strong> is designed to use two parameters files: one file
+<code class="docutils literal"><span class="pre">setup.ini</span></code> that includes all the basic parameters a modeler wishes
+to change often, and one file <code class="docutils literal"><span class="pre">advanced_setup.ini</span></code> that includes all
+the information that should be chosen only one, before starting to
+work on an event.</p>
+<div class="section" id="basic-parameters">
+<h2>Basic parameters<a class="headerlink" href="#basic-parameters" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="list-of-the-sections">
+<h3>List of the sections<a class="headerlink" href="#list-of-the-sections" title="Permalink to this headline">¶</a></h3>
+<p>In the file <code class="docutils literal"><span class="pre">setup.ini</span></code>, the parameters are divided in
+the following sections:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">EventDescription</span></code>: information about the event;</li>
+<li><code class="docutils literal"><span class="pre">Controls</span></code>: choice of the general mode of <strong>muLAn</strong>;</li>
+<li><code class="docutils literal"><span class="pre">Observatories</span></code>: data to include in the modeling, and rescaling
+factors;</li>
+<li><code class="docutils literal"><span class="pre">Plotting</span></code>: plotting mode and corresponding options;</li>
+<li><code class="docutils literal"><span class="pre">Modelling</span></code>: physical parameters related to the fit;</li>
+<li><code class="docutils literal"><span class="pre">FitSetupDMCMC</span></code>: computational parameters related to the fit.</li>
+</ul>
+</div>
+<div class="section" id="full-explained-example">
+<h3>Full Explained Example<a class="headerlink" href="#full-explained-example" title="Permalink to this headline">¶</a></h3>
+<p>In the file, a section starts with its name following the syntax:
+<code class="docutils literal"><span class="pre">[NameOfSection]</span></code>. Here below is an example of a full <code class="docutils literal"><span class="pre">setup.ini</span></code>
+file.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">EventDescription</span><span class="p">]</span>
+
+<span class="n">Name</span> <span class="p">:</span> <span class="n">OB151737</span>      <span class="c1"># name of the event</span>
+<span class="n">RA</span>   <span class="p">:</span> <span class="mi">18</span><span class="n">h08m05</span><span class="o">.</span><span class="mi">83</span><span class="n">s</span>  <span class="c1"># right ascention</span>
+<span class="n">DEC</span>  <span class="p">:</span> <span class="o">-</span><span class="mi">25</span><span class="n">d36m41</span><span class="o">.</span><span class="mi">0</span><span class="n">s</span>  <span class="c1"># declination</span>
+
+<span class="p">[</span><span class="n">Controls</span><span class="p">]</span>
+
+<span class="n">Modes</span>   <span class="p">:</span> <span class="n">Fit</span><span class="p">,</span> <span class="n">Plot</span>  <span class="c1"># fit and plot the results</span>
+<span class="n">Archive</span> <span class="p">:</span> <span class="n">run1</span>       <span class="c1"># name of the fit</span>
+
+<span class="p">[</span><span class="n">Observatories</span><span class="p">]</span>
+<span class="c1"># All dataset to be used must be included in this section.</span>
+
+<span class="c1"># The line below includes all data in the time interval [6900;7640] of the file OGLE-I.dat</span>
+<span class="n">OGLE</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">),</span> <span class="mi">6900</span><span class="o">-</span><span class="mi">7640</span>
+
+<span class="p">[</span><span class="n">Plotting</span><span class="p">]</span>
+
+<span class="n">Data</span>   <span class="p">:</span> <span class="kc">True</span>  <span class="c1"># True | False, wether or not plot data</span>
+<span class="n">Models</span> <span class="p">:</span>       <span class="c1"># list of models to plot, e.g. &quot;1, 5, 7&quot; to plot</span>
+               <span class="c1"># models 1, 5 and 7, or &quot;1-5&quot; to plot all the models</span>
+               <span class="c1"># from 1 to 5.</span>
+
+<span class="n">Type</span>    <span class="p">:</span>          <span class="n">fitmag</span><span class="p">,</span>         <span class="n">fitflux</span>  <span class="c1"># name of the plot routines</span>
+<span class="n">Options</span> <span class="p">:</span> <span class="mi">6900</span><span class="o">-</span><span class="mi">7640</span><span class="o">/</span><span class="mi">5000</span><span class="o">/</span><span class="p">,</span> <span class="mi">6900</span><span class="o">-</span><span class="mi">7640</span><span class="o">/</span><span class="mi">5000</span><span class="o">/</span>  <span class="c1"># options for the plot routines</span>
+                                            <span class="c1"># one or several plot routines can be listed</span>
+
+<span class="p">[</span><span class="n">Modelling</span><span class="p">]</span>
+
+<span class="n">Verbose</span> <span class="p">:</span> <span class="mi">5</span>           <span class="c1"># from 0 (print nothing) to 5 (print everything)</span>
+<span class="n">Method</span>  <span class="p">:</span> <span class="n">grid_dmcmc</span>  <span class="c1"># exploration method, only one option for now</span>
+
+<span class="c1"># Line below shows how several algorithms to compute the magnification can be used:</span>
+<span class="c1"># * Models_Earth means a telescope in the center of the Earth</span>
+<span class="c1"># * 0-10000/PSPL means that the method PSPL is used in [0;10000] time interval</span>
+<span class="c1"># Important: for overlaping intervals, priority is given to the right-most algorithm.</span>
+<span class="n">Models_Earth</span> <span class="p">:</span> <span class="mi">0</span><span class="o">-</span><span class="mi">10000</span><span class="o">/</span><span class="n">PSPL</span><span class="p">,</span> <span class="mi">7000</span><span class="o">-</span><span class="mi">7400</span><span class="o">/</span><span class="n">fhexaBL</span><span class="p">,</span> <span class="mi">7220</span><span class="o">-</span><span class="mi">7300</span><span class="o">/</span><span class="n">BLcontU</span>
+
+<span class="c1"># Lines below shows how the initial conditions are chosen:</span>
+<span class="c1">#    param : fit, a, b, m</span>
+<span class="c1"># means using a differential MCMC with a random initial condition</span>
+<span class="c1"># in the interval [m-a;m+a]</span>
+<span class="n">t0</span>     <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">7.2657375353e+03</span>
+<span class="n">u0</span>     <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="mf">4.0952516233e-02</span>
+<span class="n">tE</span>     <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">3e-2</span><span class="p">,</span> <span class="mf">3e-2</span><span class="p">,</span> <span class="mf">5.4396069563e+01</span>
+<span class="n">rho</span>    <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">7.3298960206e-04</span>
+<span class="n">gamma</span>  <span class="p">:</span> <span class="n">fix</span><span class="p">,</span>      <span class="p">,</span>     <span class="p">,</span> <span class="mf">0.0</span>
+<span class="n">piEN</span>   <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.0</span>
+<span class="n">piEE</span>   <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.0</span>
+<span class="n">s</span>      <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">3e-2</span><span class="p">,</span> <span class="mf">3e-2</span><span class="p">,</span> <span class="mf">2.2277240797e+00</span>
+<span class="n">q</span>      <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">7.7902505266e-02</span>
+<span class="n">alpha</span>  <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1.3903531793e+00</span>
+<span class="n">dalpha</span> <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.0</span>
+<span class="n">ds</span>     <span class="p">:</span> <span class="n">fit</span><span class="p">,</span>  <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mf">0.0</span>
+
+<span class="n">tp</span>   <span class="p">:</span> <span class="mf">7265.0</span>
+<span class="n">tb</span> <span class="p">:</span> <span class="mf">7266.0</span>
+
+<span class="n">thetaEN</span> <span class="p">:</span> <span class="n">fix</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span>  <span class="c1"># currently not used</span>
+<span class="n">thetaEE</span> <span class="p">:</span> <span class="n">fix</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.2</span>  <span class="c1"># currently not used</span>
+
+<span class="p">[</span><span class="n">FitSetupDMCMC</span><span class="p">]</span>
+
+<span class="n">Threads</span> <span class="p">:</span> <span class="mi">24</span>         <span class="c1"># any number of threads</span>
+<span class="n">Chains</span> <span class="p">:</span> <span class="mi">180</span>         <span class="c1"># number of parallel chains in MCMC</span>
+<span class="n">ChainLength</span> <span class="p">:</span> <span class="mi">10000</span>  <span class="c1"># maximum length of each chain</span>
+<span class="n">Resume</span> <span class="p">:</span> <span class="kc">False</span>       <span class="c1"># wether or not resume a run</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="advanced-parameters">
+<h2>Advanced parameters<a class="headerlink" href="#advanced-parameters" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id1">
+<h3>List of the sections<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>In the file <code class="docutils literal"><span class="pre">advancedsetup.ini</span></code>, the parameters are divided in
+the following sections:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">FullPaths</span></code>: information about the paths;</li>
+<li><code class="docutils literal"><span class="pre">RelativePaths</span></code>: paths of the inputs/outputs.</li>
+</ul>
+</div>
+<div class="section" id="id2">
+<h3>Full Explained Example<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>In the file, a section starts with its name following the syntax:
+<code class="docutils literal"><span class="pre">[NameOfSection]</span></code>. Here below is an example of a full <code class="docutils literal"><span class="pre">advancedsetup.ini</span></code>
+file.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">FullPaths</span><span class="p">]</span>
+
+<span class="n">Code</span> <span class="p">:</span> <span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">muLAn</span><span class="o">/</span>
+<span class="n">PathLocalPythonPackages</span> <span class="p">:</span>  <span class="c1"># not used any longer</span>
+
+<span class="p">[</span><span class="n">RelativePaths</span><span class="p">]</span>
+
+<span class="n">Data</span> <span class="p">:</span> <span class="n">Data</span><span class="o">/</span>
+<span class="n">Plots</span> <span class="p">:</span> <span class="n">Plots</span><span class="o">/</span>
+<span class="n">Chains</span> <span class="p">:</span> <span class="n">Chains</span><span class="o">/</span>
+<span class="n">Outputs</span> <span class="p">:</span> <span class="n">Outputs</span><span class="o">/</span>
+<span class="n">Archives</span> <span class="p">:</span> <span class="n">Archives</span><span class="o">/</span>
+<span class="n">ModelsHistory</span> <span class="p">:</span> <span class="o">./</span>
+
+<span class="c1"># The next sections correspond to the advanced parameters used by</span>
+<span class="c1"># the modules computing the magnification.</span>
+
+<span class="p">[</span><span class="n">ESBLauto</span><span class="p">]</span>
+
+<span class="n">TriggerNextMethod</span> <span class="p">:</span> <span class="mf">1e-3</span>
+<span class="n">PrecisionGoalRayshooting</span> <span class="p">:</span> <span class="mf">1e-3</span>
+<span class="n">LocalMarginRayshooting</span> <span class="p">:</span> <span class="mi">3</span>
+
+<span class="p">[</span><span class="n">IRS</span><span class="p">]</span>
+
+<span class="n">PrecisionGoalRayshooting</span> <span class="p">:</span> <span class="mf">1e-3</span>
+<span class="n">LocalMarginRayshooting</span> <span class="p">:</span> <span class="mi">2</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="observatory-properties-and-data-definition">
+<h2>Observatory properties and data definition<a class="headerlink" href="#observatory-properties-and-data-definition" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id3">
+<h3>List of the sections<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>In the file <code class="docutils literal"><span class="pre">observatories.ini</span></code>, the parameters are divided in
+the following sections:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">PlotOptions</span></code>: options related to the plots;</li>
+<li><code class="docutils literal"><span class="pre">ObservatoriesDetails</span></code>: information about each <em>dataset</em>.</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3>Full Explained Example<a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<p>In the file, a section starts with its name following the syntax:
+<code class="docutils literal"><span class="pre">[NameOfSection]</span></code>. Here below is an example of a full
+<code class="docutils literal"><span class="pre">observatories.ini</span></code> file.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">PlotOptions</span><span class="p">]</span>
+
+<span class="n">PlotExcludedData</span> <span class="p">:</span> <span class="kc">False</span>  <span class="c1"># wether or not plot the excuded data</span>
+
+<span class="p">[</span><span class="n">ObservatoriesDetails</span><span class="p">]</span>
+
+<span class="c1"># The format for each dataset is:</span>
+<span class="c1">#    Name: displayed name, HTML color, filter, &quot;Magnitude&quot; | &quot;Flux&quot;, reference frame, list</span>
+<span class="c1"># The list is a sequence of rejected data (the number refers to the data ID in the data file.</span>
+<span class="n">OGLE</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">OGLE</span><span class="p">,</span> <span class="mi">000000</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">OGLE</span><span class="o">-</span><span class="n">V</span> <span class="p">:</span> <span class="n">OGLE</span><span class="p">,</span> <span class="mi">000000</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">MOA</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">MOA</span><span class="p">,</span> <span class="mi">7</span><span class="n">F0000</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Flux</span><span class="p">,</span> <span class="n">Earth</span><span class="p">,</span> <span class="mi">1572</span><span class="p">,</span> <span class="mi">1575</span><span class="p">,</span> <span class="mi">1581</span><span class="p">,</span> <span class="mi">1584</span>
+<span class="n">MOA</span><span class="o">-</span><span class="n">V</span> <span class="p">:</span> <span class="n">MOA</span><span class="p">,</span> <span class="mi">7</span><span class="n">F0000</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">KMTCTIO</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">KMT</span> <span class="n">CTIO</span> <span class="mf">1.6</span><span class="n">m</span><span class="p">,</span> <span class="mi">09364</span><span class="n">E</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">KMTCTIO</span><span class="o">-</span><span class="n">V</span> <span class="p">:</span> <span class="n">KMT</span> <span class="n">CTIO</span> <span class="mf">1.6</span><span class="n">m</span><span class="p">,</span> <span class="mi">3</span><span class="n">DAE11</span><span class="p">,</span> <span class="n">V</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">KMTSAAO</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">KMT</span> <span class="n">SAAO</span> <span class="mf">1.6</span><span class="n">m</span><span class="p">,</span> <span class="mi">8</span><span class="n">A084B</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">KMTSSO</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">KMT</span> <span class="n">SSO</span><span class="p">,</span> <span class="mi">174405</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">DanishLuckyCam</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Danish</span> <span class="mf">1.54</span><span class="n">m</span> <span class="n">LuckyCam</span> <span class="n">A</span><span class="p">,</span> <span class="mi">0000</span><span class="n">FF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">DanishLuckyCam</span><span class="o">-</span><span class="n">Z</span> <span class="p">:</span> <span class="n">Danish</span> <span class="mf">1.54</span><span class="n">m</span> <span class="n">LuckyCam</span> <span class="n">B</span><span class="p">,</span> <span class="mi">0000</span><span class="n">FF</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">DanishDFOSC</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Danish</span> <span class="mf">1.54</span><span class="n">m</span> <span class="n">DFOSC</span><span class="p">,</span> <span class="n">FF7F00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">FaulkesNorth</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Faulkes</span> <span class="n">North</span> <span class="mf">2.0</span><span class="n">m</span><span class="p">,</span> <span class="mi">00</span><span class="n">FFFF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">FaulkesSouth</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Faulkes</span> <span class="n">South</span> <span class="mf">2.0</span><span class="n">m</span><span class="p">,</span> <span class="mi">007</span><span class="n">F00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Liverpool</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Liverpool</span> <span class="mf">2.0</span><span class="n">m</span><span class="p">,</span> <span class="mi">00</span><span class="n">A0A0</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">MonetNorth</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">MONET</span> <span class="n">North</span> <span class="mf">1.2</span><span class="n">m</span><span class="p">,</span> <span class="n">C0C0C0</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">MonetSouth</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">MONET</span> <span class="n">South</span> <span class="mf">1.2</span><span class="n">m</span><span class="p">,</span> <span class="n">BF0F00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">LcogtCTIOa</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">CTIO</span> <span class="mi">1</span><span class="n">m</span> <span class="n">A</span><span class="p">,</span> <span class="n">FF00FF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">LcogtCTIOb</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">CTIO</span> <span class="mi">1</span><span class="n">m</span> <span class="n">B</span><span class="p">,</span> <span class="n">FF00FF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">LcogtCTIOc</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">CTIO</span> <span class="mi">1</span><span class="n">m</span> <span class="n">C</span><span class="p">,</span> <span class="n">FF00FF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">LcogtSAAOa</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">SAAO</span> <span class="mi">1</span><span class="n">m</span> <span class="n">A</span><span class="p">,</span> <span class="n">FFAF00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">LcogtSAAOb</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">SAAO</span> <span class="mi">1</span><span class="n">m</span> <span class="n">B</span><span class="p">,</span> <span class="n">FFAF00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">LcogtSAAOc</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">SAAO</span> <span class="mi">1</span><span class="n">m</span> <span class="n">C</span><span class="p">,</span> <span class="n">FFAF00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">LcogtSSOa</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">SSO</span> <span class="mi">1</span><span class="n">m</span> <span class="n">A</span><span class="p">,</span> <span class="mi">7</span><span class="n">F007F</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">LcogtSSOb</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">SSO</span> <span class="mi">1</span><span class="n">m</span> <span class="n">B</span><span class="p">,</span> <span class="mi">7</span><span class="n">F007F</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Utas</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">UTas</span> <span class="mf">1.0</span><span class="n">m</span><span class="p">,</span> <span class="n">C07F7F</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Perth</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Perth</span> <span class="mf">0.6</span><span class="n">m</span><span class="p">,</span> <span class="mi">00007</span><span class="n">F</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">SAAO</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">SAAO</span> <span class="mf">1.0</span><span class="n">m</span><span class="p">,</span> <span class="mi">00</span><span class="n">FF00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">CTIO13</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">CTIO</span> <span class="mf">1.3</span><span class="n">m</span><span class="p">,</span> <span class="mi">7</span><span class="n">F7F00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">CTIO10</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">CTIO</span> <span class="mf">1.0</span><span class="n">m</span><span class="p">,</span> <span class="mi">7</span><span class="n">F7F00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Hereford</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Hereford</span> <span class="n">Arizona</span> <span class="mf">0.35</span><span class="n">m</span><span class="p">,</span> <span class="mi">007070</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Lemmon</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Mt</span> <span class="n">Lemmon</span> <span class="mf">1.0</span><span class="n">m</span><span class="p">,</span> <span class="n">B0FFB0</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">MDM</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">MDM</span> <span class="mf">2.4</span><span class="n">m</span><span class="p">,</span> <span class="mi">00</span><span class="n">FFFF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Palomar</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Palomar</span> <span class="mi">60</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">FF7F00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Regent</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Regent</span> <span class="n">Lane</span><span class="p">,</span> <span class="mi">7</span><span class="n">F7FC0</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Possum</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Possum</span> <span class="mi">11</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">FFAF00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Auckland</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Auckland</span> <span class="mf">0.4</span><span class="n">m</span><span class="p">,</span> <span class="mi">007</span><span class="n">F00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Hunters</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Hunters</span> <span class="n">Hill</span> <span class="mf">0.35</span><span class="n">m</span><span class="p">,</span> <span class="n">C07F7F</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">SouthernStars</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Southern</span> <span class="n">Stars</span> <span class="mi">11</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">C0C0C0</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">FarmCove</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Farm</span> <span class="n">Cove</span> <span class="mf">0.35</span><span class="n">m</span><span class="p">,</span> <span class="mi">0000</span><span class="n">FF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Kumeu</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Kumeu</span> <span class="n">Obs</span> <span class="mf">0.35</span><span class="n">m</span><span class="p">,</span> <span class="mi">00007</span><span class="n">F</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">VintageLane</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Vintage</span> <span class="n">Lane</span> <span class="mf">0.4</span><span class="n">m</span><span class="p">,</span> <span class="mi">7</span><span class="n">F007F</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">CBAPerth</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">CBA</span> <span class="n">Perth</span> <span class="mf">0.25</span><span class="n">m</span><span class="p">,</span> <span class="n">FF00FF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">WiseE2V</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Wise</span> <span class="mf">1.0</span><span class="n">m</span> <span class="n">E2V</span><span class="p">,</span> <span class="n">BF0F00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">WiseSITe</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Wise</span> <span class="mf">1.0</span><span class="n">m</span> <span class="n">SITe</span><span class="p">,</span> <span class="n">BF0F00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Bronberg</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Bronberg</span> <span class="mf">0.35</span><span class="n">m</span><span class="p">,</span> <span class="mi">00</span><span class="n">A0A0</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Salerno</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Salerno</span> <span class="mf">0.35</span><span class="n">m</span><span class="p">,</span> <span class="mi">00</span><span class="n">FF00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Spitzer</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">Spitzer</span> <span class="mf">0.85</span><span class="n">m</span><span class="p">,</span> <span class="n">FF0000</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Spitzer</span>
+<span class="n">LcogtSBIG1m</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">SBIG</span> <span class="n">cameras</span> <span class="mi">1</span><span class="n">m</span><span class="p">,</span> <span class="n">FFAF00</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">LcogtSinistro1m</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="n">Sinistro</span> <span class="n">cameras</span> <span class="mi">1</span><span class="n">m</span><span class="p">,</span> <span class="n">FF00FF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+<span class="n">Lcogt2m</span><span class="o">-</span><span class="n">I</span> <span class="p">:</span> <span class="n">LCOGT</span> <span class="mi">2</span><span class="n">m</span><span class="p">,</span> <span class="mi">00</span><span class="n">FFFF</span><span class="p">,</span> <span class="n">I</span><span class="p">,</span> <span class="n">Magnitude</span><span class="p">,</span> <span class="n">Earth</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="plotroutines.html" class="btn btn-neutral float-right" title="Plotting tools" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorial.html" class="btn btn-neutral" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014-2017, Clément Ranc &amp; contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.8.22',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

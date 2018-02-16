@@ -1,0 +1,361 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting Started &mdash; MuLAn v0.8.22 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="MuLAn v0.8.22 documentation" href="../index.html"/>
+        <link rel="next" title="Tutorial" href="tutorial.html"/>
+        <link rel="prev" title="muLAn: gravitational MicroLensing Analysis code" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> MuLAn
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#first-example">First example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configfiles.html">Configuration files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotroutines.html">Plotting tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="statistics.html">Statistical tools</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MuLAn</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>Getting Started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/contents/introduction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline">¶</a></h2>
+<p><em>This section will be added soon.</em></p>
+</div>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>First, download the last version of <strong>muLAn</strong> from GitHub:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ git clone https://github.com/muLAn-project/muLAn.git
+</pre></div>
+</div>
+<p>Then, you can install <strong>muLAn</strong> localy as any standard python
+package by doing:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install --user muLAn/
+</pre></div>
+</div>
+<p>It is recommended to use virtual environments to run muLAn. This
+way, the code will manage automatically the proper package versions
+without changing your current python distribution. There are several
+ways to do so; we show how to do it with the widely spread
+<a class="reference external" href="https://www.anaconda.com/what-is-anaconda/">Anaconda</a> python
+distribution.</p>
+<p>Create a new <a class="reference external" href="https://www.anaconda.com/what-is-anaconda/">Anaconda</a> virtual environment called <em>mulanenv</em>, activate it, and
+install <strong>muLAn</strong>:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ conda create -n mulanenv python=2.7
+$ source activate mulanenv
+$ pip install muLAn/
+</pre></div>
+</div>
+<p>Following this procedure, the missing python packages will be installed automatically
+within the virtual environment. Once you have finished to work with <strong>muLAn</strong>,
+you can deactivate the corresponding environment:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ source deactivate mulanenv
+</pre></div>
+</div>
+</div>
+<div class="section" id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
+<p>This package depends in particular on the following packages:</p>
+<ul class="simple">
+<li><em>Cython</em></li>
+<li><a class="reference external" href="http://www.hs.uni-hamburg.de/DE/Ins/Per/Czesla/PyA/PyA/index.html">PyAstronomy</a> (version &gt;= 0.10.1)</li>
+<li><em>GetDist</em> (version &gt;= 0.2.6)</li>
+</ul>
+</div>
+<div class="section" id="first-example">
+<h2>First example<a class="headerlink" href="#first-example" title="Permalink to this headline">¶</a></h2>
+<p>The package muLAn can be run in two different ways, depending on
+user’s preference.</p>
+<ul class="simple">
+<li>It can be used as a standard python package from a python script.</li>
+<li>It can also be used through a terminal in command line.</li>
+</ul>
+<p>There is no difference between these two modes. We only provide a
+flexible ready-to-use python script to allow a command line mode.</p>
+<p>An example is provided in the GitHub directory.</p>
+<p><strong>Python style execution</strong></p>
+<p><em>This section will be added soon.</em></p>
+<p><strong>Command line style</strong></p>
+<ol class="arabic">
+<li><p class="first">Open a terminal and move to the event directory:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ cd path-to-the-event
+</pre></div>
+</div>
+</li>
+<li><p class="first">Edit the configuration files.</p>
+</li>
+<li><p class="first">Run <strong>muLAn</strong> from the terminal:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python mulan.py
+</pre></div>
+</div>
+</li>
+</ol>
+<p>It is possible to overwrite some parameters from the configuration files
+by adding one or several options in the terminal. For example, the command:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python mulan.py --stop
+</pre></div>
+</div>
+<p>will cut short the exploration of the parameters space and properly stop
+the code.</p>
+<p>Collecting the Markov chains and create a CSV file from the best fitting
+to the worse fitting model:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python mulan.py --sort
+</pre></div>
+</div>
+<p>A list of all options is printed by calling the help:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ python mulan.py -h
+</pre></div>
+</div>
+<p>Here is the corresponding output:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">python</span> <span class="n">mulan</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">a</span> <span class="n">ARCHIVE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">nchains</span> <span class="n">NCHAINS</span><span class="p">]</span>
+                       <span class="p">[</span><span class="o">--</span><span class="n">ncores</span> <span class="n">NCORES</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">PLOT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">resume</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">sn</span><span class="p">]</span>
+                       <span class="p">[</span><span class="o">--</span><span class="n">stop</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">}]</span>
+
+<span class="n">The</span> <span class="n">command</span> <span class="n">line</span> <span class="n">options</span> <span class="n">below</span> <span class="n">overwrite</span> <span class="n">the</span> <span class="n">configuration</span> <span class="n">file</span><span class="o">.</span>
+
+<span class="n">optional</span> <span class="n">arguments</span><span class="p">:</span>
+  <span class="o">-</span><span class="n">h</span><span class="p">,</span> <span class="o">--</span><span class="n">help</span>            <span class="n">show</span> <span class="n">this</span> <span class="n">help</span> <span class="n">message</span> <span class="ow">and</span> <span class="n">exit</span>
+  <span class="o">-</span><span class="n">a</span> <span class="n">ARCHIVE</span><span class="p">,</span> <span class="o">--</span><span class="n">archive</span> <span class="n">ARCHIVE</span>
+                        <span class="n">Replace</span> <span class="o">&lt;</span><span class="n">ARCHIVE</span><span class="o">&gt;</span> <span class="n">by</span> <span class="n">the</span> <span class="n">name</span> <span class="n">of</span> <span class="n">the</span> <span class="n">archive</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">f</span><span class="p">,</span> <span class="o">--</span><span class="n">fit</span>             <span class="n">Ask</span> <span class="n">muLAn</span> <span class="n">to</span> <span class="n">fit</span> <span class="n">the</span> <span class="n">data</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">nchains</span> <span class="n">NCHAINS</span>     <span class="n">Replace</span> <span class="o">&lt;</span><span class="n">NCHAINS</span><span class="o">&gt;</span> <span class="n">by</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">chains</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">ncores</span> <span class="n">NCORES</span>       <span class="n">Replace</span> <span class="o">&lt;</span><span class="n">NCORES</span><span class="o">&gt;</span> <span class="n">by</span> <span class="n">the</span> <span class="n">number</span> <span class="n">of</span> <span class="n">cores</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">o</span><span class="p">,</span> <span class="o">--</span><span class="n">optimize</span>        <span class="n">Optimize</span> <span class="n">inputs</span><span class="o">/</span><span class="n">outputs</span> <span class="n">using</span> <span class="n">pickle</span> <span class="n">package</span> <span class="n">when</span>
+                        <span class="n">possible</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">p</span> <span class="n">PLOT</span><span class="p">,</span> <span class="o">--</span><span class="n">plot</span> <span class="n">PLOT</span>  <span class="n">Ask</span> <span class="n">muLAn</span> <span class="n">to</span> <span class="n">plot</span> <span class="n">the</span> <span class="n">model</span> <span class="n">number</span> <span class="o">&lt;</span><span class="n">PLOT</span><span class="o">&gt;</span> <span class="p">(</span><span class="n">default</span><span class="p">:</span>
+                        <span class="n">best</span> <span class="n">fitting</span> <span class="n">model</span><span class="p">)</span><span class="o">.</span> <span class="n">For</span> <span class="n">several</span> <span class="n">models</span><span class="p">,</span> <span class="n">use</span> <span class="n">coma</span>
+                        <span class="n">separator</span> <span class="n">without</span> <span class="n">space</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="o">-</span><span class="n">p</span> <span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span> <span class="ow">or</span> <span class="n">a</span> <span class="n">dash</span>
+                        <span class="n">without</span> <span class="n">space</span> <span class="k">for</span> <span class="n">a</span> <span class="nb">range</span> <span class="n">of</span> <span class="n">models</span> <span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="o">-</span><span class="n">p</span> <span class="mi">1</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">resume</span>              <span class="n">Resume</span> <span class="n">an</span> <span class="n">exploration</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">s</span><span class="p">,</span> <span class="o">--</span><span class="n">sort</span>            <span class="n">Sort</span> <span class="n">the</span> <span class="n">samples</span> <span class="ow">and</span> <span class="n">create</span> <span class="n">a</span> <span class="n">table</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">sn</span><span class="p">,</span> <span class="o">--</span><span class="n">sortno</span>         <span class="n">Skip</span> <span class="n">sort</span> <span class="n">stage</span> <span class="n">when</span> <span class="n">running</span> <span class="n">muLAn</span><span class="o">.</span>
+  <span class="o">--</span><span class="n">stop</span>                <span class="n">Stop</span> <span class="n">the</span> <span class="n">exploration</span> <span class="ow">and</span> <span class="n">save</span> <span class="n">properly</span> <span class="n">the</span> <span class="n">results</span><span class="o">.</span>
+  <span class="o">-</span><span class="n">v</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">},</span> <span class="o">--</span><span class="n">verbose</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">}</span>
+                        <span class="n">Choose</span> <span class="n">a</span> <span class="n">verbose</span> <span class="n">level</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorial.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral" title="muLAn: gravitational MicroLensing Analysis code" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2014-2017, Clément Ranc &amp; contributors.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.8.22',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
