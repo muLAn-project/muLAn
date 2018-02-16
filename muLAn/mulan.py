@@ -53,8 +53,9 @@ def getpath_event():
     :return: path of event directory
     :rtype: string
     """
-    path = os.path.realpath(__file__)
-    return '{:s}/'.format('/'.join(path.split('/')[:-1]))
+    ici = os.getcwd()
+    path_event = check_slash(os.path.realpath(ici))
+    return path_event
 # --------------------------------------------------------------------
 def getint_verbose(path_event):
     fn_as = '{:s}setup.ini'.format(path_event)
