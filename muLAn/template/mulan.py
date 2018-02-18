@@ -1,25 +1,53 @@
 # -*-coding:Utf-8 -*
-# ====================================================================
-# MIT License
-# 
-# Copyright (c) 2014-2017 The muLAn project team
-# Copyright (c) 2014-2017 Clément Ranc & Arnaud Cassan
-# 
-# See the LICENCE file
-# ====================================================================
+"""muLAn (gravitational MICROlensing Analysis code) run commands"""
 
-# --------------------------------------------------------------------
-# Packages
-# --------------------------------------------------------------------
+# Copyright (c) 2014-2018 Clément Ranc & Arnaud Cassan
+# Distributed under the terms of the MIT license
+#
+# This module is part of software:
+#       muLAn: gravitational MICROlensing Analysis code
+#       https://github.com/muLAn-project/muLAn
+
 import argparse
 import numpy as np
 import muLAn.mulan as mulan
+from muLAn.utils import muLAnFig
+from muLAn.utils.muLAnCleanData import cleandata
 
 # --------------------------------------------------------------------
-# Main
+# USER: CHOOSE RUN MODE
 # --------------------------------------------------------------------
-if __name__ == '__main__':
+#   ComLine: boolean
+#       True:  Execute muLAn from command line
+#       False: Use 'setupe.ini' options and runs listed commands.
+#              This mode further allows to execute utility routines such
+#              as data cleaning of creating output pdf figures.
+ComLine = False
 
+# --------------------------------------------------------------------
+# Execute muLAn with following instructions and 'setup.ini' options
+# --------------------------------------------------------------------
+if not ComLine:
+
+    ### clean data?
+#    cleandata('Data/data.dat')
+
+    ### run muLAn using 'setup.ini' options?
+    mulan.run()
+
+    ### create a figure for publication?
+#    help(muLAnFig)
+#    fig = muLAnFig.figure()
+#    fig.plot()
+#    fig.addinset_caustics([0.2, 0.7, 0.2, 0.2])
+#    fig.addinset_lightcurve([0.2, 0.4, 0.2, 0.2])
+#    fig.save('Plots/figure.pdf')
+#    fig.show()
+
+# --------------------------------------------------------------------
+# Execute muLAn from command line
+# --------------------------------------------------------------------
+else:
     # Command line options
     text = 'The command line options below overwrite the configuration file.'
     parser = argparse.ArgumentParser(prog='python mulan.py', description=text)
