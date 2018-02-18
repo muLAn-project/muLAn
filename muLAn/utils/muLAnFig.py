@@ -72,7 +72,9 @@ class figure():
         >>> fig.show()
         
         >>> fig = muLAnFig.figure()
-        >>> fig.addinset_caustics([0.2, 0.6, 0.2, 0.4])
+        >>> fig.plot()
+        >>> fig.addinset_caustics([0.2, 0.7, 0.2, 0.2])
+        >>> fig.addinset_lightcurve([0.2, 0.4, 0.2, 0.2])
         >>> fig.show()
         
         Example in manual mode:
@@ -89,6 +91,8 @@ class figure():
         self._labelposx = labelposx
         self._labelposy = labelposy
         self._labelsize = labelsize
+        self._lccompt = 1
+        self._causcompt = 1
         try:
             print " Searching for muLAn outputs...",
             self._getconfig()
@@ -146,8 +150,6 @@ class figure():
             lctraj = self._getlctraj()
         self.data = data
         self.lctraj = lctraj
-        self._lccompt = 1
-        self._causcompt = 1
         if trange: self._RES.set_xlim([trange[0], trange[1]])
         if resrange: self._RES.set_ylim([resrange[0], resrange[1]])
         if lcrange: self._LC.set_ylim([lcrange[0], lcrange[1]])
