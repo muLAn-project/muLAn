@@ -94,7 +94,7 @@ def cleandata(datafile):
         points. Add a new point to the list by pressing 'a' or remove it by
         pressing 'r'. Print the list at any point by pressing 't'.
         """
-    print "\033[3m "+ self.plot.__doc__ + "\033[0m"
+    print "\033[3m "+ cleandata.__doc__ + "\033[0m"
     # read data file
     try:
         idx, hjd, mag, merr, fwhm, bkg = np.loadtxt(datafile, unpack=True)
