@@ -32,6 +32,9 @@ if not ComLine:
     ### clean data?
 #    cleandata('Data/data.dat')
 
+    ### sort models? (if fitting was stopped before normal end)
+#    mulan.sortmodels()
+
     ### run muLAn using 'setup.ini' options?
     mulan.run()
 
