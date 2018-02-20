@@ -74,7 +74,6 @@ def run_mulan(path_event, options):
     sequential.run_sequence(path_event, options)
 # ----------------------------------------------------------------------
 def sortmodels():
-    path_event = getpath_event()
     mulansort.McmcFiles().sort()
 # ----------------------------------------------------------------------
 def stop():
