@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""An interactive tool to select data points from muLAn input files for cleaning purpose"""
+"""muLAnCleanData: an interactive tool to select data points from muLAn input files for cleaning purpose"""
 
 # Copyright (c) 2014-2018 Clément Ranc & Arnaud Cassan
 # Distributed under the terms of the MIT license

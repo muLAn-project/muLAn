@@ -13,6 +13,7 @@ import numpy as np
 import muLAn.mulan as mulan
 from muLAn.utils import muLAnFig
 from muLAn.utils.muLAnCleanData import cleandata
+from muLAn.utils.muLAnFormatData import formatdata
 
 # --------------------------------------------------------------------
 # USER: CHOOSE RUN MODE
@@ -28,6 +29,9 @@ ComLine = False
 # Execute muLAn with following instructions and 'setup.ini' options
 # --------------------------------------------------------------------
 if not ComLine:
+
+    ### reformat files to muLAn format?
+#    formatdata('Data/indat.dat', 'Data/outdat.dat', ['hjd', 'mag', 'errmag', 'seeing', 'backg'])
 
     ### clean data?
 #    cleandata('Data/data.dat')
