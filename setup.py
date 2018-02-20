@@ -16,6 +16,7 @@ extensions = [
 setup(
       name = name,
       ext_modules = cythonize(extensions),
+      data_files=[('lib/python2.7/site-packages/muLAn/models/espl_inputs', ['muLAn/models/espl_inputs/tab_Bo.p', 'muLAn/models/espl_inputs/tab_B1.p'])]
       )
 
 pjoin = os.path.join
