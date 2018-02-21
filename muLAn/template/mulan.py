@@ -30,15 +30,15 @@ ComLine = False
 # --------------------------------------------------------------------
 if not ComLine:
 
-    ### reformat files to muLAn format?
+    ### reformat data files to use with muLAn?
 #    help(formatdata)
 #    formatdata('Data/indat.dat', 'Data/outdat.dat', ['hjd', 'mag', 'errmag', 'seeing', 'backg'])
 
-    ### clean data?
+    ### clean data sets?
 #    help(cleandata)
 #    cleandata('Data/data.dat')
 
-    ### sort models? (if fitting was stopped before normal end)
+    ### sort models? (in case fitting was stopped before normal end)
 #    mulan.sortmodels()
 
     ### run muLAn using 'setup.ini' options?
@@ -57,6 +57,7 @@ if not ComLine:
 # Execute muLAn from command line
 # --------------------------------------------------------------------
 else:
+    
     # Command line options
     text = 'The command line options below overwrite the configuration file.'
     parser = argparse.ArgumentParser(prog='python mulan.py', description=text)
