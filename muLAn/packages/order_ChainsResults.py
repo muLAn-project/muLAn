@@ -11,8 +11,11 @@ import os
 import glob
 import copy
 import pandas as pd
+import muLAn.mulan as mulan
+import muLAn.packages.general_tools as gtools
 import numpy as np
 import ConfigParser as cp
+
 # ----------------------------------------------------------------------
 #   CLASS
 # ----------------------------------------------------------------------
