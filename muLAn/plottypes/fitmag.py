@@ -878,6 +878,11 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
         if (cfgsetup.getint("Modelling", "Verbose") >= 3) & (rang_best_model == rang_2plot[idmod]):
             fn_output_terminal = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Outputs')\
                                  + "Results.txt"
+
+            path_outputs = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Outputs')
+            if not os.path.exists(path_outputs):
+                os.makedirs(path_outputs)
+
             # print fn_output_terminal
             file = open(fn_output_terminal, 'w')
 

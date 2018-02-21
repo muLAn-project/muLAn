@@ -74,9 +74,7 @@ def run_mulan(path_event, options):
     sequential.run_sequence(path_event, options)
 # ----------------------------------------------------------------------
 def sortmodels():
-    ici = os.getcwd()
-    path_event = check_slash(os.path.realpath(ici))
-    mulansort.order(path_event)
+    mulansort.McmcFiles().sort()
 # ----------------------------------------------------------------------
 def stop():
     # Safe Emergency Stop
