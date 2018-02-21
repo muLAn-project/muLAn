@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""muLAnFig: a tool to create a figure from muLAn outputs"""
+"""Create a figure from muLAn outputs of publication quality"""
 
 # Copyright (c) 2014-2018 Clément Ranc & Arnaud Cassan
 # Distributed under the terms of the MIT license

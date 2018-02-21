@@ -63,7 +63,7 @@ def formatdata(infilename, outfilename, cols):
     # limit number of columns to read
     usecols = range(len(cols))
     # reading input data file
-    print " Reading input data file:\033[3m", infilename, "\033[0m"
+    print "\033[35m Reformating input data file:\033[0m\033[3m", infilename, "\033[0m"
     dtype = {'names': tuple(cols), 'formats': tuple(['S50' for c in cols])}
     data = np.loadtxt(infilename, dtype=dtype, usecols=usecols, unpack=False)
     # re-order columns
@@ -85,7 +85,7 @@ def formatdata(infilename, outfilename, cols):
         else:
             newfile = newfile + ' 0\n'
     # create output data file in muLAn format
-    print " Creating output data file in muAn format:\033[3m", outfilename, "\033[0m"
+    print "\033[32m Creating output data file in muAn format:\033[0m\033[3m", outfilename, "\033[0m"
     outfile = open(outfilename, 'w')
     outfile.write(newfile)
     outfile.close()

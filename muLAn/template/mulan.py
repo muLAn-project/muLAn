@@ -31,9 +31,11 @@ ComLine = False
 if not ComLine:
 
     ### reformat files to muLAn format?
+#    help(formatdata)
 #    formatdata('Data/indat.dat', 'Data/outdat.dat', ['hjd', 'mag', 'errmag', 'seeing', 'backg'])
 
     ### clean data?
+#    help(cleandata)
 #    cleandata('Data/data.dat')
 
     ### sort models? (if fitting was stopped before normal end)
