@@ -909,8 +909,7 @@ def run_sequence(path_event, options):
         if not options['sortno']:
             text = "Post-process the output files..."
             communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
-            test = mulansort.McmcFiles().sort(cfgsetup=cfgsetup)
-            
+            mulansort.McmcFiles().sort(cfgsetup=cfgsetup)
 
     # ----------------------------------------------------------------------
     #   Plots
