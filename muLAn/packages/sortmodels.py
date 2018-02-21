@@ -1,20 +1,17 @@
 # -*-coding:Utf-8 -*
-# ----------------------------------------------------------------------
-# ----------------------------------------------------------------------
-#   External libraries
-# ----------------------------------------------------------------------
-import sys
-import os
-# ----------------------------------------------------------------------
-#   Packages
-# ----------------------------------------------------------------------
-import glob
+# ====================================================================
+# Packages
+# ====================================================================
+import ConfigParser as cp
 import copy
-import pandas as pd
+import glob
 import muLAn
 import muLAn.packages.general_tools as gtools
 import numpy as np
-import ConfigParser as cp
+import os
+import pandas as pd
+import sys
+
 # ----------------------------------------------------------------------
 #   CLASS
 # ----------------------------------------------------------------------
@@ -54,6 +51,7 @@ class McmcFiles:
         if path==None:
             self._getconfig()
 
+    # --------------------------------------------------------------------
     def _getconfig(self):
         """Load the configuration files *.ini."""
 
@@ -94,9 +92,16 @@ class McmcFiles:
 
         self._cfgsetup = cfgsetup
 
-    def sort(self):
+    # --------------------------------------------------------------------
+    def sort(self, cfgsetup=None):
+        """Load the MCMC output files and sort the models.
 
-        cfgsetup = self._cfgsetup
+        :param ConfigParser cfgsetup: Content of setup.ini and advancedsetup.ini files.
+        """
+
+        if cfgsetup==None:
+            cfgsetup = self._cfgsetup
+
         path = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Chains')
 
         fnames_chains = glob.glob(path + cfgsetup.get('Controls', 'Archive') + "*-c*.txt")
@@ -341,10 +346,7 @@ class McmcFiles:
                 file.write(format)
             file.close()
 
-
-
-
-
+            self.mcmc_samples = results_sorted
 
 # ----------------------------------------------------------------------
 #   Functions
