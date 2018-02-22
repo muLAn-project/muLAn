@@ -61,26 +61,29 @@ def run_sequence(path_event, options):
     if options['plot'] != None:
         cfgsetup.set('Controls', 'Modes', 'Plot')
         cfgsetup.set('Plotting', 'Models', options['plot'])
-    if options['fit']:
+    if options['fit'] != None:
         cfgsetup.set('Controls', 'Modes', 'Fit')
     cond = (options['fit']) and (options['plot'] != None)
     if cond:
         cfgsetup.set('Controls', 'Modes', 'Fit, Plot')
         cfgsetup.set('Plotting', 'Models', options['plot'])
     if options['archive'] != None:
+        print options['archive']
         cfgsetup.set('Controls', 'Archive', options['archive'])
-    if options['ncores'] > 0:
-        cfgsetup.set('FitSetupDMCMC', 'Threads', '{:d}'.format(options['ncores']))
-    if options['nchains'] > 0:
-        cfgsetup.set('FitSetupDMCMC', 'Chains', '{:d}'.format(options['nchains']))
-    if options['resume']:
-        cfgsetup.set('FitSetupDMCMC', 'Resume', 'True')
-    if options['verbose'] > -1:
-        cfgsetup.set('Modelling', 'Verbose', '{:d}'.format(options['verbose']))
-    if options['optimize']:
-        cfgsetup.set('Controls', 'Optimize', 'True')
-    else:
-        cfgsetup.set('Controls', 'Optimize', 'False')
+    if options['ncores'] != None:
+        if options['ncores'] > 0:
+            cfgsetup.set('FitSetupDMCMC', 'Threads', '{:d}'.format(options['ncores']))
+    if options['nchains'] != None:
+        if options['nchains'] > 0:
+            cfgsetup.set('FitSetupDMCMC', 'Chains', '{:d}'.format(options['nchains']))
+    if options['resume'] != None:
+        if options['resume']: cfgsetup.set('FitSetupDMCMC', 'Resume', 'True')
+    if options['verbose'] != None:
+        if options['verbose'] > -1:
+            cfgsetup.set('Modelling', 'Verbose', '{:d}'.format(options['verbose']))
+    if options['optimize'] != None:
+        if options['optimize']: cfgsetup.set('Controls', 'Optimize', 'True')
+        else: cfgsetup.set('Controls', 'Optimize', 'False')
 
     # Controls
     modes = [a.lower() for a in unpack_options(cfgsetup, 'Controls', 'Modes')]
