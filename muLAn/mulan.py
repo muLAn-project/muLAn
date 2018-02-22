@@ -69,6 +69,11 @@ def print_welcome(verbose=1):
 
         welcome = '\033[1m\033[34m{:s}\033[0m{:s}{:s}\033[0m'.format(logo, legend, version)
         print welcome
+# ----------------------------------------------------------------------
+def set_default_options(options):
+    options.update({
+        'sortno': False
+        })
 # --------------------------------------------------------------------
 def run_mulan(path_event, options):
     sequential.run_sequence(path_event, options)
@@ -100,6 +105,8 @@ def run(options=None):
     # Use a default options dictionary if not provided by user
     if options == None:
         options = dict()
+        set_default_options(options)
+        print options
 
     # Run the modeling code
     run_mulan(path_event, options)
