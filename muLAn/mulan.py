@@ -74,6 +74,13 @@ def set_default_options(options):
     options.update({
         'sortno': False
         })
+# ----------------------------------------------------------------------
+def check_options(options):
+    if not 'sortno' in options:
+        options.update({
+            'sortno': False
+        })
+
 # --------------------------------------------------------------------
 def run_mulan(path_event, options):
     sequential.run_sequence(path_event, options)
@@ -103,10 +110,8 @@ def run(options=None):
     print_welcome(verbose=verbose)
 
     # Use a default options dictionary if not provided by user
-    if options == None:
-        options = dict()
-        set_default_options(options)
-        print options
+    if options == None: options = dict()
+    check_options(options)
 
     # Run the modeling code
     run_mulan(path_event, options)
