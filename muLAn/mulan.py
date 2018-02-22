@@ -70,11 +70,6 @@ def print_welcome(verbose=1):
         welcome = '\033[1m\033[34m{:s}\033[0m{:s}{:s}\033[0m'.format(logo, legend, version)
         print welcome
 # ----------------------------------------------------------------------
-def set_default_options(options):
-    options.update({
-        'sortno': False
-        })
-# ----------------------------------------------------------------------
 def check_options(options):
     if not 'sortno' in options:
         options.update({'sortno': False})
