@@ -89,13 +89,17 @@ def stop():
     if os.path.exists(fn_lock):
         os.remove(fn_lock)
 # ----------------------------------------------------------------------
-def run(options=dict()):
+def run(options=None):
 
     # Welcoming message depending on verbose option 
     ici = os.getcwd()
     path_event = check_slash(os.path.realpath(ici))
     verbose = getint_verbose(path_event)
     print_welcome(verbose=verbose)
+
+    # Use a default options dictionary if not provided by user
+    if options == None:
+        options = dict()
 
     # Run the modeling code
     run_mulan(path_event, options)
