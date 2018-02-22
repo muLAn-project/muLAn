@@ -179,9 +179,9 @@ class figure():
         for datai, color, obsname in self.data:
             print "   Reading data file:\033[3m", datai, "\033[0m"
             ID, hjd, mag, errmag, resmag, amp, erramp, resamp, bkg, seeing, xs, ys, chi, toto, tata = np.loadtxt(datai, unpack=True)
-            self._LC.errorbar(hjd, mag, errmag, fmt='o', color=color, markersize=4, alpha=0.3, linewidth=1)
+            self._LC.errorbar(hjd, mag, errmag, fmt='o', color=color, markersize=4, alpha=0.4, linewidth=1)
             self._RES.plot((np.min(hjd), np.max(hjd)), (0., 0.), 'k-', linewidth=0.4)
-            self._RES.errorbar(hjd, resmag, errmag, fmt='o', color=color, markersize=4, alpha=0.3, linewidth=1)
+            self._RES.errorbar(hjd, resmag, errmag, fmt='o', color=color, markersize=4, alpha=0.4, linewidth=1)
             # display observatory names
             self._LC.annotate(r'$\bullet$ ' + obsname, xy=(x, y.next()), xycoords='figure fraction', color=color, fontsize=self._labelsize)
 
@@ -213,7 +213,7 @@ class figure():
         for datai, color, obsname in self.data:
             print "   Reading data file:\033[3m", datai, "\033[0m"
             ID, hjd, mag, errmag, resmag, amp, erramp, resamp, bkg, seeing, xs, ys, chi, toto, tata = np.loadtxt(datai, unpack=True)
-            ZLC.errorbar(hjd, mag, errmag, fmt='o', color=color, markersize=4, alpha=0.3, linewidth=1)
+            ZLC.errorbar(hjd, mag, errmag, fmt='o', color=color, markersize=4, alpha=0.4, linewidth=1)
         # plot theoretical light curves
         for lctraji, color in self.lctraj:
             print "   Reading theoretical light curve file:\033[3m", lctraji, "\033[0m"
