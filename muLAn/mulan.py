@@ -77,10 +77,11 @@ def set_default_options(options):
 # ----------------------------------------------------------------------
 def check_options(options):
     if not 'sortno' in options:
-        options.update({
-            'sortno': False
-        })
-
+        options.update({'sortno': False})
+    if not 'plot' in options:
+        options.update({'plot': None})
+    if not 'fit' in options:
+        options.update({'fit': False})
 # --------------------------------------------------------------------
 def run_mulan(path_event, options):
     sequential.run_sequence(path_event, options)
