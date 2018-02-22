@@ -58,31 +58,29 @@ def run_sequence(path_event, options):
         cfgsetup.set('RelativePaths', 'ModelsHistory', cfgsetup.get('RelativePaths', 'ModelsHistory') + '/')
 
     # Take into account manual options
-    if 'plot' in options:
-        if options['plot'] != 'None':
-            cfgsetup.set('Controls', 'Modes', 'Plot')
-            cfgsetup.set('Plotting', 'Models', options['plot'])
-    if 'fit' in options:
-        if options['fit']:
-            cfgsetup.set('Controls', 'Modes', 'Fit')
-        cond = (options['fit']) and (options['plot'] != 'None')
-        if cond:
-            cfgsetup.set('Controls', 'Modes', 'Fit, Plot')
-            cfgsetup.set('Plotting', 'Models', options['plot'])
-        if options['archive'] != 'None':
-            cfgsetup.set('Controls', 'Archive', options['archive'])
-        if options['ncores'] > 0:
-            cfgsetup.set('FitSetupDMCMC', 'Threads', '{:d}'.format(options['ncores']))
-        if options['nchains'] > 0:
-            cfgsetup.set('FitSetupDMCMC', 'Chains', '{:d}'.format(options['nchains']))
-        if options['resume']:
-            cfgsetup.set('FitSetupDMCMC', 'Resume', 'True')
-        if options['verbose'] > -1:
-            cfgsetup.set('Modelling', 'Verbose', '{:d}'.format(options['verbose']))
-        if options['optimize']:
-            cfgsetup.set('Controls', 'Optimize', 'True')
-        else:
-            cfgsetup.set('Controls', 'Optimize', 'False')
+    if options['plot'] != None:
+        cfgsetup.set('Controls', 'Modes', 'Plot')
+        cfgsetup.set('Plotting', 'Models', options['plot'])
+    if options['fit']:
+        cfgsetup.set('Controls', 'Modes', 'Fit')
+    cond = (options['fit']) and (options['plot'] != None)
+    if cond:
+        cfgsetup.set('Controls', 'Modes', 'Fit, Plot')
+        cfgsetup.set('Plotting', 'Models', options['plot'])
+    if options['archive'] != None:
+        cfgsetup.set('Controls', 'Archive', options['archive'])
+    if options['ncores'] > 0:
+        cfgsetup.set('FitSetupDMCMC', 'Threads', '{:d}'.format(options['ncores']))
+    if options['nchains'] > 0:
+        cfgsetup.set('FitSetupDMCMC', 'Chains', '{:d}'.format(options['nchains']))
+    if options['resume']:
+        cfgsetup.set('FitSetupDMCMC', 'Resume', 'True')
+    if options['verbose'] > -1:
+        cfgsetup.set('Modelling', 'Verbose', '{:d}'.format(options['verbose']))
+    if options['optimize']:
+        cfgsetup.set('Controls', 'Optimize', 'True')
+    else:
+        cfgsetup.set('Controls', 'Optimize', 'False')
 
     # Controls
     modes = [a.lower() for a in unpack_options(cfgsetup, 'Controls', 'Modes')]
