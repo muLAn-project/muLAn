@@ -64,9 +64,9 @@ def getint_verbose(path_event):
 # --------------------------------------------------------------------
 def print_welcome(verbose=1):
         logo = getlogo()
-        legend = '\033[90mMicro-Lensing Analysis software\033[0m\n'
-        version = '\033[90mVersion {:s}'.format(muLAn.__version__)
-
+        # legend = '\033[90mMicro-Lensing Analysis software\033[0m\n'
+        legend = '\033[36mgravitational MICROlensing Analysis code\033[0m\n'
+        version = '\033[36mVersion {:s}'.format(muLAn.__version__)
         welcome = '\033[1m\033[34m{:s}\033[0m{:s}{:s}\033[0m'.format(logo, legend, version)
         print welcome
 # ----------------------------------------------------------------------
