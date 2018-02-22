@@ -82,6 +82,18 @@ def check_options(options):
         options.update({'plot': None})
     if not 'fit' in options:
         options.update({'fit': False})
+    if not 'archive' in options:
+        options.update({'archive': None})
+    if not 'ncores' in options:
+        options.update({'ncores': -1})
+    if not 'nchains' in options:
+        options.update({'nchains': -1})
+    if not 'resume' in options:
+        options.update({'resume': False})
+    if not 'verbose' in options:
+        options.update({'verbose': -1})
+    if not 'optimize' in options:
+        options.update({'optimize': False})
 # --------------------------------------------------------------------
 def run_mulan(path_event, options):
     sequential.run_sequence(path_event, options)
