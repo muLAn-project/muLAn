@@ -61,14 +61,13 @@ def run_sequence(path_event, options):
     if options['plot'] != None:
         cfgsetup.set('Controls', 'Modes', 'Plot')
         cfgsetup.set('Plotting', 'Models', options['plot'])
-    if options['fit'] != None:
+    if options['fit']:
         cfgsetup.set('Controls', 'Modes', 'Fit')
     cond = (options['fit']) and (options['plot'] != None)
     if cond:
         cfgsetup.set('Controls', 'Modes', 'Fit, Plot')
         cfgsetup.set('Plotting', 'Models', options['plot'])
     if options['archive'] != None:
-        print options['archive']
         cfgsetup.set('Controls', 'Archive', options['archive'])
     if options['ncores'] != None:
         if options['ncores'] > 0:
