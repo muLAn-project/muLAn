@@ -440,7 +440,8 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
             #print observatories[j]
 
             # Calculation of fs and fb
-            fs, fb = fsfb(time_serie, cond2, blending=True)
+            # fs, fb = fsfb(time_serie, cond2, blending=True)
+            fs, fb = fsfbwsig(time_serie, cond2, blending=True)
 
             # Relevance of blending for OGLE
             # if (observatories[j]=="ogle-i"):
@@ -477,6 +478,31 @@ def fsfb(time_serie, cond, blending=True):
         fb = 0.0
 
     return fs, fb
+
+# ----------------------------------------------------------------------
+def fsfbwsig(time_serie, cond, blending=True):
+
+    x = np.atleast_2d(time_serie['amp'][cond]).T
+    y = np.atleast_2d(time_serie['flux'][cond]).T
+    sig = np.atleast_2d(time_serie['err_flux'][cond]).T
+
+    x2 = np.power(x, 2)
+    sig2 = np.power(sig, 2)
+    s = np.sum(1.0 / sig2)
+    sx = np.sum(x / sig2)
+    sy = np.sum(y / sig2)
+    sxx = np.sum(x2 / sig2)
+    sxy = np.sum(x * y / sig2)
+    den = s * sxx - sx**2
+
+    if blending:
+        fs = (s * sxy - sx * sy) / den
+        fb = (sxx * sy - sx * sxy) / den
+    else:
+        fb = 0.0
+
+    return fs, fb
+
 # ----------------------------------------------------------------------
 def ini_chains_gene(fitted_param, nwalkers, params):
 
@@ -1240,7 +1266,8 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
                             del amp
 
                     # Calculation of fs and fb
-                    fs, fb = fsfb(time_serie, cond2, blending=True)
+                    # fs, fb = fsfb(time_serie, cond2, blending=True)
+                    fs, fb = fsfbwsig(time_serie, cond2, blending=True)
 
                     time_serie['fs'][cond2] = fs
                     time_serie['fb'][cond2] = fb
