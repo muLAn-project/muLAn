@@ -15,7 +15,7 @@ Getting Started
 
 This package depends in particular on the following packages:
 
-- `Cython`
+- `Cython` (version 27.1 works, troubles with version 28)
 - `pyAstronomy` (version >= 0.10.1,  <a href="http://www.hs.uni-hamburg.de/DE/Ins/Per/Czesla/PyA/PyA/index.html">link</a>)
 - `GetDist` (version >= 0.2.6)
 
