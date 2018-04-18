@@ -505,8 +505,6 @@ def fsfbwsig(time_serie, cond, blending=True):
     den = s * sxx - sx**2
 
     if blending:
-        print (s * sxy - sx * sy) / den
-        print (sxx * sy - sx * sxy) / den
         if den > 1e-20:
             fs = (s * sxy - sx * sy) / den
             fb = (sxx * sy - sx * sxy) / den
