@@ -1,4 +1,5 @@
 *.pyc
+*.titi
 *.so
 *cpm*
 *.swp
