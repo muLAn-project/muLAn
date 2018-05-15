@@ -14,6 +14,7 @@ models/inverse_rayshooting/Makefile
 models/inverse_rayshooting/invraylocal.py
 models/inverse_rayshooting/psbl.py
 models/ESBLloop.py
+models/vbb/vbb.cpp
 
 .idea/
 default/

@@ -452,15 +452,24 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
             time_serie['fs'][cond2] = fs
             time_serie['fb'][cond2] = fb
 
+            if (np.abs(fs) == np.inf) | (np.abs(fb) == np.inf):
+                lnprior_curr = - np.inf
+
         # print "Amplification, tu as..."
         # Calculation of chi2
         # print param_model, time_serie['amp']
 
-        time_serie['flux_model'] = time_serie['amp']*time_serie['fs'] + time_serie['fb']
-        time_serie['chi2pp'] = np.power((time_serie['flux']-time_serie['flux_model'])/time_serie['err_flux'], 2)
-        chi2 = np.sum(time_serie['chi2pp'])
+        if lnprior_curr != - np.inf:
+            time_serie['flux_model'] = time_serie['amp']*time_serie['fs'] + time_serie['fb']
+            time_serie['chi2pp'] = np.power((time_serie['flux']-time_serie['flux_model'])/time_serie['err_flux'], 2)
+            chi2 = np.sum(time_serie['chi2pp'])
+            result = - chi2/2.0 + lnprior_curr
+        else:
+            result = lnprior_curr
+    else:
+        result = lnprior_curr
 
-    return - chi2/2.0 + lnprior_curr
+    return result
 
 # ----------------------------------------------------------------------
 def fsfb(time_serie, cond, blending=True):
@@ -496,10 +505,14 @@ def fsfbwsig(time_serie, cond, blending=True):
     den = s * sxx - sx**2
 
     if blending:
-        fs = (s * sxy - sx * sy) / den
-        fb = (sxx * sy - sx * sxy) / den
+        if den > 1e-20:
+            fs = (s * sxy - sx * sy) / den
+            fb = (sxx * sy - sx * sxy) / den
+        else:
+            fs = np.inf
+            fb = np.inf
     else:
-        fb = 0.0
+        fs, fb = fsfb(time_serie, cond, blending=False)
 
     return fs, fb
 
