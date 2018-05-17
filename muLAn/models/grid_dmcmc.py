@@ -265,21 +265,21 @@ def test_blending(mb_lim, g_lim, fs, fb, time_serie, cond2):
 def lnprior(param_model):
     p = 0
     if param_model['t0'] < 0:
-        p = -np.inf
+        p = 1e12
     if param_model['rho'] < 0:
-        p = -np.inf
+        p = 1e12
     if param_model['rho'] > 1.0:
-        p = -np.inf
+        p = 1e12
     if param_model['tE'] < 1e-10:
-        p = -np.inf
+        p = 1e12
     if param_model['q'] < 1e-9:
-        p = -np.inf
+        p = 1e12
     if param_model['q'] > 1.0:
-        p = -np.inf
+        p = 1e12
     if param_model['s'] < 1e-10:
-        p = -np.inf
+        p = 1e12
     if param_model['s'] > 10:
-        p = -np.inf
+        p = 1e12
     return p
 # ----------------------------------------------------------------------
 def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names,
@@ -368,7 +368,7 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
     # Evaluate priors
     chi2 = 0
     lnprior_curr = lnprior(param_model)
-    if lnprior_curr != -np.inf:
+    if lnprior_curr < 1e11:
         # print "Amplification, tu veux ?"
         # Calculation of the amplification
         observatories = np.unique(time_serie['obs'])
@@ -459,15 +459,18 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
         # Calculation of chi2
         # print param_model, time_serie['amp']
 
-        if lnprior_curr != - np.inf:
+        if lnprior_curr < 1e11:
             time_serie['flux_model'] = time_serie['amp']*time_serie['fs'] + time_serie['fb']
             time_serie['chi2pp'] = np.power((time_serie['flux']-time_serie['flux_model'])/time_serie['err_flux'], 2)
             chi2 = np.sum(time_serie['chi2pp'])
-            result = - chi2/2.0 + lnprior_curr
+            result = - chi2/2.0 - lnprior_curr
         else:
-            result = 1e12
+            result = -1e12
     else:
-        result = 1e12
+        result = -1e12
+
+    if (chi2 < 1e-3) | (chi2 == np.inf):
+        result = -1e12
 
     return result
 
