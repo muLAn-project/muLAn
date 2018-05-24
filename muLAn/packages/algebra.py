@@ -60,7 +60,7 @@ def fsfbwsig(time_serie, cond, blending=True):
             den = s * sxx - sx**2
             fs = (s * sxy - sx * sy) / den
             fb = (sxx * sy - sx * sxy) / den
-        except ZeroDivisionError:
+        except RuntimeWarning, ZeroDivisionError:
             fs = np.inf
             fb = np.inf
     else:
