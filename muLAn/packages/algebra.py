@@ -66,6 +66,10 @@ def fsfbwsig(time_serie, cond, blending=True):
     else:
         fs, fb = fsfb(time_serie, cond, blending=False)
 
+    if (np.abs(fs) == np.inf) | (np.abs(fb) == np.inf):
+        fs, fb = fsfb(time_serie, cond, blending=False)
+        print fs, fb
+
     return fs, fb
 
 
