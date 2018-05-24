@@ -10,10 +10,14 @@ import muLAn.packages.general_tools as gtools
 import numpy as np
 import os
 import pandas as pd
+from sklearn import linear_model
 import sys
 
 # Functions
 # =========
+def test():
+    print "Je te vois"
+
 def fsfbwsig(time_serie, cond, blending=True):
     """
     Compute the source and blend flux using a linear fit with errors
@@ -63,6 +67,24 @@ def fsfbwsig(time_serie, cond, blending=True):
         fs, fb = fsfb(time_serie, cond, blending=False)
 
     return fs, fb
+
+
+def fsfb(time_serie, cond, blending=True):
+
+    x = np.atleast_2d(time_serie['amp'][cond]).T
+    y = np.atleast_2d(time_serie['flux'][cond]).T
+
+    regr = linear_model.LinearRegression(fit_intercept=blending)
+    regr.fit(x, y)
+    fs = regr.coef_[0][0]
+    # fb = regr.intercept_[0]
+    if blending:
+        fb = regr.intercept_[0]
+    else:
+        fb = 0.0
+
+    return fs, fb
+
 
 # Direct execution
 # ================
