@@ -831,7 +831,11 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
             # time_serie['chi2pp'] = np.power((time_serie['flux'] - time_serie[
             #     'flux_model']) / time_serie['err_flux'], 2)
-            time_serie['residus'] = time_serie['magnitude'] - (18.0 - 2.5 * np.log10(time_serie['flux_model']))
+            try:
+                time_serie['residus'] = time_serie['magnitude'] - (18.0 - 2.5 * np.log10(time_serie['flux_model']))
+            except RuntimeWarning:
+                time_serie['residus'] = 999.0 * np.ones(len(time_serie['magnitude']))
+
             time_serie['residus_flux'] = time_serie['flux'] - time_serie['flux_model']
             time_serie['mgf_data'] = (time_serie['flux'] - time_serie['fb']) / time_serie['fs']
             time_serie['mgf_data_err'] = time_serie['err_flux'] / time_serie['fs']
@@ -918,7 +922,10 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         | (i == 0):
 
                     Y = 18.0 - 2.5 * np.log10(time_serie['fb'][cond][0] + time_serie['fs'][cond][0])
-                    Yb = 18.0 - 2.5 * np.log10(time_serie['fb'][cond][0])
+                    if time_serie['fb'][cond][0] > 0:
+                        Yb = 18.0 - 2.5 * np.log10(time_serie['fb'][cond][0])
+                    else:
+                        Yb = -1
                     Ys = 18.0 - 2.5 * np.log10(time_serie['fs'][cond][0])
                     text3 = "Reference for magnitudes:\n  {:25s} {:8.3f}   {:8.3f}   {:8.3f}\n".format(
                             observatories_com[i].upper(), Y, Yb, Ys)
