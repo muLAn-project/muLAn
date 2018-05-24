@@ -381,9 +381,6 @@ def boussole(EarthSunFile=False, EarthSatelliteFile=False, cfg=False, \
 def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
          obs_properties=False, options=False, interpol_method=False):
 
-
-    algebra.test()
-
     #    Initialisation of parameters
     # ------------------------------------------------------------------
     params = {
