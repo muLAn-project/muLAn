@@ -64,7 +64,7 @@ install_requires = setuptools_args['install_requires'] = [
                                                           'astropy>=1.3.2',
                                                           'bokeh>=0.12.4',
                                                           'configparser>=3.5.0',
-                                                          'cython==0.27.3'
+                                                          'cython==0.27.3',
                                                           'emcee>=2.2.1',
                                                           'GetDist==0.2.6',
                                                           'matplotlib>=2.1.2',
