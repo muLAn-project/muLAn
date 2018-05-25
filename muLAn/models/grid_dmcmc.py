@@ -275,8 +275,8 @@ def lnprior(param_model):
         p = 1e12
     if param_model['q'] < 1e-9:
         p = 1e12
-    if param_model['q'] > 1.0:
-        p = 1e12
+#    if param_model['q'] > 1.0:
+#        p = 1e12
     if param_model['s'] < 1e-10:
         p = 1e12
     if param_model['s'] > 10:
@@ -351,7 +351,13 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
         id=id+1
     cond = (key_list=='q')
     if cond.sum()==1:
-        param_model.update({'q' : theta[id]})
+        if theta[id] < 1.0:
+            param_model.update({'q' : theta[id]})
+        else:
+            try:
+                param_model.update({'q' : 1.0 / theta[id]})
+            except:
+                param_model.update({'q' : theta[id]})
         id=id+1
     cond = (key_list=='alpha')
     if cond.sum()==1:
