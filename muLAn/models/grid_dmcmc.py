@@ -41,6 +41,7 @@ from scipy import stats
 from scipy import interpolate
 from sklearn import linear_model
 import muLAn.models as mulanmodels
+import muLAn.packages.algebra as algebra
 # ----------------------------------------------------------------------
 #   CLASS
 # ----------------------------------------------------------------------
@@ -265,21 +266,21 @@ def test_blending(mb_lim, g_lim, fs, fb, time_serie, cond2):
 def lnprior(param_model):
     p = 0
     if param_model['t0'] < 0:
-        p = -np.inf
+        p = 1e12
     if param_model['rho'] < 0:
-        p = -np.inf
+        p = 1e12
     if param_model['rho'] > 1.0:
-        p = -np.inf
+        p = 1e12
     if param_model['tE'] < 1e-10:
-        p = -np.inf
+        p = 1e12
     if param_model['q'] < 1e-9:
-        p = -np.inf
+        p = 1e12
     if param_model['q'] > 1.0:
-        p = -np.inf
+        p = 1e12
     if param_model['s'] < 1e-10:
-        p = -np.inf
+        p = 1e12
     if param_model['s'] > 10:
-        p = -np.inf
+        p = 1e12
     return p
 # ----------------------------------------------------------------------
 def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names,
@@ -368,7 +369,7 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
     # Evaluate priors
     chi2 = 0
     lnprior_curr = lnprior(param_model)
-    if lnprior_curr != -np.inf:
+    if lnprior_curr < 1e11:
         # print "Amplification, tu veux ?"
         # Calculation of the amplification
         observatories = np.unique(time_serie['obs'])
@@ -440,8 +441,8 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
             #print observatories[j]
 
             # Calculation of fs and fb
-            # fs, fb = fsfb(time_serie, cond2, blending=True)
-            fs, fb = fsfbwsig(time_serie, cond2, blending=True)
+            # fs, fb = algebra.fsfb(time_serie, cond2, blending=True)
+            fs, fb = algebra.fsfbwsig(time_serie, cond2, blending=True)
 
             # Relevance of blending for OGLE
             # if (observatories[j]=="ogle-i"):
@@ -459,62 +460,26 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
         # Calculation of chi2
         # print param_model, time_serie['amp']
 
-        if lnprior_curr != - np.inf:
+        if lnprior_curr < 1e11:
             time_serie['flux_model'] = time_serie['amp']*time_serie['fs'] + time_serie['fb']
             time_serie['chi2pp'] = np.power((time_serie['flux']-time_serie['flux_model'])/time_serie['err_flux'], 2)
             chi2 = np.sum(time_serie['chi2pp'])
-            result = - chi2/2.0 + lnprior_curr
+            result = - chi2/2.0 - lnprior_curr
         else:
-            result = lnprior_curr
+            time_serie['flux_model'] = np.ones(len(time_serie['amp']))
+            time_serie['chi2pp'] = np.ones(len(time_serie['amp']))*1e12 
+            result = -1e12
     else:
-        result = lnprior_curr
+        time_serie['flux_model'] = np.ones(len(time_serie['amp']))
+        time_serie['chi2pp'] = np.ones(len(time_serie['amp']))*1e12 
+        result = -1e12
+
+    if (chi2 < 1e-3) | (chi2 == np.inf):
+        time_serie['flux_model'] = np.ones(len(time_serie['amp']))
+        time_serie['chi2pp'] = np.ones(len(time_serie['amp']))*1e12 
+        result = -1e12
 
     return result
-
-# ----------------------------------------------------------------------
-def fsfb(time_serie, cond, blending=True):
-
-    x = np.atleast_2d(time_serie['amp'][cond]).T
-    y = np.atleast_2d(time_serie['flux'][cond]).T
-
-    regr = linear_model.LinearRegression(fit_intercept=blending)
-    regr.fit(x, y)
-    fs = regr.coef_[0][0]
-    # fb = regr.intercept_[0]
-    if blending:
-        fb = regr.intercept_[0]
-    else:
-        fb = 0.0
-
-    return fs, fb
-
-# ----------------------------------------------------------------------
-def fsfbwsig(time_serie, cond, blending=True):
-
-    x = np.atleast_2d(time_serie['amp'][cond]).T
-    y = np.atleast_2d(time_serie['flux'][cond]).T
-    sig = np.atleast_2d(time_serie['err_flux'][cond]).T
-
-    x2 = np.power(x, 2)
-    sig2 = np.power(sig, 2)
-    s = np.sum(1.0 / sig2)
-    sx = np.sum(x / sig2)
-    sy = np.sum(y / sig2)
-    sxx = np.sum(x2 / sig2)
-    sxy = np.sum(x * y / sig2)
-    den = s * sxx - sx**2
-
-    if blending:
-        if den > 1e-20:
-            fs = (s * sxy - sx * sy) / den
-            fb = (sxx * sy - sx * sxy) / den
-        else:
-            fs = np.inf
-            fb = np.inf
-    else:
-        fs, fb = fsfb(time_serie, cond, blending=False)
-
-    return fs, fb
 
 # ----------------------------------------------------------------------
 def ini_chains_gene(fitted_param, nwalkers, params):
@@ -1279,8 +1244,8 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
                             del amp
 
                     # Calculation of fs and fb
-                    # fs, fb = fsfb(time_serie, cond2, blending=True)
-                    fs, fb = fsfbwsig(time_serie, cond2, blending=True)
+                    # fs, fb = algebra.fsfb(time_serie, cond2, blending=True)
+                    fs, fb = algebra.fsfbwsig(time_serie, cond2, blending=True)
 
                     time_serie['fs'][cond2] = fs
                     time_serie['fb'][cond2] = fb
