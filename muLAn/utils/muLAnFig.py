@@ -9,6 +9,7 @@
 #       https://github.com/muLAn-project/muLAn
 
 import ConfigParser as cp
+from scipy.interpolate import interp1d
 import glob
 import numpy as np
 from copy import copy
@@ -222,9 +223,9 @@ class figure():
 #            hjd, amp, mag, xt, yt = np.loadtxt(lctraji, unpack=True)
             ZLC.plot(hjd, mag, color=color, linewidth=1)
 
-    def addinset_caustics(self, layout, caus=None, xrange=None, yrange=None):
+    def addinset_caustics(self, layout, caus=None, src=None, xrange=None, yrange=None):
         """Add a caustic pannel to the plot
-            
+
             Parameters
             ----------
             layout: sequence of float
@@ -234,6 +235,11 @@ class figure():
                 A n-length sequence [..., ('caus_i.dat', 'color_i'), ...], where
                 'caus_i.dat' is the ith caustic file, and 'color_i' its color (name or
                 hexadecimal code). Default is: use muLAn outputs (caus=None).
+            src: sequence of tuples, optional
+                A n-length sequence [..., (date, color), ...], where
+                `date` is the time (HJD) at which the source edge is plotted, and
+                `color` is the color of the edge of the source, that day.
+                Default is [(t0, 'black')]. Exemple: src=[(7387.0, 'green'), (7384.8, 'pink')]
             xrange: sequence of float, optional
                 A 2-length sequence [xmin, xmax], which defines
                 the horizontal range for the caustic plot.
@@ -246,6 +252,7 @@ class figure():
         print "\033[1m Creating caustics inset "+ str(self._causcompt) + "...\033[0m"
         self._causcompt += 1
         # pannel layout
+
         CAU = self.fig.add_axes(layout)
         if not (xrange and yrange): CAU.set_aspect('equal')
         if xrange: CAU.set_xlim(xrange)
@@ -256,7 +263,26 @@ class figure():
             hjd, amp, mag, xt, yt = np.loadtxt(lctraji, unpack=True)
             CAU.plot(xt, yt, color=color, linewidth=1)
 
+        # Plot the source edge
+        if src == None:
+            time_src = [self._bf['t0']]
+            color_src = ['k', 'Orange', 'SeaGreen', 'LightSeaGreen', 'CornflowerBlue', 'DarkViolet']
+        else:
+            time_src = [time for time, color in src]
+            color_src = [color for time, color in src]
 
+        x_interp = interp1d(hjd, xt)
+        y_interp = interp1d(hjd, yt)
+
+        for i in range(len(time_src)):
+            print "   Plotting the source at \033[3m", time_src[i], "\033[0m"
+            if (time_src[i] < hjd[-1]) & (time_src[i] > hjd[0]):
+                src_edge = (x_interp(time_src[i]) + 1j * y_interp(time_src[i]))
+                src_edge = src_edge + self._bf['rho'] * np.exp(1j * np.linspace(0, 2.0*np.pi, 100))
+                print color_src[i]
+                CAU.plot(src_edge.real, src_edge.imag, color=color_src[i], linewidth=1)
+            else:
+                print "   Skipped: the source trajectory does not include that day (choose a day closer than t0)"
 
         # Load caustics
         fname = "{:s}CAUSTIC.dat".format(self._pathoutputs)
