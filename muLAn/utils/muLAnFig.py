@@ -183,7 +183,7 @@ class figure():
             self._RES.plot((np.min(hjd), np.max(hjd)), (0., 0.), 'k-', linewidth=0.4)
             self._RES.errorbar(hjd, resmag, errmag, fmt='o', color=color, markersize=4, alpha=0.4, linewidth=1)
             # display observatory names
-            self._LC.annotate(r'$\bullet$ ' + obsname, xy=(x, y.next()), xycoords='figure fraction', color=color, fontsize=self._labelsize)
+            self._LC.annotate(r'$\bullet$ ' + obsname, xy=(x, y.next()), xycoords='figure fraction', color=color, fontsize=self._labelsize, bbox={'facecolor':'red', 'alpha':0.5, 'pad':10})
 
     def addinset_lightcurve(self, layout, trange=None, lcrange=None):
         """Add a light curve zoom pannel to the plot
