@@ -2,16 +2,31 @@ name = 'muLAn'
 
 import sys
 import os
+import platform
 
 from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Build import cythonize
+import setuptools
 
-extensions = [
-              Extension("muLAn/models/vbb/vbb",
-                        sources=["muLAn/models/vbb/vbb.pyx"],
-                        language="c++")
-              ]
+if platform.system() == 'Darwin':
+    macosv = platform.mac_ver()[0]
+    macosv_full = [int(a) for a in macosv.split('.')]
+    if (macosv_full[0] >= 10) & (macosv_full[1] > 9):
+        txt = "-mmacosx-version-min={:d}.{:d}".format(macosv_full[0], macosv_full[1])
+        txt = "-mmacosx-version-min=10.9"
+        extensions = [Extension(name="muLAn.models.vbb.vbb",
+                                sources=["muLAn/models/vbb/vbb.pyx"],
+                                language="c++",
+                                extra_link_args=["-stdlib=libc++", txt])]
+    else:
+        extensions = [Extension(name="muLAn.models.vbb.vbb",
+                                sources=["muLAn/models/vbb/vbb.pyx"],
+                                language="c++")]
+else:
+        extensions = [Extension(name="muLAn.models.vbb.vbb",
+                            sources=["muLAn/models/vbb/vbb.pyx"],
+                            language="c++")]
 
 setup(
       name = name,
