@@ -387,7 +387,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False,
     sys.stdout = open(path_formatted + "corr02_output.txt", "w")
     sys.stderr = open(path_formatted + "corr02_errors.log", "w")
     print "Sample files loaded :"
-    samples = mcsamples.loadMCSamples(filename, settings={'ignore_rows': 0.0})
+    samples = mcsamples.loadMCSamples(filename, settings={'ignore_rows': 0.3})
     filename_conv = path + "formatted-chains/corr02_getdist_output.txt"
     samples.getConvergeTests(test_confidence=0.95, writeDataToFile=True, what=['MeanVar', 'GelmanRubin', 'SplitTest', 'RafteryLewis', 'CorrLengths'], filename=filename_conv, feedback=True)
     # Plot object
@@ -401,12 +401,16 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False,
     chains['dchi2'] = chains['chi2'] - np.min(chains['chi2'].values)
     # dchi2_list = np.array([999999999, 100, 50, 10, 0])
     dchi2_list = np.array([1e12, 18.4, 11.8, 6.17, 2.30, 0.0])
+    dchi2_list = np.array([18.4, 11.8, 6.17, 2.30, 0.0])
     # colors = ['lightsteelblue', 'deepskyblue', 'limegreen', 'red']
     spectral_map = plt.get_cmap('Spectral')
     colors = ['black', spectral_map(255.0/255.0), spectral_map(170.0/255.0), spectral_map(85.0/255.0), spectral_map(0.0)]
+    colors = [spectral_map(255.0/255.0), spectral_map(170.0/255.0), spectral_map(85.0/255.0), spectral_map(0.0)]
     # colors = np.array(colors)/255.0
     alpha = [0.5, 0.9, 0.9, 0.9, 0.9]
+    alpha = [0.9, 0.9, 0.9, 0.9]
     s_list = [1, 5, 5, 5, 5]
+    s_list = [5, 5, 5, 5]
     for id_dchi2 in xrange(len(dchi2_list)-1):
         cond = chains.reject == 1
         chains.loc[cond,'reject'] = 0
