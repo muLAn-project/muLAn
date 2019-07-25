@@ -512,9 +512,16 @@ def run_sequence(path_event, options):
             # del sTe, sEe, sNe, DsTe, DsEe, DsNe, sTs, sEs, sNs, DsTs, DsEs, DsNs
             # del name1, name2, name, format, time_serie_temp
 
-            time_serie.update({'flux': np.power(10, 0.4*(18.0-time_serie['magnitude']))})
-            time_serie.update({'err_flux': np.abs((np.log(10) / 2.5) * time_serie['err_magn'] * time_serie['flux'])})
-            time_serie.update({'err_flux_orig': np.abs((np.log(10) / 2.5) * time_serie['err_magn_orig'] * time_serie['flux'])})
+
+            if not obs_properties['fluxoumag'][i].lower() == 'flux':
+                time_serie.update({'flux': np.power(10, 0.4*(18.0-time_serie['magnitude']))})
+                time_serie.update({'err_flux': np.abs((np.log(10) / 2.5) * time_serie['err_magn'] * time_serie['flux'])})
+                time_serie.update({'err_flux_orig': np.abs((np.log(10) / 2.5) * time_serie['err_magn_orig'] * time_serie['flux'])})
+            else:
+                time_serie.update({'flux': np.full(time_serie['dates'].shape[0], 0.0, dtype='f8')})
+                time_serie.update({'err_flux': np.full(time_serie['dates'].shape[0], 0.99, dtype='f8')})
+                time_serie.update({'err_flux_orig': np.full(time_serie['dates'].shape[0], 0.99, dtype='f8')})
+
             time_serie.update({'amp': np.full(time_serie['dates'].shape[0], -1, dtype='f8')})
             time_serie.update({'fs': np.full(time_serie['dates'].shape[0], -999, dtype='f8')})
             time_serie.update({'fb': np.full(time_serie['dates'].shape[0], -999, dtype='f8')})
@@ -556,11 +563,11 @@ def run_sequence(path_event, options):
 
                     time_serie['err_flux'][i] = np.sqrt(np.power(gamma * file['err_flux'][idx], 2) + np.power((np.log(10) * epsilon * file['flux'][idx]) / 2.5, 2))
 
-                    try:
+                    if file['flux'][idx] > 0:
                         time_serie['magnitude'][i] = 18.0 - 2.5 * np.log10(file['flux'][idx])
                         time_serie['err_magn_orig'][i] = np.abs(2.5 * file['err_flux'][idx] / (file['flux'][idx] * np.log(10)))
                         time_serie['err_magn'][i] = np.sqrt(np.power(gamma * time_serie['err_magn_orig'][i], 2) + epsilon ** 2)
-                    except:
+                    else:
                         time_serie['magnitude'][i] = 0.0
                         time_serie['err_magn_orig'][i] = 0.0
                         time_serie['err_magn'][i] = 0.0
