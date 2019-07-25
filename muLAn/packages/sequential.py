@@ -85,6 +85,11 @@ def run_sequence(path_event, options):
         if options['optimize']: cfgsetup.set('Controls', 'Optimize', 'True')
         else: cfgsetup.set('Controls', 'Optimize', 'False')
 
+    if not cfgsetup.has_section('Optimization'):
+        cfgsetup.add_section('Optimization')
+    if not cfgsetup.has_option('Optimization', 'UseBinaryFiles'):
+        cfgsetup.set('Optimization', 'UseBinaryFiles', 'False')
+
     # Controls
     modes = [a.lower() for a in unpack_options(cfgsetup, 'Controls', 'Modes')]
     cfgsetup.set('Modelling', 'Fit', str(any(x == 'fit' for x in modes)))
