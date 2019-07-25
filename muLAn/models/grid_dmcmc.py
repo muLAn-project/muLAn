@@ -362,6 +362,12 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
     cond = (key_list=='alpha')
     if cond.sum()==1:
         param_model.update({'alpha' : theta[id]})
+        if theta[id] > 2.0 * np.pi:
+            a = np.remainder(theta[id], np.pi * 2.0)
+            param_model.update({'alpha' : a})
+        if theta[id] < -2.0 * np.pi:
+            a = np.remainder(theta[id], np.pi * 2.0) - 2.0 * np.pi
+            param_model.update({'alpha' : a})
         id=id+1
     cond = (key_list == 'dalpha')
     if cond.sum()==1:
