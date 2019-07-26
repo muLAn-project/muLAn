@@ -1381,9 +1381,12 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 ("Date", "@dates{1.11}")])
             tools = ["save", "pan", "box_zoom", "wheel_zoom", "reset", "tap",
                      hover_prm]
+
+            res_stat = np.std(time_serie['resfluxalign'])
+
             fig = np.append(fig, bplt.figure(toolbar_location="above", plot_width=1200,
                                         plot_height=300, x_range=fig[0].x_range,
-                                        y_range=(-0.25, 0.25), \
+                                        y_range=(-3.0*res_stat, 3.0*res_stat), \
                                         title=None, min_border=10,
                                         min_border_left=50, tools=tools))
             fig_curr = fig[1]
