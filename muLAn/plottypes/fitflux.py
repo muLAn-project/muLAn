@@ -65,6 +65,7 @@ from matplotlib.ticker import FixedLocator, FormatStrFormatter
 #  Non-standard packages
 # ----------------------------------------------------------------------
 import muLAn.models.ephemeris as ephemeris
+import muLAn.packages.algebra as algebra
 
 # import models.esblparall as esblparall
 # import packages.plotconfig as plotconfig
@@ -127,32 +128,11 @@ def bash_command(text):
     proc = subprocess.Popen(text, shell=True, executable="/bin/bash")
     proc.wait()
 
-
 # ----------------------------------------------------------------------
 def unpack_options(cfgsetup, level0, level1, sep=','):
     options = [a.strip() for a in cfgsetup.get(level0, level1).split(sep)]
     del a, cfgsetup, level0, level1
     return options
-
-
-# ----------------------------------------------------------------------
-def fsfb(time_serie, cond, blending=True):
-
-    #blending = True
-
-    x = np.atleast_2d(time_serie['amp'][cond]).T
-    y = np.atleast_2d(time_serie['flux'][cond]).T
-
-    regr = linear_model.LinearRegression(fit_intercept=blending)
-    regr.fit(x, y)
-    fs = regr.coef_[0][0]
-    # fb = regr.intercept_[0]
-    if blending:
-        fb = regr.intercept_[0]
-    else:
-        fb = 0.0
-
-    return fs, fb
 
 # ----------------------------------------------------------------------
 def critic_roots(s, q, phi):
@@ -810,7 +790,8 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         del amp
 
                 # Calculation of fs and fb
-                fs, fb = fsfb(time_serie, cond2, blending=True)
+#               fs, fb = fsfb(time_serie, cond2, blending=True)
+                fs, fb = algebra.fsfbwsig(time_serie, cond2, blending=cfgsetup.getboolean('Modelling', 'IncludeBlending'))
                 # if (fb/fs < 0 and observatories[j]=="ogle-i"):
                 #     fs, fb = fsfb(time_serie, cond2, blending=False)
 
