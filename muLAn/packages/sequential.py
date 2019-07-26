@@ -58,6 +58,16 @@ def run_sequence(path_event, options):
     if cfgsetup.get('RelativePaths', 'ModelsHistory')[-1] != '/':
         cfgsetup.set('RelativePaths', 'ModelsHistory', cfgsetup.get('RelativePaths', 'ModelsHistory') + '/')
 
+    if not cfgsetup.has_section('Optimization'):
+        cfgsetup.add_section('Optimization')
+    if not cfgsetup.has_option('Optimization', 'UseBinaryFiles'):
+        cfgsetup.set('Optimization', 'UseBinaryFiles', 'False')
+
+    if not cfgsetup.has_section('Modelling'):
+        cfgsetup.add_section('Modelling')
+    if not cfgsetup.has_option('Modelling', 'IncludeBlending'):
+        cfgsetup.set('Modelling', 'IncludeBlending', 'True')
+
     # Take into account manual options
     if options['plot'] != None:
         cfgsetup.set('Controls', 'Modes', 'Plot')
@@ -84,11 +94,6 @@ def run_sequence(path_event, options):
     if options['optimize'] != None:
         if options['optimize']: cfgsetup.set('Controls', 'Optimize', 'True')
         else: cfgsetup.set('Controls', 'Optimize', 'False')
-
-    if not cfgsetup.has_section('Optimization'):
-        cfgsetup.add_section('Optimization')
-    if not cfgsetup.has_option('Optimization', 'UseBinaryFiles'):
-        cfgsetup.set('Optimization', 'UseBinaryFiles', 'False')
 
     # Controls
     modes = [a.lower() for a in unpack_options(cfgsetup, 'Controls', 'Modes')]
