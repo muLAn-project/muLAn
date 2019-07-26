@@ -454,7 +454,7 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
 
             # Calculation of fs and fb
             # fs, fb = algebra.fsfb(time_serie, cond2, blending=True)
-            fs, fb = algebra.fsfbwsig(time_serie, cond2, blending=True)
+            fs, fb = algebra.fsfbwsig(time_serie, cond2, blending=cfgsetup.getboolean('Modelling', 'IncludeBlending'))
 
             # Relevance of blending for OGLE
             # if (observatories[j]=="ogle-i"):
@@ -1257,7 +1257,7 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
 
                     # Calculation of fs and fb
                     # fs, fb = algebra.fsfb(time_serie, cond2, blending=True)
-                    fs, fb = algebra.fsfbwsig(time_serie, cond2, blending=True)
+                    fs, fb = algebra.fsfbwsig(time_serie, cond2, blending=cfgsetup.getboolean('Modelling', 'IncludeBlending'))
 
                     time_serie['fs'][cond2] = fs
                     time_serie['fb'][cond2] = fb
