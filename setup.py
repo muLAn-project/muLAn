@@ -4,10 +4,8 @@ import sys
 import os
 import platform
 
-from distutils.core import setup
-from distutils.extension import Extension
+from setuptools import setup, Extension, Command
 from Cython.Build import cythonize
-import setuptools
 
 if platform.system() == 'Darwin':
     macosv = platform.mac_ver()[0]
@@ -30,7 +28,7 @@ else:
 
 setup(
       name = name,
-      ext_modules = cythonize(extensions),
+      ext_modules = cythonize(extensions, language_level=3),
       data_files=[('lib/python3.8/site-packages/muLAn/models/espl_inputs', ['muLAn/models/espl_inputs/tab_Bo.p', 'muLAn/models/espl_inputs/tab_B1.p'])]
       )
 
