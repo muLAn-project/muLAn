@@ -27,7 +27,7 @@ full_path = a
 #   Packages
 # ----------------------------------------------------------------------
 import numpy as np
-import ConfigParser as cp
+import configparser as cp
 from PyAstronomy import pyasl
 from astropy.time import Time
 from scipy.interpolate import interp1d

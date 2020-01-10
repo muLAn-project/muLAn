@@ -150,7 +150,7 @@ def magnifcalc_wrap(**kwargs):
     # Compute magnification using quadrupole, hexadecapole or inverse rayshooting
     flag = np.zeros(len(x), dtype='i4')
     magnification = np.zeros(len(x), dtype='f8')
-    for i in xrange(4):
+    for i in range(4):
         rgs = np.where(flag == 0)
         s_curr = s[rgs]
         x_curr = x[rgs]
