@@ -101,7 +101,7 @@ def run_sequence(path_event, options):
         name = prompt(filename, cfgsetup.get('Controls', 'Archive'))
         cfgsetup.set('Controls', 'Archive', name)
 
-    # Print the details
+    # print(the details)
     text = "Event details"
     communicate(cfgsetup, 3, text, opts=[printoption.level1], prefix=False, newline=True)
 
@@ -136,10 +136,10 @@ def run_sequence(path_event, options):
     except:
         raise KeyError("No models to load.")
     models_temp2 = np.atleast_1d([unpack_options(cfgsetup, "Modelling", a) for a in models_temp])
-    for i in xrange(len(models_temp)):
+    for i in range(len(models_temp)):
         text = "Models for {:s} observations:".format(models_temp[i].split("_")[1].upper())
         communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=True, tab=True)
-        for j in xrange(len(models_temp2[i])):
+        for j in range(len(models_temp2[i])):
             a = np.array(models_temp2[i][j].split('/'))
             text = "  {:s} {:.6f} --> {:.6f}".format(a[1], float(a[0].split("-")[0]), float(a[0].split("-")[1]))
             communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=False, tab=True)
@@ -208,7 +208,7 @@ def run_sequence(path_event, options):
     plots_temp = np.atleast_1d(cfgsetup.get("Plotting", "Type"))
     options_temp = np.atleast_1d(cfgsetup.get("Plotting", "Options"))
     text = "  "
-    [communicate(cfgsetup, 3, text + plots_temp[i] + ": " + options_temp[i], opts=False, prefix=False, newline=False, tab=True) for i in xrange(len(plots_temp))]
+    [communicate(cfgsetup, 3, text + plots_temp[i] + ": " + options_temp[i], opts=False, prefix=False, newline=False, tab=True) for i in range(len(plots_temp))]
 
 
     # ----------------------------------------------------------------------
@@ -229,7 +229,7 @@ def run_sequence(path_event, options):
 
         # Cross-match with data to use
         data2use = np.array(cfgsetup.options('Observatories'))
-        data2use = np.array([data2find[i] for i in xrange(len(data2find)) if np.any(data2use == data2find[i])])
+        data2use = np.array([data2find[i] for i in range(len(data2find)) if np.any(data2use == data2find[i])])
 
         # Reference for plotting
         filename = cfgsetup.get('FullPaths', 'Event') + 'setup.ini'
@@ -247,7 +247,7 @@ def run_sequence(path_event, options):
 
         data_filenames = glob.glob(path + '*')
         observatories = [a.split('/')[-1] for a in data_filenames]
-        data_filenames = [data_filenames[i] for i in xrange(len(data_filenames)) if
+        data_filenames = [data_filenames[i] for i in range(len(data_filenames)) if
                           np.any(data2use == observatories[i].rpartition('.')[0].lower())]
         observatories = [ob.rpartition('.')[0].lower() for ob in observatories if
                          np.any(data2use == ob.rpartition('.')[0].lower())]
@@ -255,7 +255,7 @@ def run_sequence(path_event, options):
         obs_properties = dict({'name': [], 'colour': [], 'filter': [], 'gamma': [],
                 'loc': [], 'fluxoumag': [], 'exclude': [], 'key': []})
         # text = 'Data from:\n'
-        for i in xrange(len(observatories)):
+        for i in range(len(observatories)):
             table = [a.strip() for a in cfgobs.get('ObservatoriesDetails', observatories[i]).split(',')]
 
             obs_properties['name'].append(table[0])
@@ -289,7 +289,7 @@ def run_sequence(path_event, options):
         # Parameters of modelling
         model_params = dict()
         interpol_method = dict()
-        for i in xrange(len(obs_properties['loc'])):
+        for i in range(len(obs_properties['loc'])):
             name = 'Models_' + obs_properties['loc'][i]
             table = np.array([a.split('/')[1].strip() for a in unpack_options(cfgsetup, 'Modelling', name)])
             model_params.update({name: table})
@@ -298,16 +298,16 @@ def run_sequence(path_event, options):
             name2 = 'DateRanges_' + obs_properties['loc'][i]
             model_params.update({name2: table})
 
-            for j in xrange(len(unpack_options(cfgsetup, 'Modelling', name))):
+            for j in range(len(unpack_options(cfgsetup, 'Modelling', name))):
                 a = unpack_options(cfgsetup, 'Modelling', name)[j]
                 a = a.split('/')
                 if len(a) == 3:
                     name3 = obs_properties['loc'][i] + '#' + a[1] + '#' + a[0]
                     t1 = float(a[0].split('-')[0].strip())
                     t2 = float(a[0].split('-')[1].strip())
-                    # print name3, t1, t2
+                    # print(name3, t1, t2)
                     interpol_method.update({name3: [np.linspace(t1, t2, int(a[2])), np.full(int(a[2]), 0, dtype='f8'), np.full(int(a[2]), 0, dtype='f8'), np.full(int(a[2]), 0, dtype='f8')]})
-                    # print interpol_method
+                    # print(interpol_method)
 
         # Ephemeris
         path = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Data')
@@ -328,7 +328,7 @@ def run_sequence(path_event, options):
         time_serie_temp = dict({})
         model2load = np.array([])
         text_nb_data = ""
-        for i in xrange(len(observatories)):
+        for i in range(len(observatories)):
             file = np.loadtxt(data_filenames[i], dtype=format, usecols=(0, 1, 2, 3, 4, 5), \
                               skiprows=0, unpack=False)
 
@@ -339,7 +339,7 @@ def run_sequence(path_event, options):
             # Ephemeris
             c_icrs = SkyCoord(ra=cfgsetup.get('EventDescription', 'RA'), \
                               dec=cfgsetup.get('EventDescription', 'DEC'), frame='icrs')
-            # print c_icrs.transform_to('barycentrictrueecliptic')
+            # print(c_icrs.transform_to('barycentrictrueecliptic'))
             l = c_icrs.transform_to('barycentrictrueecliptic').lon.degree
             b = c_icrs.transform_to('barycentrictrueecliptic').lat.degree
 
@@ -406,7 +406,7 @@ def run_sequence(path_event, options):
             cond1 = time_serie['obs'] == observatories[i]
             cond_obs = np.invert(np.array(cond1))
             if (len(prop_temp) > 0) & (prop_temp != ['']):
-                list_temp = [prop_temp[iii].strip() for iii in xrange(len(prop_temp)) if (prop_temp[iii].strip() != '')]
+                list_temp = [prop_temp[iii].strip() for iii in range(len(prop_temp)) if (prop_temp[iii].strip() != '')]
                 for a in list_temp:
                     toinclude = a.split('-')
                     if len(toinclude) == 2:
@@ -428,7 +428,7 @@ def run_sequence(path_event, options):
             prop_temp = cfgobs.get('ObservatoriesDetails', observatories[i]).split(',')
             if len(prop_temp) > 5:
                 if prop_temp[5].strip() != '':
-                    list_temp = [prop_temp[iii].strip() for iii in xrange(len(prop_temp)) if
+                    list_temp = [prop_temp[iii].strip() for iii in range(len(prop_temp)) if
                                  (iii > 4) & (prop_temp[iii].strip() != '')]
                     for a in list_temp:
                         toremove = a.split('-')
@@ -484,10 +484,10 @@ def run_sequence(path_event, options):
             name = 'DateRanges_' + obs_properties['loc'][i]
             dates_temp = model_params[name]
 
-            # print time_serie['dates'].shape, time_serie['magnitude'].shape, time_serie['obs'].shape
+            # print(time_serie['dates'].shape, time_serie['magnitude'].shape, time_serie['obs'].shape)
 
             key = np.array([key for key in interpol_method])
-            for j in xrange(len(models_temp)):
+            for j in range(len(models_temp)):
                 model2load = np.append(model2load, models_temp[j])
                 tmin = float((dates_temp[j]).split('-')[0].strip())
                 tmax = float((dates_temp[j]).split('-')[1].strip())
@@ -517,7 +517,7 @@ def run_sequence(path_event, options):
         # Load flux if available
         # ----------------------
         list_flux = [a for a in observatories
-                       for i in xrange(len(obs_properties['key']))
+                       for i in range(len(obs_properties['key']))
                        if ((a == obs_properties['key'][i])
                            & ((obs_properties['fluxoumag'][i]).lower() == "flux"))]
         for a in list_flux:
@@ -560,7 +560,7 @@ def run_sequence(path_event, options):
                     time_serie['err_magn_orig'][i] = 0.0
                     time_serie['err_magn'][i] = 0.0
 
-        # print time_serie['dates'].shape, time_serie['magnitude'].shape, time_serie['obs'].shape
+        # print(time_serie['dates'].shape, time_serie['magnitude'].shape, time_serie['obs'].shape)
 
         # Decide if method interpolation is used or not.
         key_list = np.array([key for key in interpol_method])
@@ -569,7 +569,7 @@ def run_sequence(path_event, options):
             text = "Ask interpolation"
             communicate(cfgsetup, 3, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
 
-            for i in xrange(len(key_list)):
+            for i in range(len(key_list)):
                 loc = key_list[i].split('#')[0]
 
                 tmin = float(key_list[i].split('#')[2].split('-')[0])
@@ -578,7 +578,7 @@ def run_sequence(path_event, options):
                 cond1 = (time_serie['dates'] <= tmax) & (time_serie['dates'] >= tmin) &\
                         (time_serie['loc'] == loc)
 
-                # print loc, len(time_serie['model'][cond1]), len(interpol_method[key_list[i]][0])
+                # print(loc, len(time_serie['model'][cond1]), len(interpol_method[key_list[i]][0]))
 
                 if len(time_serie['model'][cond1]) > len(interpol_method[key_list[i]][0]):
 
@@ -608,7 +608,7 @@ def run_sequence(path_event, options):
 
                     c_icrs = SkyCoord(ra=cfgsetup.get('EventDescription', 'RA'), \
                                       dec=cfgsetup.get('EventDescription', 'DEC'), frame='icrs')
-                    # print c_icrs.transform_to('barycentrictrueecliptic')
+                    # print(c_icrs.transform_to('barycentrictrueecliptic'))
                     l = c_icrs.transform_to('barycentrictrueecliptic').lon.degree
                     b = c_icrs.transform_to('barycentrictrueecliptic').lat.degree
 
@@ -643,7 +643,7 @@ def run_sequence(path_event, options):
         # ----------------------------
         models_modules = dict()
         if(len(model2load)) > 0:
-            for i in xrange(len(model2load)):
+            for i in range(len(model2load)):
                 text = 'muLAn.models.{:s}'.format(model2load[i])
                 importlib.import_module(text)
                 models_modules.update({model2load[i]: getattr(mulanmodels, model2load[i])})
@@ -653,7 +653,7 @@ def run_sequence(path_event, options):
         modules_mini = np.array([cfgsetup.get('Modelling', 'Method')])
         minim_algo = np.array([])
         if len(modules_mini) > 0:
-            for i in xrange(len(modules_mini)):
+            for i in range(len(modules_mini)):
                 text = 'muLAn.models.{:s}'.format(modules_mini[i])
                 importlib.import_module(text)
                 minim_algo = np.append(minim_algo, getattr(mulanmodels, modules_mini[i]))
@@ -686,7 +686,7 @@ def run_sequence(path_event, options):
 
         # Cross-match with data to use
         data2use = np.array(cfgsetup.options('Observatories'))
-        data2use = np.array([data2find[i] for i in xrange(len(data2find)) if np.any(data2use == data2find[i])])
+        data2use = np.array([data2find[i] for i in range(len(data2find)) if np.any(data2use == data2find[i])])
 
         observatories = data2use
 
@@ -703,7 +703,7 @@ def run_sequence(path_event, options):
 
         obs_properties = dict({'name': [], 'colour': [], 'filter': [], 'loc': [], 'exclude': [], 'key': []})
         text = 'Simulated light curve from:\n'
-        for i in xrange(len(observatories)):
+        for i in range(len(observatories)):
             table = [a.strip() for a in cfgobs.get('ObservatoriesDetails', observatories[i]).split(',')]
 
             obs_properties['name'].append(table[0])
@@ -730,7 +730,7 @@ def run_sequence(path_event, options):
         # Parameters of modelling
         model_params = dict()
         interpol_method = dict()
-        for i in xrange(len(obs_properties['loc'])):
+        for i in range(len(obs_properties['loc'])):
             name = 'Models_' + obs_properties['loc'][i]
             table = np.array([a.split('/')[1].strip() for a in unpack_options(cfgsetup, 'Modelling', name)])
             model_params.update({name: table})
@@ -739,16 +739,16 @@ def run_sequence(path_event, options):
             name2 = 'DateRanges_' + obs_properties['loc'][i]
             model_params.update({name2: table})
 
-            for j in xrange(len(unpack_options(cfgsetup, 'Modelling', name))):
+            for j in range(len(unpack_options(cfgsetup, 'Modelling', name))):
                 a = unpack_options(cfgsetup, 'Modelling', name)[j]
                 a = a.split('/')
                 if len(a) == 3:
                     name3 = obs_properties['loc'][i] + '#' + a[1] + '#' + a[0]
                     t1 = float(a[0].split('-')[0].strip())
                     t2 = float(a[0].split('-')[1].strip())
-                    # print name3, t1, t2
+                    # print(name3, t1, t2)
                     interpol_method.update({name3: [np.linspace(t1, t2, int(a[2])), np.full(int(a[2]), 0, dtype='f8'), np.full(int(a[2]), 0, dtype='f8'), np.full(int(a[2]), 0, dtype='f8')]})
-                    # print interpol_method
+                    # print(interpol_method)
 
         # Ephemeris
         path = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Data')
@@ -765,7 +765,7 @@ def run_sequence(path_event, options):
         time_serie = dict({})
         time_serie_temp = dict({})
         model2load = np.array([])
-        for i in xrange(len(observatories)):
+        for i in range(len(observatories)):
             if i == 0:
                 time_serie.update({'id': []})
                 time_serie.update({'dates': []})
@@ -803,7 +803,7 @@ def run_sequence(path_event, options):
             dates_temp = model_params[name]
 
             key = np.array([key for key in interpol_method])
-            for j in xrange(len(models_temp)):
+            for j in range(len(models_temp)):
                 model2load = np.append(model2load, models_temp[j])
                 time_serie.update({'model': np.append(time_serie['model'], models_temp[j])})
 
@@ -814,7 +814,7 @@ def run_sequence(path_event, options):
                 # text = "\nInterpolation of the amplification asked."
                 # communicate(cfgsetup, 1, text, opts=[printoption.bright])
 
-                for i in xrange(len(key_list)):
+                for i in range(len(key_list)):
                     loc = key_list[i].split('#')[0]
 
                     tmin = float(key_list[i].split('#')[2].split('-')[0])
@@ -833,7 +833,7 @@ def run_sequence(path_event, options):
 
                     c_icrs = SkyCoord(ra=cfgsetup.get('EventDescription', 'RA'), \
                                       dec=cfgsetup.get('EventDescription', 'DEC'), frame='icrs')
-                    # print c_icrs.transform_to('barycentrictrueecliptic')
+                    # print(c_icrs.transform_to('barycentrictrueecliptic'))
                     l = c_icrs.transform_to('barycentrictrueecliptic').lon.degree
                     b = c_icrs.transform_to('barycentrictrueecliptic').lat.degree
 
@@ -866,11 +866,11 @@ def run_sequence(path_event, options):
             text = text + "sys.path.insert(0, '" + cfgsetup.get('FullPaths', 'Code') \
                    + "models')\n"
 
-            for i in xrange(len(modules)):
+            for i in range(len(modules)):
                 text = text + "import " + modules[i] + " as " + modules[i]
                 text = text + "\n"
 
-            for i in xrange(len(modules_mini)):
+            for i in range(len(modules_mini)):
                 text = text + "import " + modules_mini[i] + " as " + modules_mini[i]
                 text = text + "\n"
 
@@ -878,13 +878,13 @@ def run_sequence(path_event, options):
             text = text + "\tmodels_files = [" + modules[0] + "]\n"
 
             if len(modules) > 1:
-                for i in xrange(len(modules) - 1):
+                for i in range(len(modules) - 1):
                     text = text + "\tmodels_files.append(" + modules[i + 1] + ")\n"
 
             text = text + "\tminim_files = [" + modules_mini[0] + "]\n"
 
             if len(modules_mini) > 1:
-                for i in xrange(len(modules_mini) - 1):
+                for i in range(len(modules_mini) - 1):
                     text = text + "\tminim_files.append(" + modules_mini[i + 1] + ")\n"
 
             text = text + "\treturn models_files, minim_files\n"
@@ -900,7 +900,7 @@ def run_sequence(path_event, options):
 
         models_modules, minim_algo = load_modules.main()
 
-        models_modules = {model2load[i]: models_modules[i] for i in xrange(len(model2load))}
+        models_modules = {model2load[i]: models_modules[i] for i in range(len(model2load))}
 
     # ----------------------------------------------------------------------
     #   Order models
@@ -927,13 +927,13 @@ def run_sequence(path_event, options):
         plots2load = np.unique(plots2load_brut)
         plottypes_list = dict()
         if(len(plots2load)) > 0:
-            for i in xrange(len(plots2load)):
+            for i in range(len(plots2load)):
                 text = 'muLAn.plottypes.{:s}'.format(plots2load[i])
                 importlib.import_module(text)
                 plottypes_list.update({plots2load[i]: getattr(mulanplots, plots2load[i])})
 
         # Recursively run the plots routines
-        for i in xrange(len(plots2load_brut)):
+        for i in range(len(plots2load_brut)):
 
             text = plots2load_brut[i] + " - " + plottypes_list[plots2load_brut[i]].help()
             communicate(cfgsetup, 1, text, opts=False, prefix=False, newline=True, tab=True)
