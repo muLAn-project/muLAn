@@ -31,7 +31,7 @@ else:
 setup(
       name = name,
       ext_modules = cythonize(extensions),
-      data_files=[('lib/python2.7/site-packages/muLAn/models/espl_inputs', ['muLAn/models/espl_inputs/tab_Bo.p', 'muLAn/models/espl_inputs/tab_B1.p'])]
+      data_files=[('lib/python3.8/site-packages/muLAn/models/espl_inputs', ['muLAn/models/espl_inputs/tab_Bo.p', 'muLAn/models/espl_inputs/tab_B1.p'])]
       )
 
 pjoin = os.path.join
@@ -64,7 +64,7 @@ setup_args = dict(
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: MIT',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.8',
                        ],
 )
 
@@ -81,7 +81,7 @@ install_requires = setuptools_args['install_requires'] = [
                                                           'configparser>=3.5.0',
                                                           'Cython>=0.27.3',
                                                           'emcee>=2.2.1',
-                                                          'GetDist==0.2.6',
+                                                          'GetDist>=0.2.6',
                                                           'matplotlib>=2.1.2',
                                                           'numpy>=1.12.1',
                                                           'pandas>=0.18.1',
