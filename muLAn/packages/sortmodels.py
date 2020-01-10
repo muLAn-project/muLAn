@@ -210,7 +210,7 @@ class McmcFiles:
 
             # Read on the chains
             if nb_chains > 0:
-                for i in xrange(nb_chains):
+                for i in range(nb_chains):
 
                     file = open(fnames_chains[i], 'r')
                     for line in file:
@@ -324,7 +324,7 @@ class McmcFiles:
                 + '\n'
             file.write(format)
 
-            for i in xrange(len(results_sorted)):
+            for i in range(len(results_sorted)):
                 format = '{:},'.format(results_sorted['fullid'].values[i])\
                     + '{:.10e},'.format(results_sorted['t0'].values[i])\
                     + '{:.10e},'.format(results_sorted['u0'].values[i])\
@@ -364,13 +364,13 @@ def communicate(cfg, verbose, text, opts=False, prefix=False, newline=False, tab
                 text = "    " + text
             if newline:
                 text = "\n" + text
-            print text
+            print(text)
         else:
             if tab:
                 text = "    " + text
             if newline:
                 text = "\n" + text
-            print text
+            print(text)
 # ----------------------------------------------------------------------
 def unpack_options(cfgsetup, level0, level1):
     options = [a.strip() for a in cfgsetup.get(level0, level1).split(',')]
