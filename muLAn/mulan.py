@@ -68,7 +68,7 @@ def print_welcome(verbose=1):
         legend = '\033[36mgravitational MICROlensing Analysis code\033[0m\n'
         version = '\033[36mVersion {:s}'.format(muLAn.__version__)
         welcome = '\033[1m\033[34m{:s}\033[0m{:s}{:s}\033[0m'.format(logo, legend, version)
-        print welcome
+        print(welcome)
 # ----------------------------------------------------------------------
 def check_options(options):
     if not 'sortno' in options:
