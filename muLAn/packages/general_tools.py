@@ -61,7 +61,6 @@ def check_slash(path):
 # --------------------------------------------------------------------
 def unpack_options(cfgsetup, level0, level1):
     options = [a.strip() for a in cfgsetup.get(level0, level1).split(',')]
-    del a, cfgsetup, level0, level1
     return options
 # ----------------------------------------------------------------------
 def str2bool(string):
