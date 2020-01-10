@@ -16,7 +16,7 @@ import sys
 # Functions
 # =========
 def test():
-    print "Je te vois"
+    print("Je te vois")
 
 def fsfbwsig(time_serie, cond, blending=True):
     """
@@ -60,7 +60,7 @@ def fsfbwsig(time_serie, cond, blending=True):
             den = s * sxx - sx**2
             fs = (s * sxy - sx * sy) / den
             fb = (sxx * sy - sx * sxy) / den
-        except RuntimeWarning, ZeroDivisionError:
+        except(RuntimeWarning, ZeroDivisionError):
             fs = np.inf
             fb = np.inf
     else:
@@ -68,7 +68,7 @@ def fsfbwsig(time_serie, cond, blending=True):
 
     if (np.abs(fs) == np.inf) | (np.abs(fb) == np.inf):
         fs, fb = fsfb(time_serie, cond, blending=False)
-        print fs, fb
+        print(fs, fb)
 
     return fs, fb
 
