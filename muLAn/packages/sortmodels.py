@@ -2,7 +2,7 @@
 # ====================================================================
 # Packages
 # ====================================================================
-import ConfigParser as cp
+import configparser as cp
 import copy
 import glob
 import muLAn
@@ -63,9 +63,9 @@ class McmcFiles:
         fname_advanced = "{:s}advancedsetup.ini".format(path_event)
 
         # Load configuration files
-        cfgsetup = cp.SafeConfigParser()
+        cfgsetup = cp.ConfigParser()
         cfgsetup.read([fname_setup, fname_advanced])
-        cfgobs = cp.SafeConfigParser()
+        cfgobs = cp.ConfigParser()
         cfgobs.read(path_event + 'observatories.ini')
 
         # Add the path to the configuration

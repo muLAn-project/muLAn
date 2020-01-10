@@ -2,7 +2,7 @@
 
 # Packages
 # ========
-import ConfigParser as cp
+import configparser as cp
 import copy
 import glob
 import muLAn

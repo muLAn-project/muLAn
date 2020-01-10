@@ -9,12 +9,12 @@ import sys
 import glob
 import importlib
 import numpy as np
-import ConfigParser as cp
+import configparser as cp
 from astropy.coordinates import SkyCoord
 # ----------------------------------------------------------------------
 # Local packages
 # ----------------------------------------------------------------------
-from general_tools import *
+from muLAn.packages.general_tools import *
 import muLAn.models.ephemeris as ephemeris
 import muLAn.models as mulanmodels
 import muLAn.plottypes as mulanplots
@@ -26,13 +26,13 @@ import muLAn.packages.sortmodels as mulansort
 def run_sequence(path_event, options):
 
     # Load configuration files
-    cfgsetup = cp.SafeConfigParser()
+    cfgsetup = cp.ConfigParser()
     cfgsetup.read([path_event + 'setup.ini', path_event + 'advancedsetup.ini'])
 
     text = "Load parameter files..."
     communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True)
 
-    cfgobs = cp.SafeConfigParser()
+    cfgobs = cp.ConfigParser()
     cfgobs.read(path_event + 'observatories.ini')
 
     # Add the path to the configuration
