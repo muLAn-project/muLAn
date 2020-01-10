@@ -41,13 +41,13 @@ def communicate(cfg, verbose, text, opts=False, prefix=False, newline=False, tab
                 text = "    " + text
             if newline:
                 text = "\n" + text
-            print text
+            print(text)
         else:
             if tab:
                 text = "    " + text
             if newline:
                 text = "\n" + text
-            print text
+            print(text)
 # --------------------------------------------------------------------
 def add_topythonpath(path):
     if len(path)>0:
