@@ -3,6 +3,7 @@ muLAn: gravitational MICROlensing Analysis Software
 
 [![Build Status](https://travis-ci.org/muLAn-project/muLAn.svg?branch=py3)](https://travis-ci.org/muLAn-project/muLAn)
 [![License](https://img.shields.io/github/license/muLAn-project/muLAn)](https://github.com/muLAn-project/muLAn/blob/master/LICENSE)
+[![Build status](https://ci.appveyor.com/api/projects/status/kyufdmvy3ske3qlb?svg=true)](https://ci.appveyor.com/project/clementranc/mulan)
 
 Goals
 -----
@@ -16,7 +17,7 @@ Getting Started
 
 This package depends in particular on the following packages:
 
-- `Cython` (troubles with version 28 are fixed)
+- `Cython`
 - `pyAstronomy` (version >= 0.10.1,  <a href="http://www.hs.uni-hamburg.de/DE/Ins/Per/Czesla/PyA/PyA/index.html">link</a>)
 - `GetDist` (version >= 0.2.6)
 
@@ -34,7 +35,7 @@ pip install --user muLAn/
 
 We however recommend to use an [Anaconda](https://anaconda.org) user environment:
 ```
-conda create -n muLAn-0.8 python=2.7
+conda create -n muLAn-0.8 python=3.8
 source activate muLAn-0.8
 pip install muLAn/
 ```
