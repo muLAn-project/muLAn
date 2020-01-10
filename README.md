@@ -1,8 +1,8 @@
 muLAn: gravitational MICROlensing Analysis Software
 ======
 
-![Travis (.org) branch](https://img.shields.io/travis/muLAn-project/muLAn/py3)
-![GitHub](https://img.shields.io/github/license/muLAn-project/muLAn)
+[![Build Status](https://travis-ci.org/muLAn-project/muLAn.svg?branch=py3)](https://travis-ci.org/muLAn-project/muLAn)
+[![License](https://img.shields.io/github/license/muLAn-project/muLAn)](https://github.com/muLAn-project/muLAn/blob/master/LICENSE)
 
 Goals
 -----
