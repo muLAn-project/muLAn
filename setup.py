@@ -4,10 +4,8 @@ import sys
 import os
 import platform
 
-from distutils.core import setup
-from distutils.extension import Extension
+from setuptools import setup, Extension, Command
 from Cython.Build import cythonize
-import setuptools
 
 if platform.system() == 'Darwin':
     macosv = platform.mac_ver()[0]
