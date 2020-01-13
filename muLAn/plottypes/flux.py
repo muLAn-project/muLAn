@@ -759,14 +759,14 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             time_serie.update({'y': np.empty(len(time_serie['dates']))})
 
             for j in range(len(observatories)):
-                cond2 = (time_serie['obs'] == observatories[j])
+                cond2 = np.array(time_serie['obs']) == observatories[j]
 
                 if flag_fix_gamma:
-                    param_model.update({'gamma': time_serie['gamma'][cond2][0]})
+                    param_model.update({'gamma': np.array(time_serie['gamma'])[cond2][0]})
 
                 for i in range(models_lib.shape[0]):
-                    cond = (time_serie['model'] == models_lib[i]) &\
-                           (time_serie['obs'] == observatories[j])
+                    cond = (np.array(time_serie['model']) == models_lib[i]) &\
+                           (np.array(time_serie['obs']) == observatories[j])
 
                     if cond.sum() > 0:
                         time_serie_export = time_serie['dates'][cond]
