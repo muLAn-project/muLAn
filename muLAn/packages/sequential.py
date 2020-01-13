@@ -16,6 +16,7 @@ import muLAn.plottypes as mulanplots
 import numpy as np
 import pandas as pd
 import os
+import pickle
 import sys
 
 # ====================================================================
@@ -55,6 +56,16 @@ def run_sequence(path_event, options):
     if cfgsetup.get('RelativePaths', 'ModelsHistory')[-1] != '/':
         cfgsetup.set('RelativePaths', 'ModelsHistory', cfgsetup.get('RelativePaths', 'ModelsHistory') + '/')
 
+    if not cfgsetup.has_section('Optimization'):
+        cfgsetup.add_section('Optimization')
+    if not cfgsetup.has_option('Optimization', 'UseBinaryFiles'):
+        cfgsetup.set('Optimization', 'UseBinaryFiles', 'False')
+
+    if not cfgsetup.has_section('Modelling'):
+        cfgsetup.add_section('Modelling')
+    if not cfgsetup.has_option('Modelling', 'IncludeBlending'):
+        cfgsetup.set('Modelling', 'IncludeBlending', 'True')
+
     # Take into account manual options
     if options['plot'] != None:
         cfgsetup.set('Controls', 'Modes', 'Plot')
@@ -90,7 +101,12 @@ def run_sequence(path_event, options):
     # Verbose
     text = "Parameter files have been read and checked."
     communicate(cfgsetup, 4, text, opts=[printoption.good], prefix=False, newline=False)
-    # communicate(cfgsetup, 4, text, opts=False, prefix=False, newline=False)
+
+    # Check directories and create missing ones
+    paths_to_check = ['Data', 'Plots', 'Outputs', 'Chains', 'Archives']
+    for i in range(len(paths_to_check)):
+        if not os.path.exists(cfgsetup.get('RelativePaths', paths_to_check[i])):
+            os.makedirs(cfgsetup.get('RelativePaths', paths_to_check[i]))
 
     # Test the archive
     if cfgsetup.getboolean('Modelling', 'Fit') & (cfgsetup.getboolean('FitSetupDMCMC', 'Resume')==False)\
@@ -99,7 +115,7 @@ def run_sequence(path_event, options):
         name = prompt(filename, cfgsetup.get('Controls', 'Archive'))
         cfgsetup.set('Controls', 'Archive', name)
 
-    # print(the details)
+    # Print the details
     text = "Event details"
     communicate(cfgsetup, 3, text, opts=[printoption.level1], prefix=False, newline=True)
 
@@ -331,264 +347,290 @@ def run_sequence(path_event, options):
 
         # Use Pandas DataFrame to store data
         # ==================================
-        data = pd.DataFrame()
-        namecol = np.array('id dates magnitude err_magn_orig seeing background'.split())
-        namecolf = np.array('id dates flux err_flux_orig seeing background'.split())
-        coltype = 'i8 f8    f8        f8       f8    f8'.split()
-        coltypet = np.array([np.dtype(a) for a in coltype])
-        usecols = range(5)
-        coltype = dict(zip(namecol, coltypet))
-        coltypef = dict(zip(namecolf, coltypet))
-        li = []
-        model2load = np.array([])
-        text_nb_data = ""
+        filename_bin = "{:s}/all_data.bin".format(cfgsetup.get('RelativePaths', 'Data'))
+        if (not cfgsetup.getboolean('Optimization', 'UseBinaryFiles'))\
+                | (not os.path.exists(filename_bin)):
 
-        # Identify the datasets providing flux
-        list_flux = np.array([a for a in observatories 
-            for i in range(len(obs_properties['key'])) 
-            if ((a == obs_properties['key'][i]) & 
-                ((obs_properties['fluxoumag'][i]).lower() == "flux"))])
+            data = pd.DataFrame()
+            namecol = np.array('id dates magnitude err_magn_orig seeing background'.split())
+            namecolf = np.array('id dates flux err_flux_orig seeing background'.split())
+            coltype = 'i8 f8    f8        f8       f8    f8'.split()
+            coltypet = np.array([np.dtype(a) for a in coltype])
+            usecols = range(5)
+            coltype = dict(zip(namecol, coltypet))
+            coltypef = dict(zip(namecolf, coltypet))
+            li = []
+            model2load = np.array([])
+            text_nb_data = ""
 
-        for i in range(len(observatories)):
-            # Load data
-            flag_flux = any(list_flux == observatories[i])
-            if flag_flux:
-                df = pd.read_csv(data_filenames[i], sep='\s+', names=namecolf,
-                    usecols=usecols, dtype=coltypef, skiprows=1)
-            else:
-                df = pd.read_csv(data_filenames[i], sep='\s+', names=namecol,
-                    usecols=usecols, dtype=coltype, skiprows=1)
+            # Identify the datasets providing flux
+            list_flux = np.array([a for a in observatories 
+                for i in range(len(obs_properties['key'])) 
+                if ((a == obs_properties['key'][i]) & 
+                    ((obs_properties['fluxoumag'][i]).lower() == "flux"))])
 
-            # Add dataset name
-            df['obs'] = observatories[i]
-            nb_data_init = len(df)
-            
-            # Linear limb darkening coefficient Gamma
-            df['gamma'] = obs_properties['gamma'][i]
-            
-            # Add location for ephemeris
-            df['loc'] = obs_properties['loc'][i]
-            
-            # Rescale the error-bars [see Wyrzykowski et al. (2009)]
-            gamma = float(unpack_options(cfgsetup, 'Observatories', observatories[i])[0][1:])
-            epsilon = float(unpack_options(cfgsetup, 'Observatories', observatories[i])[1][:-1])
-            if flag_flux:
-                df['err_flux'] = np.sqrt(np.power(gamma * df['err_flux_orig'],2)\
-                        + np.power((np.log(10) * epsilon * df['flux']) / 2.5, 2))
-            else:
-                df['err_magn'] = np.sqrt(np.power(gamma * df['err_magn_orig'], 2) + epsilon ** 2)
-
-            # Select data only in specified time interval
-            prop_temp = cfgsetup.get('Observatories', observatories[i]).split(',')
-
-            if len(prop_temp) < 3:
-                txt = ("Format error in setup.ini [Observatories]"
-                        "Name : (gamma, epsilon), time1-time2")
-                sys.exit(txt)
-            prop_temp = prop_temp[2].replace(' ', '')
-            if not prop_temp == '':
-                prop_temp = prop_temp.split('-')
-                try:
-                    limits = [float(prop_temp[0]), float(prop_temp[1])]
-                except ValueError as err :
-                    txt = "{:s}\n{:s}\n{:s}\n{:s} {:s}.".format(
-                        "Format error in setup.ini",
-                        "In [Observatories] you should write:",
-                        "Name : (gamma, epsilon), time1-time2",
-                        "No data will be removed from",
-                        data_filenames[i])
-                    print(err, txt)
-                    continue
-
-                mask = (df['dates'] < limits[0]) | (df['dates'] >= limits[1])
-                df.drop(df[mask].index, inplace=True)
-
-            # Remove outliers specified in Observatories.ini
-            prop_temp = cfgobs.get('ObservatoriesDetails', observatories[i]).split(',')
-            if len(prop_temp) > 5:
-                idx = np.array([], dtype='i8')
-                if prop_temp[5].strip() != '':
-                    list_temp = [prop_temp[iii].strip() for iii in range(len(prop_temp)) if
-                                 (iii > 4) & (prop_temp[iii].strip() != '')]
-                    for a in list_temp:
-                        toremove = np.array(a.split('-'), dtype='i8')
-                        if len(toremove) == 1: 
-                            idx = np.append(idx, toremove)
-                        elif len(toremove) == 2: 
-                            n = toremove[1] - toremove[0]
-                            idx = np.append(idx, np.linspace(toremove[0], toremove[1], n+1, 
-                                endpoint=True, dtype='i8'))
-                
-                    for j in range(idx.shape[0]):
-                        mask = df['id'] == idx[j]
-                        df.drop(df[mask].index, inplace=True)
-            
-            a = float(unpack_options(cfgsetup, "Observatories", observatories[i])[2].split("-")[0])
-            b = float(unpack_options(cfgsetup, "Observatories", observatories[i])[2].split("-")[1])
-            text = "Reading data within {:.6f} --> {:.6f} from {:s}".format(a, b, data_filenames[i].split("/")[-1])
-            communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=False, tab=True)
-            a = len(df)
-            b = nb_data_init - a
-            if b==0:
-                text_nb_data = text_nb_data + "    \033[1m{:6d}\033[0m data\n".format(a, b)
-            else:
-                text_nb_data = text_nb_data + "    \033[1m{:6d}\033[0m data + \033[40m\033[97m\033[1m{:6d} data excluded\033[0m\n".format(a, b)
-            if i==len(observatories)-1:
-                text_nb_data = text_nb_data + "  = \033[1m{:6d}\033[0m data in total".format(len(data))
-
-            # Calculations from ephemeris for parallax
-            name2 = glob.glob(path + obs_properties['loc'][i] + '.*')[0]
-            try:
-                sTe, sEe, sNe, DsTe, DsEe, DsNe, sTs, sEs, sNs, DsTs, DsEs, DsNs = \
-                    ephemeris.Ds(name1, name2, l, b,
-                            cfgsetup.getfloat('Modelling', 'tp'), cfgsetup)
-                if name1 != name2:
-                    DsN = DsNs
-                    DsE = DsEs
+            for i in range(len(observatories)):
+                # Load data
+                flag_flux = any(list_flux == observatories[i])
+                if flag_flux:
+                    df = pd.read_csv(data_filenames[i], sep='\s+', names=namecolf,
+                        usecols=usecols, dtype=coltypef, skiprows=1)
                 else:
-                    DsN = DsNe
-                    DsE = DsEe
-                df['DsN'] = DsN(df['dates'].values)
-                df['DsE'] = DsE(df['dates'].values)
-            except:
-                DsN = None
-                DsE = None
-                df['DsN'] = 0
-                df['DsE'] = 0
+                    df = pd.read_csv(data_filenames[i], sep='\s+', names=namecol,
+                        usecols=usecols, dtype=coltype, skiprows=1)
 
-            # Models
-            name = 'Models_' + obs_properties['loc'][i]
-            models_temp = model_params[name]
-            name = 'DateRanges_' + obs_properties['loc'][i]
-            dates_temp = model_params[name]
-
-            df['model'] = 'PSPL'
-
-            key = np.array([key for key in interpol_method])
-            for j in range(len(models_temp)):
-                model2load = np.append(model2load, models_temp[j])
-                tmin = float((dates_temp[j]).split('-')[0].strip())
-                tmax = float((dates_temp[j]).split('-')[1].strip())
-
-                mask = (df['dates'] > tmin) & (df['dates'] <= tmax)
-                df.loc[mask, 'model'] = models_temp[j]
-
-            if flag_flux:
-                try:
-                    df['magnitude'] = 18.0 - 2.5 * np.log10(df['flux'])
-                    df['err_magn_orig'] = np.abs(2.5 * df['err_flux_orig']\
-                            / (df['flux'] * np.log(10)))
+                # Add dataset name
+                df['obs'] = observatories[i]
+                nb_data_init = len(df)
+                
+                # Linear limb darkening coefficient Gamma
+                df['gamma'] = obs_properties['gamma'][i]
+                
+                # Add location for ephemeris
+                df['loc'] = obs_properties['loc'][i]
+                
+                # Rescale the error-bars [see Wyrzykowski et al. (2009)]
+                gamma = float(unpack_options(cfgsetup, 'Observatories', observatories[i])[0][1:])
+                epsilon = float(unpack_options(cfgsetup, 'Observatories', observatories[i])[1][:-1])
+                if flag_flux:
+                    df['err_flux'] = np.sqrt(np.power(gamma * df['err_flux_orig'],2)\
+                            + np.power((np.log(10) * epsilon * df['flux']) / 2.5, 2))
+                else:
                     df['err_magn'] = np.sqrt(np.power(gamma * df['err_magn_orig'], 2) + epsilon ** 2)
-                except:
-                    df['magnitude'] = 0.0
-                    df['err_magn_orig'] = 0.0
-                    df['err_magn'] = 0.0
-            else:
-                # Compute flux from magnitudes
-                df['flux'] = np.power( 10, 0.4 * (18.0 - df['magnitude']) )
-                df['err_flux_orig'] = np.abs((np.log(10) / 2.5) *
-                        df['err_magn_orig'] * df['flux'])
-                df['err_flux'] = np.abs((np.log(10) / 2.5) * df['err_magn'] * df['flux'])
 
-            li.append(df)
+                # Select data only in specified time interval
+                prop_temp = cfgsetup.get('Observatories', observatories[i]).split(',')
 
-        # Display data removed and included
-        communicate(cfgsetup, 3, text_nb_data, opts=False, prefix=False, newline=True, tab=False)
+                if len(prop_temp) < 3:
+                    txt = ("Format error in setup.ini [Observatories]"
+                            "Name : (gamma, epsilon), time1-time2")
+                    sys.exit(txt)
+                prop_temp = prop_temp[2].replace(' ', '')
+                if not prop_temp == '':
+                    prop_temp = prop_temp.split('-')
+                    try:
+                        limits = [float(prop_temp[0]), float(prop_temp[1])]
+                    except ValueError as err :
+                        txt = "{:s}\n{:s}\n{:s}\n{:s} {:s}.".format(
+                            "Format error in setup.ini",
+                            "In [Observatories] you should write:",
+                            "Name : (gamma, epsilon), time1-time2",
+                            "No data will be removed from",
+                            data_filenames[i])
+                        print(err, txt)
+                        continue
 
-        # Concatenate all the data
-        data = pd.concat(li, axis=0, ignore_index=True)
-        data.astype({'gamma': np.dtype('f8')})
+                    mask = (df['dates'] < limits[0]) | (df['dates'] >= limits[1])
+                    df.drop(df[mask].index, inplace=True)
 
-        # Correct dates
-        mask = data['dates'] > 2450000
-        data.loc[mask, 'dates'] = data.loc[mask, 'dates'] - 2450000
+                # Remove outliers specified in Observatories.ini
+                prop_temp = cfgobs.get('ObservatoriesDetails', observatories[i]).split(',')
+                if len(prop_temp) > 5:
+                    idx = np.array([], dtype='i8')
+                    if prop_temp[5].strip() != '':
+                        list_temp = [prop_temp[iii].strip() for iii in range(len(prop_temp)) if
+                                     (iii > 4) & (prop_temp[iii].strip() != '')]
+                        for a in list_temp:
+                            toremove = np.array(a.split('-'), dtype='i8')
+                            if len(toremove) == 1: 
+                                idx = np.append(idx, toremove)
+                            elif len(toremove) == 2: 
+                                n = toremove[1] - toremove[0]
+                                idx = np.append(idx, np.linspace(toremove[0], toremove[1], n+1, 
+                                    endpoint=True, dtype='i8'))
+                    
+                        for j in range(idx.shape[0]):
+                            mask = df['id'] == idx[j]
+                            df.drop(df[mask].index, inplace=True)
+                
+                a = float(unpack_options(cfgsetup, "Observatories", observatories[i])[2].split("-")[0])
+                b = float(unpack_options(cfgsetup, "Observatories", observatories[i])[2].split("-")[1])
+                text = "Reading data within {:.6f} --> {:.6f} from {:s}".format(a, b, data_filenames[i].split("/")[-1])
+                communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=False, tab=True)
+                a = len(df)
+                b = nb_data_init - a
+                if b==0:
+                    text_nb_data = text_nb_data + "    \033[1m{:6d}\033[0m data\n".format(a, b)
+                else:
+                    text_nb_data = text_nb_data + "    \033[1m{:6d}\033[0m data + \033[40m\033[97m\033[1m{:6d} data excluded\033[0m\n".format(a, b)
+                if i==len(observatories)-1:
+                    text_nb_data = text_nb_data + "  = \033[1m{:6d}\033[0m data in total".format(len(data))
 
-        # Create columns for use in fit
-        data['amp'] = -1
-        data['fs'] = -999
-        data['fb'] = -999
-        li = ['amp', 'fs', 'fb']
-        [data.astype({a: np.dtype('f8')}) for a in li]
-
-        # For compatibility, convert DataFrame data into a dictionnary
-        time_serie = data.to_dict('list')
-
-        # Decide if method interpolation is used or not.
-        key_list = np.array([key for key in interpol_method])
-        if len(key_list) > 0:
-
-            text = "Ask interpolation"
-            communicate(cfgsetup, 3, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
-
-            for i in range(len(key_list)):
-                loc = key_list[i].split('#')[0]
-
-                tmin = float(key_list[i].split('#')[2].split('-')[0])
-                tmax = float(key_list[i].split('#')[2].split('-')[1])
-
-                cond1 = (time_serie['dates'] <= tmax) & (time_serie['dates'] >= tmin) &\
-                        (time_serie['loc'] == loc)
-
-                # print(loc, len(time_serie['model'][cond1]), len(interpol_method[key_list[i]][0]))
-
-                if len(time_serie['model'][cond1]) > len(interpol_method[key_list[i]][0]):
-
-                    text = "Relevant for {:s} within {:s} --> {:s}\n".format(
-                            loc,
-                            key_list[i].split('#')[2].split('-')[0],
-                            key_list[i].split('#')[2].split('-')[1])
-                    text = text\
-                            + "        {:d} observations / {:d} points asked: \033[1m\033[32mOK\033[0m".format(
-                            len(time_serie['model'][cond1]),
-                            len(interpol_method[key_list[i]][0]))
-                    # communicate(cfgsetup, 1, text, opts=False)
-                    communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=True, tab=True)
-
-                    time_serie['interpol'][cond1] = key_list[i]
-
-                    # Ephemeris
-                    path = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Data')
-
-                    if len(obs_properties['loc']) > 1:
-                        name1 = obs_properties['loc'][np.where(np.array(
-                            [obs == cfgsetup.get('Observatories', 'Reference').lower()
-                             for obs in observatories]) == True)[0][0]]
-                        name1 = glob.glob(path + name1 + '.*')[0]
-                    else:
-                        name1 = glob.glob(path + obs_properties['loc'][0] + '.*')[0]
-
-                    c_icrs = SkyCoord(ra=cfgsetup.get('EventDescription', 'RA'), \
-                                      dec=cfgsetup.get('EventDescription', 'DEC'), frame='icrs')
-                    # print(c_icrs.transform_to('barycentrictrueecliptic'))
-                    l = c_icrs.transform_to('barycentrictrueecliptic').lon.degree
-                    b = c_icrs.transform_to('barycentrictrueecliptic').lat.degree
-
-                    name2 = glob.glob(path + loc + '.*')[0]
+                # Calculations from ephemeris for parallax
+                name2 = glob.glob(path + obs_properties['loc'][i] + '.*')[0]
+                try:
                     sTe, sEe, sNe, DsTe, DsEe, DsNe, sTs, sEs, sNs, DsTs, DsEs, DsNs = \
-                        ephemeris.Ds(name1, name2, l, b, cfgsetup.getfloat('Modelling', 'tp'), \
-                                     cfgsetup)
-
+                        ephemeris.Ds(name1, name2, l, b,
+                                cfgsetup.getfloat('Modelling', 'tp'), cfgsetup)
                     if name1 != name2:
                         DsN = DsNs
                         DsE = DsEs
                     else:
                         DsN = DsNe
                         DsE = DsEe
+                    df['DsN'] = DsN(df['dates'].values)
+                    df['DsE'] = DsE(df['dates'].values)
+                except:
+                    DsN = None
+                    DsE = None
+                    df['DsN'] = 0
+                    df['DsE'] = 0
 
-                    interpol_method[key_list[i]][1] = DsN(interpol_method[key_list[i]][0])
-                    interpol_method[key_list[i]][2] = DsE(interpol_method[key_list[i]][0])
+                # Models
+                name = 'Models_' + obs_properties['loc'][i]
+                models_temp = model_params[name]
+                name = 'DateRanges_' + obs_properties['loc'][i]
+                dates_temp = model_params[name]
+
+                df['model'] = 'PSPL'
+
+                key = np.array([key for key in interpol_method])
+                for j in range(len(models_temp)):
+                    model2load = np.append(model2load, models_temp[j])
+                    tmin = float((dates_temp[j]).split('-')[0].strip())
+                    tmax = float((dates_temp[j]).split('-')[1].strip())
+
+                    mask = (df['dates'] > tmin) & (df['dates'] <= tmax)
+                    df.loc[mask, 'model'] = models_temp[j]
+
+                if flag_flux:
+                    try:
+                        df['magnitude'] = 18.0 - 2.5 * np.log10(df['flux'])
+                        df['err_magn_orig'] = np.abs(2.5 * df['err_flux_orig']\
+                                / (df['flux'] * np.log(10)))
+                        df['err_magn'] = np.sqrt(np.power(gamma * df['err_magn_orig'], 2) + epsilon ** 2)
+                    except:
+                        df['magnitude'] = 0.0
+                        df['err_magn_orig'] = 0.0
+                        df['err_magn'] = 0.0
                 else:
-                    text = "Not relevant for {:s} within {:s} --> {:s}\n".format(
-                            loc,
-                            key_list[i].split('#')[2].split('-')[0],
-                            key_list[i].split('#')[2].split('-')[1])
-                    text = text\
-                            + "        {:d} observations / {:d} points asked: \033[1m\033[31mIGNORED\033[0m".format(
-                            len(time_serie['model'][cond1]),
-                            len(interpol_method[key_list[i]][0]))
-                    communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=True, tab=True)
+                    # Compute flux from magnitudes
+                    df['flux'] = np.power( 10, 0.4 * (18.0 - df['magnitude']) )
+                    df['err_flux_orig'] = np.abs((np.log(10) / 2.5) *
+                            df['err_magn_orig'] * df['flux'])
+                    df['err_flux'] = np.abs((np.log(10) / 2.5) * df['err_magn'] * df['flux'])
 
-                    del interpol_method[key_list[i]]
+                li.append(df)
+
+            # Display data removed and included
+            communicate(cfgsetup, 3, text_nb_data, opts=False, prefix=False, newline=True, tab=False)
+
+            # Concatenate all the data
+            data = pd.concat(li, axis=0, ignore_index=True)
+            data.astype({'gamma': np.dtype('f8')})
+
+            # Correct dates
+            mask = data['dates'] > 2450000
+            data.loc[mask, 'dates'] = data.loc[mask, 'dates'] - 2450000
+
+            # Create columns for use in fit
+            data['amp'] = -1
+            data['fs'] = -999
+            data['fb'] = -999
+            li = ['amp', 'fs', 'fb']
+            [data.astype({a: np.dtype('f8')}) for a in li]
+
+            # For compatibility, convert DataFrame data into a dictionnary
+            time_serie = data.to_dict('list')
+
+            # Decide if method interpolation is used or not.
+            key_list = np.array([key for key in interpol_method])
+            if len(key_list) > 0:
+
+                text = "Ask interpolation"
+                communicate(cfgsetup, 3, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
+
+                for i in range(len(key_list)):
+                    loc = key_list[i].split('#')[0]
+
+                    tmin = float(key_list[i].split('#')[2].split('-')[0])
+                    tmax = float(key_list[i].split('#')[2].split('-')[1])
+
+                    cond1 = (time_serie['dates'] <= tmax) & (time_serie['dates'] >= tmin) &\
+                            (time_serie['loc'] == loc)
+
+                    # print(loc, len(time_serie['model'][cond1]), len(interpol_method[key_list[i]][0]))
+
+                    if len(time_serie['model'][cond1]) > len(interpol_method[key_list[i]][0]):
+
+                        text = "Relevant for {:s} within {:s} --> {:s}\n".format(
+                                loc,
+                                key_list[i].split('#')[2].split('-')[0],
+                                key_list[i].split('#')[2].split('-')[1])
+                        text = text\
+                                + "        {:d} observations / {:d} points asked: \033[1m\033[32mOK\033[0m".format(
+                                len(time_serie['model'][cond1]),
+                                len(interpol_method[key_list[i]][0]))
+                        # communicate(cfgsetup, 1, text, opts=False)
+                        communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=True, tab=True)
+
+                        time_serie['interpol'][cond1] = key_list[i]
+
+                        # Ephemeris
+                        path = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Data')
+
+                        if len(obs_properties['loc']) > 1:
+                            name1 = obs_properties['loc'][np.where(np.array(
+                                [obs == cfgsetup.get('Observatories', 'Reference').lower()
+                                 for obs in observatories]) == True)[0][0]]
+                            name1 = glob.glob(path + name1 + '.*')[0]
+                        else:
+                            name1 = glob.glob(path + obs_properties['loc'][0] + '.*')[0]
+
+                        c_icrs = SkyCoord(ra=cfgsetup.get('EventDescription', 'RA'), \
+                                          dec=cfgsetup.get('EventDescription', 'DEC'), frame='icrs')
+                        # print(c_icrs.transform_to('barycentrictrueecliptic'))
+                        l = c_icrs.transform_to('barycentrictrueecliptic').lon.degree
+                        b = c_icrs.transform_to('barycentrictrueecliptic').lat.degree
+
+                        name2 = glob.glob(path + loc + '.*')[0]
+                        sTe, sEe, sNe, DsTe, DsEe, DsNe, sTs, sEs, sNs, DsTs, DsEs, DsNs = \
+                            ephemeris.Ds(name1, name2, l, b, cfgsetup.getfloat('Modelling', 'tp'), \
+                                         cfgsetup)
+
+                        if name1 != name2:
+                            DsN = DsNs
+                            DsE = DsEs
+                        else:
+                            DsN = DsNe
+                            DsE = DsEe
+
+                        interpol_method[key_list[i]][1] = DsN(interpol_method[key_list[i]][0])
+                        interpol_method[key_list[i]][2] = DsE(interpol_method[key_list[i]][0])
+                    else:
+                        text = "Not relevant for {:s} within {:s} --> {:s}\n".format(
+                                loc,
+                                key_list[i].split('#')[2].split('-')[0],
+                                key_list[i].split('#')[2].split('-')[1])
+                        text = text\
+                                + "        {:d} observations / {:d} points asked: \033[1m\033[31mIGNORED\033[0m".format(
+                                len(time_serie['model'][cond1]),
+                                len(interpol_method[key_list[i]][0]))
+                        communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=True, tab=True)
+
+                        del interpol_method[key_list[i]]
+
+            filename = "{:s}/all_data.bin".format(cfgsetup.get('RelativePaths', 'Data'))
+            outfile = open(filename,'wb')
+            to_dump = [time_serie, model2load]
+            pickle.dump(to_dump, outfile)
+            outfile.close()
+
+        # (Optimization) Load saved data from binary files
+        elif cfgsetup.getboolean('Optimization', 'UseBinaryFiles')\
+                & os.path.exists(filename_bin):
+
+            text = "Data from the previous run, loaded from a binary file."
+            communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=False, tab=True)
+            text = "If you want to reload all the data, please use option UseBinaryFiles=False in advancedsetup.ini."
+            communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=False, tab=True)
+
+            filename = "{:s}/all_data.bin".format(cfgsetup.get('RelativePaths', 'Data'))
+            infile = open(filename,'rb')
+            list_input = pickle.load(infile)
+            time_serie = list_input[0]
+            model2load = list_input[1]
+            infile.close()
 
         # Load models of magnification
         # ----------------------------
