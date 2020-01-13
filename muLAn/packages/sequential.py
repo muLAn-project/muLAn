@@ -332,17 +332,32 @@ def run_sequence(path_event, options):
         # Use Pandas DataFrame to store data
         # ==================================
         data = pd.DataFrame()
-        name = np.array('id dates magnitude err_magn_orig seeing background'.split())
+        namecol = np.array('id dates magnitude err_magn_orig seeing background'.split())
+        namecolf = np.array('id dates flux err_flux_orig seeing background'.split())
         coltype = 'i8 f8    f8        f8       f8    f8'.split()
-        coltype = np.array([np.dtype(a) for a in coltype])
+        coltypet = np.array([np.dtype(a) for a in coltype])
         usecols = range(5)
-        coltype = dict(zip(name, coltype))
+        coltype = dict(zip(namecol, coltypet))
+        coltypef = dict(zip(namecolf, coltypet))
         li = []
+        model2load = np.array([])
         text_nb_data = ""
+
+        # Identify the datasets providing flux
+        list_flux = np.array([a for a in observatories 
+            for i in range(len(obs_properties['key'])) 
+            if ((a == obs_properties['key'][i]) & 
+                ((obs_properties['fluxoumag'][i]).lower() == "flux"))])
+
         for i in range(len(observatories)):
             # Load data
-            df = pd.read_csv(data_filenames[i], sep='\s+', names=name,
-                usecols=usecols, dtype=coltype, skiprows=1)
+            flag_flux = any(list_flux == observatories[i])
+            if flag_flux:
+                df = pd.read_csv(data_filenames[i], sep='\s+', names=namecolf,
+                    usecols=usecols, dtype=coltypef, skiprows=1)
+            else:
+                df = pd.read_csv(data_filenames[i], sep='\s+', names=namecol,
+                    usecols=usecols, dtype=coltype, skiprows=1)
 
             # Add dataset name
             df['obs'] = observatories[i]
@@ -357,7 +372,11 @@ def run_sequence(path_event, options):
             # Rescale the error-bars [see Wyrzykowski et al. (2009)]
             gamma = float(unpack_options(cfgsetup, 'Observatories', observatories[i])[0][1:])
             epsilon = float(unpack_options(cfgsetup, 'Observatories', observatories[i])[1][:-1])
-            df['err_magn'] = np.sqrt(np.power(gamma * df['err_magn_orig'], 2) + epsilon ** 2)
+            if flag_flux:
+                df['err_flux'] = np.sqrt(np.power(gamma * df['err_flux_orig'],2)\
+                        + np.power((np.log(10) * epsilon * df['flux']) / 2.5, 2))
+            else:
+                df['err_magn'] = np.sqrt(np.power(gamma * df['err_magn_orig'], 2) + epsilon ** 2)
 
             # Select data only in specified time interval
             prop_temp = cfgsetup.get('Observatories', observatories[i]).split(',')
@@ -443,7 +462,7 @@ def run_sequence(path_event, options):
             name = 'DateRanges_' + obs_properties['loc'][i]
             dates_temp = model_params[name]
 
-            data['model'] = 'PSPL'
+            df['model'] = 'PSPL'
 
             key = np.array([key for key in interpol_method])
             for j in range(len(models_temp)):
@@ -453,6 +472,23 @@ def run_sequence(path_event, options):
 
                 mask = (df['dates'] > tmin) & (df['dates'] <= tmax)
                 df.loc[mask, 'model'] = models_temp[j]
+
+            if flag_flux:
+                try:
+                    df['magnitude'] = 18.0 - 2.5 * np.log10(df['flux'])
+                    df['err_magn_orig'] = np.abs(2.5 * df['err_flux_orig']\
+                            / (df['flux'] * np.log(10)))
+                    df['err_magn'] = np.sqrt(np.power(gamma * df['err_magn_orig'], 2) + epsilon ** 2)
+                except:
+                    df['magnitude'] = 0.0
+                    df['err_magn_orig'] = 0.0
+                    df['err_magn'] = 0.0
+            else:
+                # Compute flux from magnitudes
+                df['flux'] = np.power( 10, 0.4 * (18.0 - df['magnitude']) )
+                df['err_flux_orig'] = np.abs((np.log(10) / 2.5) *
+                        df['err_magn_orig'] * df['flux'])
+                df['err_flux'] = np.abs((np.log(10) / 2.5) * df['err_magn'] * df['flux'])
 
             li.append(df)
 
@@ -467,258 +503,15 @@ def run_sequence(path_event, options):
         mask = data['dates'] > 2450000
         data.loc[mask, 'dates'] = data.loc[mask, 'dates'] - 2450000
 
-##### =================> EDIT FROM HERE <================================
+        # Create columns for use in fit
+        data['amp'] = -1
+        data['fs'] = -999
+        data['fb'] = -999
+        li = ['amp', 'fs', 'fb']
+        [data.astype({a: np.dtype('f8')}) for a in li]
 
-##### =================> TO HERE <================================
-##### =================> EDIT FROM HERE <================================
-#        print(data)
-
-
-
-# Convert data in the convention of the time_series dictionnary.
-#        sys.exit()
-##### =================> TO HERE <================================
-
-#       time_serie = dict({})
-#       time_serie_temp = dict({})
-#       model2load = np.array([])
-#       text_nb_data = ""
-        for i in range(len(observatories)):
-#           file = np.loadtxt(data_filenames[i], dtype=format, usecols=(0, 1, 2, 3, 4, 5), \
-#                             skiprows=0, unpack=False)
-
-#           # Rescale the error-bars [see Wyrzykowski et al. (2009)]
-#           gamma = float(unpack_options(cfgsetup, 'Observatories', observatories[i])[0][1:])
-#           epsilon = float(unpack_options(cfgsetup, 'Observatories', observatories[i])[1][:-1])
-
-#           # Ephemeris
-#           c_icrs = SkyCoord(ra=cfgsetup.get('EventDescription', 'RA'), \
-#                             dec=cfgsetup.get('EventDescription', 'DEC'), frame='icrs')
-#           # print(c_icrs.transform_to('barycentrictrueecliptic'))
-#           l = c_icrs.transform_to('barycentrictrueecliptic').lon.degree
-#           b = c_icrs.transform_to('barycentrictrueecliptic').lat.degree
-
-#           name2 = glob.glob(path + obs_properties['loc'][i] + '.*')[0]
-#           sTe, sEe, sNe, DsTe, DsEe, DsNe, sTs, sEs, sNs, DsTs, DsEs, DsNs = \
-#               ephemeris.Ds(name1, name2, l, b, cfgsetup.getfloat('Modelling', 'tp'), \
-#                            cfgsetup)
-
-#           if name1 != name2:
-#               DsN = DsNs
-#               DsE = DsEs
-#           else:
-#               DsN = DsNe
-#               DsE = DsEe
-
-#           # Timeseries
-#           dates = file['dates']
-#           cond = file['dates'] > 2450000
-#           if cond.sum() > 0:
-#               dates = file['dates'] - 2450000
-
-#           if i == 0:
-#               time_serie.update({'id': file['id']})
-#               time_serie.update({'dates': dates})
-#               time_serie.update({'magnitude': file['magnitude']})
-#               time_serie.update({'err_magn': np.sqrt(np.power(gamma * file['err_magn'], 2) + epsilon ** 2)})
-#               time_serie.update({'err_magn_orig': file['err_magn']})
-#               time_serie.update({'seeing': file['seeing']})
-#               time_serie.update({'background': file['background']})
-#               time_serie.update({'DsN': np.full(dates.shape[0], 0, dtype='f8')})
-#               time_serie.update({'DsE': np.full(dates.shape[0], 0, dtype='f8')})
-#               time_serie.update({'model': np.full(dates.shape[0], '0', dtype='S100')})
-#               time_serie.update({'interpol': np.full(dates.shape[0], '0', dtype='S100')})
-#               time_serie.update({'obs': np.full(dates.shape[0], observatories[i], dtype='S100')})
-#               time_serie.update({'gamma': np.full(dates.shape[0], obs_properties['gamma'][i], dtype='f8')})
-#               time_serie.update({'loc': np.full(dates.shape[0], obs_properties['loc'][i], dtype='S100')})
-#           else:
-#               time_serie_temp.update({'id': file['id']})
-#               time_serie_temp.update({'dates': dates})
-#               time_serie_temp.update({'magnitude': file['magnitude']})
-#               time_serie_temp.update({'err_magn': np.sqrt(np.power(gamma * file['err_magn'], 2) + epsilon ** 2)})
-#               time_serie_temp.update({'err_magn_orig': file['err_magn']})
-#               time_serie_temp.update({'seeing': file['seeing']})
-#               time_serie_temp.update({'background': file['background']})
-#               time_serie_temp.update({'DsN': np.full(dates.shape[0], 0, dtype='f8')})
-#               time_serie_temp.update({'DsE': np.full(dates.shape[0], 0, dtype='f8')})
-#               time_serie_temp.update({'model': np.full(dates.shape[0], '0', dtype='S100')})
-#               time_serie_temp.update({'interpol': np.full(dates.shape[0], '0', dtype='S100')})
-#               time_serie_temp.update({'obs': np.full(dates.shape[0], observatories[i], dtype='S100')})
-#               time_serie_temp.update({'gamma': np.full(dates.shape[0], obs_properties['gamma'][i], dtype='f8')})
-#               time_serie_temp.update({'loc': np.full(dates.shape[0], obs_properties['loc'][i], dtype='S100')})
-
-#               time_serie = {key: np.append(np.array(time_serie[key]),
-#                                            np.array(time_serie_temp[key])) for key in time_serie}
-
-#            # Select data in the right dates range.
-#            prop_temp = cfgsetup.get('Observatories', observatories[i]).split(',')
-#
-#            if len(prop_temp) < 2:
-#                sys.exit("Error Syntax in [Observatories] from 'setup.ini'.")
-#            prop_temp = np.delete(prop_temp, [0, 1])
-#            if len(prop_temp) == 0: prop_temp = ['']
-#
-#            print(time_serie)
-#            cond1 = time_serie['obs'] == observatories[i]
-#            cond_obs = np.invert(np.array(cond1))
-#            print(cond1)
-#            print(cond_obs)
-#            if (len(prop_temp) > 0) & (prop_temp != ['']):
-#                list_temp = [prop_temp[iii].strip() for iii in range(len(prop_temp)) if (prop_temp[iii].strip() != '')]
-#                for a in list_temp:
-#                    toinclude = a.split('-')
-#                    if len(toinclude) == 2:
-#                        if toinclude[0].strip() == '': toinclude[0] = -999999999.0
-#                        if toinclude[1].strip() == '': toinclude[1] = 999999999.0
-#                        cond_inc = np.array(
-#                            (time_serie['dates'] >= float(toinclude[0])) & (time_serie['dates'] <= float(toinclude[1]))
-#                            & cond1)
-#                        cond_obs[cond_inc] = True
-#                    else:
-#                        text = 'Problem in the time intervals in setup.ini.'
-#                        sys.exit(text)
-#
-#                time_serie = dict({key: time_serie[key][cond_obs] for key in time_serie})
-#
-#            nb_data_init = (time_serie['obs'] == observatories[i]).sum()
-#
-#            # Remove data specified in the Observatories files using data IDs.
-#            prop_temp = cfgobs.get('ObservatoriesDetails', observatories[i]).split(',')
-#            if len(prop_temp) > 5:
-#                if prop_temp[5].strip() != '':
-#                    list_temp = [prop_temp[iii].strip() for iii in range(len(prop_temp)) if
-#                                 (iii > 4) & (prop_temp[iii].strip() != '')]
-#                    for a in list_temp:
-#                        toremove = a.split('-')
-#                        if len(toremove) == 2:
-#                            cond_rm = np.invert(
-#                                np.array((time_serie['id'] >= long(toremove[0])) & (time_serie['id'] <= long(toremove[1]))
-#                                         & (time_serie['obs'] == observatories[i])))
-#                            time_serie = dict({key: time_serie[key][cond_rm] for key in time_serie})
-#                        else:
-#                            cond_rm = np.invert(np.array((time_serie['id'] == long(toremove[0]))
-#                                                         & (time_serie['obs'] == observatories[i])))
-#                            time_serie = dict({key: time_serie[key][cond_rm] for key in time_serie})
-#
-#            a = float(unpack_options(cfgsetup, "Observatories", observatories[i])[2].split("-")[0])
-#            b = float(unpack_options(cfgsetup, "Observatories", observatories[i])[2].split("-")[1])
-#            text = "Reading data within {:.6f} --> {:.6f} from {:s}".format(a, b, data_filenames[i].split("/")[-1])
-#            communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=False, tab=True)
-#            a = (time_serie['obs'] == observatories[i]).sum()
-#            b = nb_data_init - a
-#            if a!=a+b:
-#                text_nb_data = text_nb_data + "    \033[1m{:6d}\033[0m data + \033[40m\033[97m\033[1m{:6d} data excluded\033[0m\n".format(a, b)
-#            else:
-#                text_nb_data = text_nb_data + "    \033[1m{:6d}\033[0m data\n".format(a, b)
-#            if i==len(observatories)-1:
-#                text_nb_data = text_nb_data + "  = \033[1m{:6d}\033[0m data in total".format(len(time_serie['dates']))
-#
-#            # try:
-#            #     del prop_temp
-#            #     del list_temp
-#            #     del toremove
-#            #     #del cond_rm
-#            # except:
-#            #     pass
-#
-#            # Calculation of Ds
-#            cond1 = time_serie['obs'] == observatories[i]
-#            time_serie['DsN'][cond1] = DsN(time_serie['dates'][cond1])
-#            time_serie['DsE'][cond1] = DsE(time_serie['dates'][cond1])
-#
-#            # try:
-#            #     del prop_temp
-#            #     del cond1
-#            #     #del cond_obs
-#            #     del list_temp
-#            #     del toinclude
-#            #     del cond_inc
-#            # except:
-#            #     pass
-#
-#            # Models
-#            name = 'Models_' + obs_properties['loc'][i]
-#            models_temp = model_params[name]
-#            name = 'DateRanges_' + obs_properties['loc'][i]
-#            dates_temp = model_params[name]
-#
-#            # print(time_serie['dates'].shape, time_serie['magnitude'].shape, time_serie['obs'].shape)
-#
-#            key = np.array([key for key in interpol_method])
-#            for j in range(len(models_temp)):
-#                model2load = np.append(model2load, models_temp[j])
-#                tmin = float((dates_temp[j]).split('-')[0].strip())
-#                tmax = float((dates_temp[j]).split('-')[1].strip())
-#
-#                cond = (time_serie['obs'] == observatories[i]) \
-#                       & (time_serie['dates'] <= tmax) & (time_serie['dates'] >= tmin)
-#
-#                time_serie['model'][cond] = models_temp[j]
-#
-#            cond = time_serie['model'] == '0'
-#            if cond.sum() > 0:
-#                time_serie['model'][cond] = models_temp[0]
-#
-#        communicate(cfgsetup, 3, text_nb_data, opts=False, prefix=False, newline=True, tab=False)
-#
-#        # del file, tmin, tmax, cond, models_temp, dates_temp, dates
-#        # del sTe, sEe, sNe, DsTe, DsEe, DsNe, sTs, sEs, sNs, DsTs, DsEs, DsNs
-#        # del name1, name2, name, format, time_serie_temp
-
-        time_serie.update({'flux': np.power(10, 0.4*(18.0-time_serie['magnitude']))})
-        time_serie.update({'err_flux': np.abs((np.log(10) / 2.5) * time_serie['err_magn'] * time_serie['flux'])})
-        time_serie.update({'err_flux_orig': np.abs((np.log(10) / 2.5) * time_serie['err_magn_orig'] * time_serie['flux'])})
-        time_serie.update({'amp': np.full(time_serie['dates'].shape[0], -1, dtype='f8')})
-        time_serie.update({'fs': np.full(time_serie['dates'].shape[0], -999, dtype='f8')})
-        time_serie.update({'fb': np.full(time_serie['dates'].shape[0], -999, dtype='f8')})
-
-        # Load flux if available
-        # ----------------------
-        list_flux = [a for a in observatories
-                       for i in range(len(obs_properties['key']))
-                       if ((a == obs_properties['key'][i])
-                           & ((obs_properties['fluxoumag'][i]).lower() == "flux"))]
-        for a in list_flux:
-            cond = np.where(time_serie['obs'] == a)
-            fname = '{:s}{:s}*.dat'.format(
-                cfgsetup.get("FullPaths", "Event"),
-                cfgsetup.get("RelativePaths", "Data"))
-            fname = [aa for aa in glob.glob(fname)
-                    if os.path.basename(aa).lower() == '{:s}.dat'.format(a)]
-            if len(fname) == 1:
-                fname = fname[0]
-            else:
-                text = "File error when looking for flux."
-                sys.exit(text)
-
-            format = {'names': ('id', 'date', 'flux', 'err_flux', 'seeing', 'background'),
-                      'formats': ('i8', 'f8', 'f8', 'f8', 'f8', 'f8')}
-            file = np.loadtxt(fname, dtype=format, usecols=(0, 1, 2, 3, 4, 5), skiprows=0, unpack=False)
-            cond2 = file['date'] > 2450000
-            for i in cond[0]:
-                if cond2.sum() > 0:
-                    idx = (np.abs(file['date'] - time_serie['dates'][i] - 2450000.0)).argmin()
-                else:
-                    idx = (np.abs(file['date'] - time_serie['dates'][i])).argmin()
-                time_serie['flux'][i] = file['flux'][idx]
-                time_serie['err_flux_orig'][i] = file['err_flux'][idx]
-
-                # Rescale the error-bars [see Wyrzykowski et al. (2009)]
-                gamma = float(unpack_options(cfgsetup, 'Observatories', a)[0][1:])
-                epsilon = float(unpack_options(cfgsetup, 'Observatories', a)[1][:-1])
-
-                time_serie['err_flux'][i] = np.sqrt(np.power(gamma * file['err_flux'][idx], 2) + np.power((np.log(10) * epsilon * file['flux'][idx]) / 2.5, 2))
-
-                try:
-                    time_serie['magnitude'][i] = 18.0 - 2.5 * np.log10(file['flux'][idx])
-                    time_serie['err_magn_orig'][i] = np.abs(2.5 * file['err_flux'][idx] / (file['flux'][idx] * np.log(10)))
-                    time_serie['err_magn'][i] = np.sqrt(np.power(gamma * time_serie['err_magn_orig'][i], 2) + epsilon ** 2)
-                except:
-                    time_serie['magnitude'][i] = 0.0
-                    time_serie['err_magn_orig'][i] = 0.0
-                    time_serie['err_magn'][i] = 0.0
-
-        # print(time_serie['dates'].shape, time_serie['magnitude'].shape, time_serie['obs'].shape)
+        # For compatibility, convert DataFrame data into a dictionnary
+        time_serie = data.to_dict('list')
 
         # Decide if method interpolation is used or not.
         key_list = np.array([key for key in interpol_method])
