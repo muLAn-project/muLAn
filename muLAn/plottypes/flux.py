@@ -111,7 +111,6 @@ def bash_command(text):
 # ----------------------------------------------------------------------
 def unpack_options(cfgsetup, level0, level1, sep=','):
     options = [a.strip() for a in cfgsetup.get(level0, level1).split(sep)]
-    del a, cfgsetup, level0, level1
     return options
 
 
