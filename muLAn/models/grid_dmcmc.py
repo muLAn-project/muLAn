@@ -6,23 +6,6 @@
 # ----------------------------------------------------------------------
 import sys
 import os
-# Full path of this file
-full_path_here = os.path.realpath(__file__)
-text = full_path_here.split('/')
-a = ''
-i = 0
-while i < len(text)-1:
-   a = a + text[i] + '/'
-   i = i + 1
-full_path = a
-
-#filename = full_path + '../' + '.pythonexternallibpath'
-#file = open(filename, 'r')
-#for line in file:
-#    path_lib_ext=line
-#file.close()
-#if path_lib_ext != 'None':
-#    sys.path.insert(0, path_lib_ext[:-1])
 # ----------------------------------------------------------------------
 #    Packages
 # ----------------------------------------------------------------------
@@ -110,13 +93,13 @@ def communicate(cfg, verbose, text, opts=False, prefix=False, newline=False, tab
                 text = "    " + text
             if newline:
                 text = "\n" + text
-            print text
+            print(text)
         else:
             if tab:
                 text = "    " + text
             if newline:
                 text = "\n" + text
-            print text
+            print(text)
 # ----------------------------------------------------------------------
 def zipdir(path, ziph):
     # ziph is zipfile handle
@@ -168,7 +151,7 @@ def binrot(alpha, tau, beta, s, q):
     tau_chap = np.array([np.cos(alpha), np.sin(alpha)])
     beta_chap = np.array([-np.sin(alpha), np.cos(alpha)])
 
-    lenssource = np.array([tau[i] * tau_chap + beta[i] * beta_chap for i in xrange(len(tau))])
+    lenssource = np.array([tau[i] * tau_chap + beta[i] * beta_chap for i in range(len(tau))])
 
     gl1 = s * q/(1+q) * np.array([1, 0])
     lenssource = lenssource - gl1
@@ -257,10 +240,10 @@ def test_blending(mb_lim, g_lim, fs, fb, time_serie, cond2):
 
 # ----------------------------------------------------------------------
 # def sort_on_runtime(pos):
-#     print pos
+#     print(pos)
 #     p = np.atleast_2d(pos)
 #     idx = np.argsort(p[:, 3])#[::-1]
-#     #print idx
+#     #print(idx)
 #     return p[idx], idx
 # ----------------------------------------------------------------------
 def lnprior(param_model):
@@ -285,28 +268,28 @@ def lnprior(param_model):
 # ----------------------------------------------------------------------
 def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names,
            interpol_method, tb, cfgsetup):
-    # print theta[2]
+    # print(theta[2])
 
     #import modulesloading as load_modules
 
     #models, y = load_modules.main()
-    #models = {models_names[i] : models[i] for i in xrange(len(models_names))}
+    #models = {models_names[i] : models[i] for i in range(len(models_names))}
 
     models = dict()
-    for i in xrange(len(models_names)):
+    for i in range(len(models_names)):
         text = 'muLAn.models.{:s}'.format(models_names[i])
         importlib.import_module(text)
         models.update({models_names[i]: getattr(mulanmodels, models_names[i])})
 
-    # print res
+    # print(res)
     # -----------
 
-    # print models
-    # print models_names
+    # print(models)
+    # print(models_names)
     # sys.exit()
 
-    # print models
-    # print "Hello, c'est moi"
+    # print(models)
+    # print("Hello, c'est moi")
 
     flag_fix_gamma = 1
 
@@ -376,19 +359,19 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
     chi2 = 0
     lnprior_curr = lnprior(param_model)
     if lnprior_curr < 1e11:
-        # print "Amplification, tu veux ?"
+        # print("Amplification, tu veux ?")
         # Calculation of the amplification
         observatories = np.unique(time_serie['obs'])
         models_lib = np.unique(time_serie['model'])
-        for j in xrange(len(observatories)):
+        for j in range(len(observatories)):
             cond2 = (time_serie['obs']==observatories[j])
-            #print observatories[j]
+            #print(observatories[j])
 
             if flag_fix_gamma:
                 param_model.update({'gamma': time_serie['gamma'][cond2][0]})
 
-            for i in xrange(models_lib.shape[0]):
-                #print models_lib[i]
+            for i in range(models_lib.shape[0]):
+                #print(models_lib[i])
                 cond = (time_serie['model'] == models_lib[i]) & (time_serie['obs']==observatories[j])\
                         & (time_serie['interpol'] == '0')
 
@@ -415,7 +398,7 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
         key_list = [key for key in interpol_method]
 
         if len(key_list) > 0:
-            for i in xrange(len(key_list)):
+            for i in range(len(key_list)):
                 time_serie_export = interpol_method[key_list[i]][0]
 
                 DsN_export = interpol_method[key_list[i]][1]
@@ -430,7 +413,7 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
                     kwargs_method = dict()
                 amp = models[name].magnifcalc(time_serie_export, param_model, Ds=Ds_export, tb=tb, **kwargs_method)
 
-                # print amp
+                # print(amp)
                 interpol_method[key_list[i]][3] = amp
                 interpol_func = interpolate.interp1d(time_serie_export, amp, kind='linear')
                 # interpol_func.update({key_list[i]: interpolate.interp1d(time_serie_export, amp)})
@@ -442,9 +425,9 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
 
         #  Source and blending fluxes.
         # -------------------------------------------------------------------------
-        for j in xrange(len(observatories)):
+        for j in range(len(observatories)):
             cond2 = (time_serie['obs']==observatories[j])
-            #print observatories[j]
+            #print(observatories[j])
 
             # Calculation of fs and fb
             # fs, fb = algebra.fsfb(time_serie, cond2, blending=True)
@@ -462,9 +445,9 @@ def lnprob(theta, time_serie, model_params, fitted_param, nuisance, models_names
             if (np.abs(fs) == np.inf) | (np.abs(fb) == np.inf):
                 lnprior_curr = - np.inf
 
-        # print "Amplification, tu as..."
+        # print("Amplification, tu as...")
         # Calculation of chi2
-        # print param_model, time_serie['amp']
+        # print(param_model, time_serie['amp'])
 
         if lnprior_curr < 1e11:
             time_serie['flux_model'] = time_serie['amp']*time_serie['fs'] + time_serie['fb']
@@ -569,7 +552,7 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
         shutil.rmtree(path)
         if not os.path.exists(path): os.makedirs(path)
 
-        for i in xrange(cfgsetup.getint('FitSetupDMCMC', 'Chains')):
+        for i in range(cfgsetup.getint('FitSetupDMCMC', 'Chains')):
             filename4chains = path + cfgsetup.get('Controls', 'Archive')\
                 + '-c{:04d}'.format(i) + '.txt'
             file_chains = open(filename4chains, 'a')
@@ -626,7 +609,7 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
 
             accrate_loaded = np.array([])
             id_loaded = np.array([])
-            for i in xrange(nb_chains):
+            for i in range(nb_chains):
 
                 file = open(fnames_chains[i], 'r')
                 for line in file:
@@ -771,7 +754,7 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
     os.remove(filename)
 
     # Prepare the DMCMC
-    # print lengh_grid
+    # print(lengh_grid)
     t0_best = np.empty(cfgsetup.getint('FitSetupDMCMC', 'Chains'), 'f8')
     u0_best = np.empty(cfgsetup.getint('FitSetupDMCMC', 'Chains'), 'f8')
     tE_best = np.empty(cfgsetup.getint('FitSetupDMCMC', 'Chains'), 'f8')
@@ -789,7 +772,7 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
     date_best = np.empty(cfgsetup.getint('FitSetupDMCMC', 'Chains'), 'S8')
     hour_best = np.empty(cfgsetup.getint('FitSetupDMCMC', 'Chains'), 'S6')
 
-    for id_grid in xrange(lengh_grid):
+    for id_grid in range(lengh_grid):
 
         # if flag_grid_yes:
             # text = '\nGrid: {:d} / {:d}'.format(id_grid+1, lengh_grid)
@@ -799,12 +782,12 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
 
         if flag_grid_yes:
             node = dict()
-            for id2_grid in xrange(nb_params_grid):
+            for id2_grid in range(nb_params_grid):
                 node.update({grid_params[id2_grid] : grid_values_combined.T[id_grid][id2_grid]})
 
             path = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Chains')
 
-            for i in xrange(cfgsetup.getint('FitSetupDMCMC', 'Chains')):
+            for i in range(cfgsetup.getint('FitSetupDMCMC', 'Chains')):
                 filename4chains = path + cfgsetup.get('Controls', 'Archive')\
                     + '-c{:04d}'.format(i) + '-g{:d}'.format(id_grid) + '.txt'
                 file_chains = open(filename4chains, 'a')
@@ -934,7 +917,7 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
 
         # Parameters of MCMC
         ndim, nwalkers = len(fitted_param), cfgsetup.getint('FitSetupDMCMC', 'Chains')  # Attention nwalkers nombre pair.
-        # pos = [result + 0.1*np.random.randn(ndim) for i in xrange(
+        # pos = [result + 0.1*np.random.randn(ndim) for i in range(
         #         nwalkers)]
         if fitted_param!={}:
             # Use delta random in a specified interval
@@ -981,7 +964,7 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
                 for key, value in fitted_param.iteritems():
                     key_list = np.append(key_list, key)
 
-                for i in xrange(nwalkers):
+                for i in range(nwalkers):
                     param_model = nuisance
                     id = 0
                     cond = (key_list=='t0')
@@ -1160,11 +1143,11 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
                 if stop==1:
                     break
 
-                # print "On continue"
+                # print("On continue")
 
             # Save best model if grid
             if flag_grid_yes:
-                for i in xrange(nwalkers):
+                for i in range(nwalkers):
                     path = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Chains')
                     filename4chains = path + cfgsetup.get('Controls', 'Archive')\
                         + '-c{:04d}'.format(i) + '.txt'
@@ -1218,17 +1201,17 @@ def search(cfgsetup=False, models=False, model_param=False, time_serie=False,\
                 bash_command(text)
         else:
             stop = 0
-            for i in xrange(nwalkers):
+            for i in range(nwalkers):
                 param_model = nuisance
 
 
                 # Calculation of the amplification
                 observatories = np.unique(time_serie['obs'])
                 models_lib = np.unique(time_serie['model'])
-                for jjj in xrange(len(observatories)):
+                for jjj in range(len(observatories)):
                     cond2 = (time_serie['obs']==observatories[jjj])
 
-                    for iii in xrange(models_lib.shape[0]):
+                    for iii in range(models_lib.shape[0]):
                         cond = (time_serie['model'] == models_lib[iii]) & (time_serie['obs']==observatories[jjj])
 
                         if cond.sum() > 0:
