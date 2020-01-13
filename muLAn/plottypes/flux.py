@@ -6,24 +6,6 @@
 # ----------------------------------------------------------------------
 import sys
 import os
-
-# Full path of this file
-full_path_here = os.path.realpath(__file__)
-text = full_path_here.split('/')
-a = ''
-i = 0
-while i < len(text) - 1:
-    a = a + text[i] + '/'
-    i = i + 1
-full_path = a
-
-#filename = full_path + '../' + '.pythonexternallibpath'
-#file = open(filename, 'r')
-#for line in file:
-#    path_lib_ext = line
-#file.close()
-#if path_lib_ext != 'None':
-#    sys.path.insert(0, path_lib_ext[:-1])
 # ----------------------------------------------------------------------
 #  Standard packages
 # ----------------------------------------------------------------------
@@ -32,9 +14,7 @@ import glob
 import sys
 import copy
 import cmath
-# import math
 import emcee
-# import pylab
 import pickle
 import pylab
 import zipfile
@@ -51,7 +31,7 @@ from bokeh.models.widgets import DateFormatter, NumberFormatter, DataTable, \
     TableColumn
 import bokeh.io as io
 from scipy import stats
-import ConfigParser as cp
+import configparser as cp
 from astropy.time import Time
 from PyAstronomy import pyasl
 import matplotlib as mpl
