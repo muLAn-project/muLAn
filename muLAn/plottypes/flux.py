@@ -110,13 +110,13 @@ def communicate(cfg, verbose, text, opts=False, prefix=False, newline=False, tab
                 text = "    " + text
             if newline:
                 text = "\n" + text
-            print text
+            print(text)
         else:
             if tab:
                 text = "    " + text
             if newline:
                 text = "\n" + text
-            print text
+            print(text)
 # ----------------------------------------------------------------------
 def help():
     text = "Plot the light curve of a previously modelled event."
@@ -203,7 +203,7 @@ def epsilon(i, j, k):
 def onSky(m_hat, n_hat, u):
     x = np.array(
         [epsilon(i + 1, j + 1, k + 1) * u[i] * n_hat[j] * m_hat[k] for i
-         in xrange(3) for j in xrange(3) for k in xrange(3)]).sum()
+         in range(3) for j in range(3) for k in range(3)]).sum()
     u_proj = (1.0 / np.sqrt(1 - ((n_hat * m_hat).sum()) ** 2)) \
              * np.array([x,
                          (n_hat * u).sum() - (n_hat * m_hat).sum() * (
@@ -321,7 +321,7 @@ def boussole(EarthSunFile=False, EarthSatelliteFile=False, cfg=False, \
     delta_pos = np.array([])
     delta_pos_proj = np.array([])
     pos_proj = np.array([])
-    for t in xrange(len(EarthSun)):
+    for t in range(len(EarthSun)):
         pos = np.array(
             [EarthSun['x'][t], EarthSun['y'][t], EarthSun['z'][t]])
         delta_pos_temp = pos - (EarthSun['hjd'][t] - t0par) * vp - sp
@@ -351,7 +351,7 @@ def boussole(EarthSunFile=False, EarthSatelliteFile=False, cfg=False, \
     delta_pos = np.array([])
     delta_pos_proj = np.array([])
     pos_proj = np.array([])
-    for t in xrange(len(EarthSat)):
+    for t in range(len(EarthSat)):
         pos = np.array([EarthSun['x'][t] - EarthSat['x'][t],
                         EarthSun['y'][t] - EarthSat['y'][t],
                         EarthSun['z'][t] - EarthSat['z'][t]])
@@ -388,7 +388,7 @@ def boussole(EarthSunFile=False, EarthSatelliteFile=False, cfg=False, \
         D_enm = onSky(m_hat, n_hat, D_ecl)
 
 
-    # print D_enm
+    # print(D_enm)
     return EarthSun, EarthSat, D_enm
 
 
@@ -572,7 +572,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
     elif flag_fix:
         # Read on the chains
         if nb_chains > 0:
-            for i in xrange(nb_chains):
+            for i in range(nb_chains):
 
                 file = open(fnames_chains[i], 'r')
                 for line in file:
@@ -640,7 +640,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 file.close()
 
     # TO BE REMOVE: PB with negative rho.
-    for ii in xrange(len(samples_file['rho'])):
+    for ii in range(len(samples_file['rho'])):
         if samples_file['rho'][ii] < 0:
             samples_file['rho'][ii] = 0.000001
     # ------------------------------------
@@ -682,7 +682,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
         rang_best_model = [0]
 
     # Plots
-    for idmod in xrange(len(rang_2plot)):
+    for idmod in range(len(rang_2plot)):
 
         if flag_fix:
             best_model = dict({})
@@ -779,13 +779,13 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             time_serie.update({'x': np.empty(len(time_serie['dates']))})
             time_serie.update({'y': np.empty(len(time_serie['dates']))})
 
-            for j in xrange(len(observatories)):
+            for j in range(len(observatories)):
                 cond2 = (time_serie['obs'] == observatories[j])
 
                 if flag_fix_gamma:
                     param_model.update({'gamma': time_serie['gamma'][cond2][0]})
 
-                for i in xrange(models_lib.shape[0]):
+                for i in range(models_lib.shape[0]):
                     cond = (time_serie['model'] == models_lib[i]) &\
                            (time_serie['obs'] == observatories[j])
 
@@ -805,8 +805,8 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                                 param_model, Ds=Ds_export, tb=tb, **kwargs_method)
 
                         time_serie['amp'][cond] = amp
-                        # print amp
-                        # print time_serie['amp'][cond]
+                        # print(amp)
+                        # print(time_serie['amp'][cond])
                         del amp
 
                 # Calculation of fs and fb
@@ -816,14 +816,14 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
                 time_serie['fs'][cond2] = fs
                 time_serie['fb'][cond2] = fb
-                # print fs, fb
+                # print(fs, fb)
 
                 if (observatories[j] == cfgsetup.get('Observatories', 'Reference').lower()) \
                         | (j == 0):
                     fs_ref = fs
                     fb_ref = fb
                     mag_baseline = 18.0 - 2.5 * np.log10(1.0 * fs_ref + fb_ref)
-                    # print fs, fb
+                    # print(fs, fb)
 
                 # Source postion
                 if cond2.sum() > 0:
@@ -861,8 +861,8 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
         locations = np.unique(obs_properties['loc'])
 
 
-        print "      Max magnification: {:.2f}".format(np.max(time_serie['amp']))
-        # print len(time_serie['amp'])
+        print("      Max magnification: {:.2f}".format(np.max(time_serie['amp'])))
+        # print(len(time_serie['amp']))
 
         # Fit summary
         text = "Fit summary"
@@ -872,12 +872,12 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
         if (cfgsetup.getint("Modelling", "Verbose") >= 3) & (rang_best_model == rang_2plot[idmod]):
             fn_output_terminal = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Outputs')\
                                  + "Results.txt"
-            # print fn_output_terminal
+            # print(fn_output_terminal)
             file = open(fn_output_terminal, 'w')
 
             text = "\n\033[1m\033[7m  {:25s} {:>9s}    {:>9s}    {:>9s}    {:>9s}    \033[0m".format(
                 "Site", "chi^2", "chi^2/dof", "RF 1", "RF 2")
-            print text
+            print(text)
 
             text_precis = "\n  {:25s} {:>18s}    {:>18s}    {:>18s}    {:>18s}    \n".format(
                 "Site", "chi^2", "chi^2/dof", "RF 1", "RF 2")
@@ -893,7 +893,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             text2 = ""
             text_precis = ""
             text2_precis = ""
-            for i in xrange(len(observatories_com)):
+            for i in range(len(observatories_com)):
                 rf = [float(a.replace("(", "").replace(")", "").strip()) for a in unpack_options(cfgsetup, "Observatories", observatories_com[i])[:2]]
                 cond = time_serie['obs']==observatories_com[i]
                 chi2_com = np.sum(time_serie['chi2pp'][cond])
@@ -933,37 +933,37 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                     text3_precis = "Reference for magnitudes:\n  {:25s} {:18.12e}   {:18.12e}   {:18.12e}\n".format(
                         observatories_com[i].upper(), Y, Yb, Ys)
 
-            print text
+            print(text)
             file.write(text_precis)
 
             text = "{:25}={:2}{:9.3e}{:4}{:9.3e} (chi^2 on magn)".format("", "", chi2_flux, "", chi2/(nb_data_tot-n_param))
             chi2dof_flux = chi2/(nb_data_tot-n_param)
-            print text
+            print(text)
             text = "{:25}={:2}{:18.12e}{:4}{:18.12e} (chi^2 on magn)".format("", "", chi2_flux, "", chi2/(nb_data_tot-n_param))
             chi2dof_flux = chi2/(nb_data_tot-n_param)
             file.write(text)
 
             text = "\n\033[1m\033[7m  {:78s}\033[0m".format("Best-fitting parameters")
-            print text
+            print(text)
             text = "\n  {:78s}\n".format("Best-fitting parameters")
             file.write(text)
 
             piE = np.sqrt(np.power(samples_file['piEN'][rang_best_model], 2) + np.power(samples_file['piEE'][rang_best_model],2))
             gamma = np.sqrt((samples_file['ds'][rang_best_model]/samples_file['s'][rang_best_model])**2 + samples_file['dalpha'][rang_best_model]**2)
             text = "{:>10} = {:.6f}\n".format("q", samples_file['q'][rang_best_model]) + "{:>10} = {:.6f}\n".format("s", samples_file['s'][rang_best_model]) + "{:>10} = {:.6f}\n".format("tE", samples_file['tE'][rang_best_model]) + "{:>10} = {:.6f}\n".format("rho", samples_file['rho'][rang_best_model]) + "{:>10} = {:.6f}\n".format("piEN", samples_file['piEN'][rang_best_model]) + "{:>10} = {:.6f}\n".format("piEE", samples_file['piEE'][rang_best_model]) + "{:>10} = {:.6f}\n".format("piE", piE) + "{:>10} = {:.6f}\n".format("t0", samples_file['t0'][rang_best_model]) + "{:>10} = {:.6f}\n".format("u0", samples_file['u0'][rang_best_model]) + "{:>10} = {:.6f}\n".format("alpha", samples_file['alpha'][rang_best_model]) + "{:>10} = {:.6f}\n".format("dalpha", samples_file['dalpha'][rang_best_model]) + "{:>10} = {:.6f}\n".format("ds", samples_file['ds'][rang_best_model]) + "{:>10} = {:.6f}\n".format("gammaL", gamma) + "{:>10} = {:.6f}\n".format("tp", cfgsetup.getfloat("Modelling", "tp")) + "{:>10} = {:.6f}\n".format("tb", cfgsetup.getfloat("Modelling", "tb"))
-            print text
+            print(text)
             text = "{:>10} = {:.12e}\n".format("q", samples_file['q'][rang_best_model]) + "{:>10} = {:.12e}\n".format("s", samples_file['s'][rang_best_model]) + "{:>10} = {:.12e}\n".format("tE", samples_file['tE'][rang_best_model]) + "{:>10} = {:.12e}\n".format("rho", samples_file['rho'][rang_best_model]) + "{:>10} = {:.12e}\n".format("piEN", samples_file['piEN'][rang_best_model]) + "{:>10} = {:.12e}\n".format("piEE", samples_file['piEE'][rang_best_model]) + "{:>10} = {:.12e}\n".format("piE", piE) + "{:>10} = {:.12e}\n".format("t0", samples_file['t0'][rang_best_model]) + "{:>10} = {:.12e}\n".format("u0", samples_file['u0'][rang_best_model]) + "{:>10} = {:.12e}\n".format("alpha", samples_file['alpha'][rang_best_model]) + "{:>10} = {:.12e}\n".format("dalpha", samples_file['dalpha'][rang_best_model]) + "{:>10} = {:.12e}\n".format("ds", samples_file['ds'][rang_best_model]) + "{:>10} = {:.12e}\n".format("gammaL", gamma) + "{:>10} = {:.12e}\n".format("tp", cfgsetup.getfloat("Modelling", "tp")) + "{:>10} = {:.12e}\n".format("tb", cfgsetup.getfloat("Modelling", "tb"))
             file.write(text)
 
             text = "\n\033[1m\033[7m  {:25s} {:>8s}   {:>8s}   {:>8s}     {:>6s}   {:>5s}{:3s}\033[0m".format(
                 "Site", "Baseline", "Blending", "Source", "Fb/Fs", "LLD", "")
-            print text
+            print(text)
             text = "\n  {:25s} {:>18s}   {:>18s}   {:>18s}   {:>18s}   {:>18s}{:3s}\n".format(
                 "Site", "Baseline", "Blending", "Source", "Fb/Fs", "LLD", "")
             file.write(text)
-            print text2
+            print(text2)
             file.write(text2_precis)
-            print text3
+            print(text3)
             file.write(text3_precis)
             file.close()
 
@@ -981,7 +981,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
         else:
             name1 = glob.glob(path + obs_properties['loc'][0] + '.*')[0]
 
-        for i in xrange(len(locations)):
+        for i in range(len(locations)):
             name = 'Models_' + locations[i]
             models_temp = model_param[name]
             name = 'DateRanges_' + locations[i]
@@ -989,7 +989,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
             # min = []
             # max = []
-            # for j in xrange(len(models_temp)):
+            # for j in range(len(models_temp)):
             #       model2load = np.append(model2load, models_temp[j])
             #       tmin = float((dates_temp[j]).split('-')[0].strip())
             #       tmax = float((dates_temp[j]).split('-')[1].strip())
@@ -1016,7 +1016,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                     'amp': np.full(nb_pts, 0.1, dtype='f8'),
                 })]))
 
-            for j in xrange(len(models_temp)):
+            for j in range(len(models_temp)):
                 tmin = float((dates_temp[j]).split('-')[0].strip())
                 tmax = float((dates_temp[j]).split('-')[1].strip())
 
@@ -1033,7 +1033,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             c_icrs = SkyCoord(ra=cfgsetup.get('EventDescription', 'RA'), \
                               dec=cfgsetup.get('EventDescription', 'DEC'),
                               frame='icrs')
-            # print c_icrs.transform_to('barycentrictrueecliptic')
+            # print(c_icrs.transform_to('barycentrictrueecliptic'))
             l = c_icrs.transform_to('barycentrictrueecliptic').lon.degree
             b = c_icrs.transform_to('barycentrictrueecliptic').lat.degree
 
@@ -1057,7 +1057,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
             # Amplification
             models_lib = np.unique(model_time_serie[i]['model'])
-            for k in xrange(models_lib.shape[0]):
+            for k in range(models_lib.shape[0]):
                 cond = (model_time_serie[i]['model'] == models_lib[k])
 
                 if cond.sum() > 0:
@@ -1097,7 +1097,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
         del amp, DsN_export, DsE_export, Ds_export, cond, time_serie_export
 
-        # print model_time_serie[1]['model']
+        # print(model_time_serie[1]['model'])
 
         # # Interpolation method
         # # -------------------------------------------------------------------------
@@ -1105,7 +1105,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
         #
         # interpol_func = dict()
         # if len(key_list) > 0:
-        #     for i in xrange(len(key_list)):
+        #     for i in range(len(key_list)):
         #         time_serie_export = interpol_method[key_list[i]][0]
         #
         #         DsN_export = interpol_method[key_list[i]][1]
@@ -1142,10 +1142,10 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
         if (cfgsetup.getint("Modelling", "Verbose") > 4) & (nb_param_fit > 0):
             text = "\n\033[1m\033[7m{:>2s}{:<25s}{:1s}{:>10s}{:1s}{:>5s}{:1s}{:>10s}{:1s}{:>5s}{:1s}{:>10s}{:1s}{:>5s}{:2s}\033[0m".format(
                     "", "Site", "", "RF1(loop3)", "", "Rej.", "", "RF1(loop5)", "", "Rej.", "", "RF1(loop7)", "", "Rej.", "")
-            print text
+            print(text)
 
             text = ""
-            for j in xrange(len(observatories_com)):
+            for j in range(len(observatories_com)):
                 # Pre-defied rescaling factors
                 f1 = float(unpack_options(cfgsetup, 'Observatories', observatories[0])[0].replace('(', ''))
                 f2 = float(unpack_options(cfgsetup, 'Observatories', observatories[0])[1].replace(')', ''))
@@ -1168,7 +1168,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 nb_reject_sc = 0
                 nb_loops = 7
                 text = text + "{:>2s}{:<25s}".format("", observatories_com[j].upper())
-                for i in xrange(nb_loops):
+                for i in range(nb_loops):
                     mean = np.mean(time_serie_SC['err_magn'])
                     sdt = np.std(time_serie_SC['err_magn'])
                     toremove = np.where(np.abs(time_serie_SC['err_magn'] - mean) > 3.0 * sdt)
@@ -1183,7 +1183,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                                 f1_op, "", nb_reject_sc, "")
 
                 text = text + "\n"
-            print text
+            print(text)
 
 
         # ---------------------------------------------------------------------
@@ -1229,7 +1229,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             palette = plt.get_cmap('Blues')
 
             observatories = np.unique(time_serie['obs'])
-            for i in xrange(len(observatories)):
+            for i in range(len(observatories)):
                 cond = np.where(time_serie['obs'] == observatories[i])
 
                 cond2 = \
@@ -1253,7 +1253,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 os.makedirs(path_outputs)
 
             if nb_param_fit > 0:
-                for j in xrange(len(observatories_com)):
+                for j in range(len(observatories_com)):
                     text = "#{0:>17s} {1:>6s} {2:>9s} {3:>12s} {4:>10s} {5:>9s} {6:>6s} {7:>9s}\n".format(
                             "Date", "Magn", "Err_Magn", "Err_Magn_Res", "Resi", "Back", "Seeing", "Chi2")
                     filename = path_outputs + observatories_com[j].upper() + ".dat"
@@ -1262,7 +1262,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                     time_serie_SC = copy.deepcopy(time_serie)
                     [time_serie_SC.update({key: time_serie_SC[key][condj]}) for key in time_serie_SC]
 
-                    for jj in xrange(len(time_serie_SC['dates'])):
+                    for jj in range(len(time_serie_SC['dates'])):
                         text = text +\
                                "{0:18.12f} {1:6.3f} {2:9.3e} {3:12.3e} {4:10.3e} {5:9.3f} {6:6.3f} {7:9.3e}".format(
                                 time_serie_SC['dates'][jj],
@@ -1309,13 +1309,13 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             # ----------------------------------------------
             colours = ['black', '#297CC4']
             id_colour = 0
-            for i in xrange(len(locations)):
+            for i in range(len(locations)):
                 name = 'Models_' + locations[i]
                 models_temp = model_param[name]
                 name = 'DateRanges_' + locations[i]
                 dates_temp = model_param[name]
 
-                for j in xrange(len(models_temp)):
+                for j in range(len(models_temp)):
                     tmin = float((dates_temp[j]).split('-')[0].strip())
                     tmax = float((dates_temp[j]).split('-')[1].strip())
 
@@ -1339,7 +1339,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 # --------------
                 colours = ['black', '#297CC4']
                 id_colour = 0
-                for i in xrange(len(locations)):
+                for i in range(len(locations)):
                     X = model_time_serie[i]['dates']
                     Y = model_time_serie[i]['flux']
                     fig_curr.line(X, Y, line_width=2, color=colours[id_colour],
@@ -1358,7 +1358,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
                 # Write the legend
                 # ----------------
-                for i in xrange(len(obs_properties['name'])):
+                for i in range(len(obs_properties['name'])):
                     col = '#' + obs_properties['colour'][i]
                     fig_curr.circle(-10000, -10000, size=8, color=col, alpha=0.4,
                                     legend=obs_properties['name'][i])
@@ -1411,13 +1411,13 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             # -----------
             colours = ['black', '#297CC4']
             id_colour = 0
-            for i in xrange(len(locations)):
+            for i in range(len(locations)):
                 name = 'Models_' + locations[i]
                 models_temp = model_param[name]
                 name = 'DateRanges_' + locations[i]
                 dates_temp = model_param[name]
 
-                for j in xrange(len(models_temp)):
+                for j in range(len(models_temp)):
                     tmin = float((dates_temp[j]).split('-')[0].strip())
                     tmax = float((dates_temp[j]).split('-')[1].strip())
 
@@ -1527,7 +1527,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
             if q > 1e-10:
                 if n_caustics > 0:
-                    for i in xrange(n_caustics):
+                    for i in range(n_caustics):
                         # > Courbes critiques et caustiques
                         delta = 2.0 * np.pi / (nb_pts_caus - 1.0)
                         phi = np.arange(nb_pts_caus) * delta
@@ -1539,7 +1539,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                         caustic = caustic * np.exp(1j*(alpha[i]-alpha0))
 
                         fig_curr.circle(caustic.real, caustic.imag, size=0.5, color=color_caustics[0], alpha=0.5)
-                        print color_caustics
+                        print(color_caustics)
                         color_caustics = np.roll(color_caustics, -1)
 
                 # > Courbes critiques et caustiques
@@ -1563,7 +1563,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             colours = ['black', '#297CC4']
             id_colour = 0
 
-            for i in xrange(len(locations)):
+            for i in range(len(locations)):
                 temp = np.array([abs(a - best_model['t0']) for a in
                                  model_time_serie[i]['dates']])
                 rang_c = np.where(temp == np.min(temp))[0][0]
@@ -1670,7 +1670,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                                          np.array(
                                              [D_enm[0], D_enm[1]]))) + np.pi / 2.0
                 rotation = np.exp(1j * epsilon)
-                # print alpha1*180.0/np.pi, alpha2*180.0/np.pi, epsilon*180.0/np.pi
+                # print(alpha1*180.0/np.pi, alpha2*180.0/np.pi, epsilon*180.0/np.pi)
 
                 # Unit vectors in xy
                 x_hat_xy = 1.0
@@ -1789,7 +1789,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 # ^^^^^^^^^^^^
                 colours = ['black', '#297CC4']
                 id_colour = 0
-                for i in xrange(len(locations)):
+                for i in range(len(locations)):
                     X = (model_time_serie[i]['x'] + 1j * model_time_serie[i][
                         'y']) * rotation
                     fig_curr.line(-X.real, X.imag, line_width=2,
@@ -1900,7 +1900,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             file = open(filename, 'r')
             file_new = ''
             for line in file:
-                # print line.strip()[:7]
+                # print(line.strip()[:7])
                 if line.strip()[:7] == '<title>':
                     file_new = file_new \
                             + '        <style type="text/css">\n' \
@@ -1981,7 +1981,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             if 0:
                 # PLOT STATISTIC RESIDUAL IN MAG ==================================
 
-                for j in xrange(len(observatories)):
+                for j in range(len(observatories)):
                     cond2 = (time_serie['obs'] == observatories[j])
 
                     # Configuration
@@ -2080,8 +2080,8 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
                     # Legend
                     # ^^^^^^
-                    ax_curr.set_xlabel(ur"%s" % ("$\sigma$ (mag)"), labelpad=0)
-                    ax_curr.set_ylabel(ur"%s" % ("count"), labelpad=3)
+                    ax_curr.set_xlabel("{:s}".format("$\sigma$ (mag)"), labelpad=0)
+                    ax_curr.set_ylabel("{:s}".format("count"), labelpad=0)
 
                     # # --> Options de fin
                     #
@@ -2156,7 +2156,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
             ymin = 0.9
             ymax = 0
-            for i in xrange(len(locations)):
+            for i in range(len(locations)):
                 ymax_temp = np.max(model_time_serie[i]['amp'])
                 ymax = np.max(np.array([ymax, ymax_temp]))
 
@@ -2174,13 +2174,13 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             # ^^^^^^^^^^^
             colours = ['black', '#297CC4']
             id_colour = 0
-            for i in xrange(len(locations)):
+            for i in range(len(locations)):
                 name = 'Models_' + locations[i]
                 models_temp = model_param[name]
                 name = 'DateRanges_' + locations[i]
                 dates_temp = model_param[name]
 
-                for j in xrange(len(models_temp)):
+                for j in range(len(models_temp)):
                     tmin = float((dates_temp[j]).split('-')[0].strip())
                     tmax = float((dates_temp[j]).split('-')[1].strip())
 
@@ -2208,7 +2208,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             # ^^^^^^^^^^^^^^^^^^^^
             colours = ['black', '#297CC4', 'green']
             id_colour = 0
-            for i in xrange(len(locations)):
+            for i in range(len(locations)):
                 X = model_time_serie[i]['dates']
                 Y = model_time_serie[i]['amp']
                 fig_curr.line(X, Y, line_width=2, color=colours[id_colour],
@@ -2273,7 +2273,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
 
             if q > 1e-10:
                 if n_caustics > 0:
-                    for i in xrange(n_caustics):
+                    for i in range(n_caustics):
                         # > Courbes critiques et caustiques
                         delta = 2.0 * np.pi / (nb_pts_caus - 1.0)
                         phi = np.arange(nb_pts_caus) * delta
@@ -2309,7 +2309,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             colours = ['black', '#297CC4']
             id_colour = 0
 
-            for i in xrange(len(locations)):
+            for i in range(len(locations)):
                 temp = np.array([abs(a - best_model['t0']) for a in
                                  model_time_serie[i]['dates']])
                 rang_c = np.where(temp == np.min(temp))[0][0]
@@ -2411,7 +2411,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                                          np.array(
                                              [D_enm[0], D_enm[1]]))) + np.pi / 2.0
                 rotation = np.exp(1j * epsilon)
-                # print alpha1*180.0/np.pi, alpha2*180.0/np.pi, epsilon*180.0/np.pi
+                # print(alpha1*180.0/np.pi, alpha2*180.0/np.pi, epsilon*180.0/np.pi)
 
                 # Unit vectors in xy
                 x_hat_xy = 1.0
@@ -2513,7 +2513,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
                 # ^^^^^^^^^^^^
                 colours = ['black', '#297CC4']
                 id_colour = 0
-                for i in xrange(len(locations)):
+                for i in range(len(locations)):
                     X = (model_time_serie[i]['x'] + 1j * model_time_serie[i][
                         'y']) * rotation
                     fig_curr.line(-X.real, X.imag, line_width=2,
@@ -2615,7 +2615,7 @@ def plot(cfgsetup=False, models=False, model_param=False, time_serie=False, \
             file = open(filename, 'r')
             file_new = ''
             for line in file:
-                # print line.strip()[:7]
+                # print(line.strip()[:7])
                 if line.strip()[:7] == '<title>':
                     file_new = file_new \
                                + '        <style type="text/css">\n' \
