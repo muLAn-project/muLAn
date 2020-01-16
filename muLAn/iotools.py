@@ -7,6 +7,7 @@ import copy
 import glob
 import muLAn
 import muLAn.packages.general_tools as gtools
+import muLAn.packages.algebra as algebra
 import numpy as np
 import os
 import pandas as pd
@@ -324,6 +325,7 @@ class LensModel:
             tb = models.loc[midx[k], 'tb']
 
             for j in range(len(instrument)):
+                mask1 = table['obs'] == instrument[j]
                 for i in range(algo.shape[0]):
                     mask = (table['obs'] == instrument[j])\
                             & (table['model'] == algo[i])
@@ -342,6 +344,11 @@ class LensModel:
                         mag = lib[algo[i]].magnifcalc(epochs, params, Ds=Ds, tb=tb, **kwargs_method)
 
                         table.loc[mask,'amp'] = mag
+
+                fs, fb = algebra.fsfbwsig(table, None, blending=True)
+                table.loc[mask1,'fs'] = fs
+                table.loc[mask1,'fb'] = fb
+
      
             if save:
                 try:
