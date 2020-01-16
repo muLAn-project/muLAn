@@ -11,6 +11,7 @@ import numpy as np
 import os
 import pandas as pd
 import sys
+import tables
 
 class FitResults:
     """Class to read, save, and manipulate models tested during the fit.
@@ -164,6 +165,8 @@ class FitResults:
             # Add physical quantities
             if not 'tS' in samples:
                 samples['tS'] = samples['tE'] * samples['rho']
+            if not 'tb' in samples:
+                samples['tb'] = cfgsetup.getfloat('Modelling', 'tb')
 
             # Give a unique ID to models
             id_start = np.max(samples['fullid']) + 1
@@ -276,6 +279,81 @@ class FitResults:
             samples = self.samples.loc[
                     self.samples[col].round(12).drop_duplicates(subset=col).index]
             return samples
+
+
+class LensModel:
+    """Class to compute a microlensing model with requested algorithms.
+
+    Args:
+        model (:obj:`muLAn.iotools.FitResults`): model parameters.
+        data (:obj:`muLAn.data.Data`, default None): table of observations.
+        epochs (, default None): list of epochs to compute a model.
+
+    Attributes:
+        fit (:obj:`muLAn.iotools.FitResults`): model parameters.
+
+
+    """
+
+    def __init__(self, archive='archive.h5', **kwargs):
+
+        self.archive = archive.replace('//','/')
+        
+
+    def compute(self, data=None, models=None, lib=None, parser=None, magnification=False,
+            save=True):
+        """Method computing the magnification
+
+        Args:
+            lib
+            models
+            data
+            parser
+            magnification
+
+        """
+
+        table = data.table.copy(deep=True)
+
+        instrument = np.unique(table['obs'])
+        algo = np.unique(table['model'])
+
+        midx = models.index
+        for k in range(len(midx)):
+            params = models.loc[midx[k]].to_dict()
+            tb = models.loc[midx[k], 'tb']
+
+            for j in range(len(instrument)):
+                for i in range(algo.shape[0]):
+                    mask = (table['obs'] == instrument[j])\
+                            & (table['model'] == algo[i])
+
+                    if mask.sum() > 0:
+                        epochs = table.loc[mask, 'dates'].values
+                        DsN = table.loc[mask, 'DsN'].values
+                        DsE = table.loc[mask, 'DsE'].values
+                        Ds = dict({'N': DsN, 'E': DsE})
+
+                        try:
+                            kwargs_method = dict(parser.items(algo[i]))
+                        except:
+                            kwargs_method = dict()
+
+                        mag = lib[algo[i]].magnifcalc(epochs, params, Ds=Ds, tb=tb, **kwargs_method)
+
+                        table.loc[mask,'amp'] = mag
+     
+            if save:
+                try:
+                    key = self.archive.split('/')[-1].split('.h5')
+                    key = ''.join(key[:-1])
+                    key = '{:s}_{:d}_data'.format(key, params['fullid'])
+                    table.to_hdf(self.archive, key=key, mode='a')
+                except tables.exceptions.HDF5ExtError as e:
+                    txt = '\n\nSomething is wrong with the file {:s}.'.format(self.archive)
+                    txt = '{:s}\nPlease check if the file is not used by another software.'.format(txt)
+                    print(e, txt)
+                    sys.exit()
 
 
 if (__name__ == "__main__"):
