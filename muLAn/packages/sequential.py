@@ -8,6 +8,7 @@ from astropy.coordinates import SkyCoord
 import configparser as cp
 import glob
 import importlib
+import muLAn.iotools as iotools
 import muLAn.models as mulanmodels
 import muLAn.models.ephemeris as ephemeris
 from muLAn.packages.general_tools import *
@@ -895,14 +896,59 @@ def run_sequence(path_event, options):
 
         models_modules = {model2load[i]: models_modules[i] for i in range(len(model2load))}
 
-    # ----------------------------------------------------------------------
-    #   Order models
-    # ----------------------------------------------------------------------
+    # Sort the MCMC samples and create a summary file for analysis
+    # ============================================================
+
     if 'sortno' in options:
-        if not options['sortno']:
-            text = "Post-process the output files..."
-            communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
-            mulansort.McmcFiles().sort(cfgsetup=cfgsetup)
+        text = "Post-process the output files..."
+        communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
+
+        if cfgsetup.getboolean('Optimization', 'UseBinaryFiles'):
+            if options['sortno']:
+                summary = iotools.FitResults(cfgsetup, format='h5')
+            else:
+                summary = iotools.FitResults(cfgsetup, format='ascii')
+                summary.remove_duplicates(inplace=True)
+                summary.save(format='h5')
+        else:
+            if options['sortno']:
+                summary = iotools.FitResults(cfgsetup, format='h5')
+            else:
+                summary = iotools.FitResults(cfgsetup, format='ascii')
+                summary.remove_duplicates(inplace=True)
+                summary.save(format='h5')
+                n = np.min([len(summary.samples), 1000])
+                summary.save(format='ascii', N=n)
+
+        # Display a preview in the terminal
+        cols = ['fullid', 'dchi2', 'tE', 'q', 's', 'rho']
+        colnames = [
+                'Model ID',
+                '\u0394\u03C7\u00b2', 
+                'tE', 
+                'q', 
+                'sep',
+                'rho',
+                ]
+        format={'dchi2': '{:.2f}'.format,
+                'tE': " {:.1f}".format,
+                'q': " {:.2e}".format,
+                's': " {:.2e}".format,
+                'rho': " {:.2e}".format,
+                }
+
+        txt = "Best models preview\n"
+        communicate(cfgsetup, 3, txt, opts=[printoption.level1], prefix=False, newline=True, tab=False)
+        txt = summary.samples.head(5).to_string(columns=cols, header=colnames, index=False, formatters=format, max_rows=15, line_width=79)
+        txt = '   {:s}'.format(txt.replace('\n', '\n   '))
+        communicate(cfgsetup, 3, txt, opts=False, prefix=False, newline=False, tab=False)
+
+        txt = "Worst models preview\n"
+        communicate(cfgsetup, 3, txt, opts=[printoption.level1], prefix=False, newline=True, tab=False)
+        txt = summary.samples.tail(5).to_string(columns=cols, header=colnames, index=False, formatters=format, max_rows=15, line_width=79)
+        txt = '   {:s}'.format(txt.replace('\n', '\n   '))
+        communicate(cfgsetup, 3, txt, opts=False, prefix=False, newline=False, tab=False)
+    sys.exit()
 
     # ----------------------------------------------------------------------
     #   Plots
