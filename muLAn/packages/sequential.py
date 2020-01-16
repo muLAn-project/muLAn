@@ -900,7 +900,7 @@ def run_sequence(path_event, options):
     # ============================================================
 
     if 'sortno' in options:
-        text = "Post-process the output files..."
+        text = "Post-processing MCMC output..."
         communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
 
         if cfgsetup.getboolean('Optimization', 'UseBinaryFiles'):
@@ -921,7 +921,7 @@ def run_sequence(path_event, options):
                 summary.save(format='ascii', N=n)
 
         # Display a preview in the terminal
-        cols = ['fullid', 'dchi2', 'tE', 'q', 's', 'rho']
+        cols = ['fullid', 'dchi2', 'tE', 'q', 's', 'rho', 'tS']
         colnames = [
                 'Model ID',
                 '\u0394\u03C7\u00b2', 
@@ -929,12 +929,14 @@ def run_sequence(path_event, options):
                 'q', 
                 'sep',
                 'rho',
+                'tS',
                 ]
         format={'dchi2': '{:.2f}'.format,
                 'tE': " {:.1f}".format,
                 'q': " {:.2e}".format,
                 's': " {:.2e}".format,
                 'rho': " {:.2e}".format,
+                'tS': " {:.3f}".format,
                 }
 
         txt = "Best models preview\n"
@@ -948,7 +950,6 @@ def run_sequence(path_event, options):
         txt = summary.samples.tail(5).to_string(columns=cols, header=colnames, index=False, formatters=format, max_rows=15, line_width=79)
         txt = '   {:s}'.format(txt.replace('\n', '\n   '))
         communicate(cfgsetup, 3, txt, opts=False, prefix=False, newline=False, tab=False)
-    sys.exit()
 
     # ----------------------------------------------------------------------
     #   Plots
