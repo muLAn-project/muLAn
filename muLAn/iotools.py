@@ -161,6 +161,10 @@ class FitResults:
             samples['dchi2'] = samples['chi2'] - np.min(samples['chi2'])
             samples = samples.sort_values(['dchi2', 'fullid'], ascending=[1, 0])
 
+            # Add physical quantities
+            if not 'tS' in samples:
+                samples['tS'] = samples['tE'] * samples['rho']
+
             # Give a unique ID to models
             id_start = np.max(samples['fullid']) + 1
             if id_start == 0 : id_start = 1
