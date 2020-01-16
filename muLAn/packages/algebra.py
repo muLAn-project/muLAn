@@ -13,11 +13,6 @@ import pandas as pd
 from sklearn import linear_model
 import sys
 
-# Functions
-# =========
-def test():
-    print("Je te vois")
-
 def fsfbwsig(time_serie, cond, blending=True):
     """
     Compute the source and blend flux using a linear fit with errors
@@ -44,9 +39,15 @@ def fsfbwsig(time_serie, cond, blending=True):
         A float which is the blend flux.
     """
 
-    x = np.atleast_2d(time_serie['amp'][cond]).T
-    y = np.atleast_2d(time_serie['flux'][cond]).T
-    sig = np.atleast_2d(time_serie['err_flux'][cond]).T
+    if isinstance(time_serie, pd.DataFrame):
+        x = np.atleast_2d(time_serie['amp'].values).T
+        y = np.atleast_2d(time_serie['flux'].values).T
+        sig = np.atleast_2d(time_serie['err_flux'].values).T
+    else:
+        x = np.atleast_2d(time_serie['amp'][cond]).T
+        y = np.atleast_2d(time_serie['flux'][cond]).T
+        sig = np.atleast_2d(time_serie['err_flux'][cond]).T
+
     x2 = np.power(x, 2)
     sig2 = np.power(sig, 2)
 
@@ -66,22 +67,24 @@ def fsfbwsig(time_serie, cond, blending=True):
     else:
         fs, fb = fsfb(time_serie, cond, blending=False)
 
-    if (np.abs(fs) == np.inf) | (np.abs(fb) == np.inf):
-        fs, fb = fsfb(time_serie, cond, blending=False)
-        print(fs, fb)
+        if (np.abs(fs) == np.inf) | (np.abs(fb) == np.inf):
+            fs, fb = fsfb(time_serie, cond, blending=False)
 
     return fs, fb
 
 
 def fsfb(time_serie, cond, blending=True):
 
-    x = np.atleast_2d(time_serie['amp'][cond]).T
-    y = np.atleast_2d(time_serie['flux'][cond]).T
+    if isinstance(time_serie, pd.DataFrame):
+        x = np.atleast_2d(time_serie['amp'].values).T
+        y = np.atleast_2d(time_serie['flux'].values).T
+    else:
+        x = np.atleast_2d(time_serie['amp'][cond]).T
+        y = np.atleast_2d(time_serie['flux'][cond]).T
 
     regr = linear_model.LinearRegression(fit_intercept=blending)
     regr.fit(x, y)
     fs = regr.coef_[0][0]
-    # fb = regr.intercept_[0]
     if blending:
         fb = regr.intercept_[0]
     else:
