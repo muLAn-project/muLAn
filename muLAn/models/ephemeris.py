@@ -28,6 +28,7 @@ full_path = a
 # ----------------------------------------------------------------------
 import numpy as np
 import configparser as cp
+import glob
 from PyAstronomy import pyasl
 from astropy.time import Time
 from scipy.interpolate import interp1d
@@ -36,6 +37,38 @@ from astropy.coordinates import SkyCoord
 # ----------------------------------------------------------------------
 #   Functions
 # ----------------------------------------------------------------------
+def dsndse(l, b, cfgsetup, obs_properties, observatories):
+
+    # Observer position
+    path = cfgsetup.get('FullPaths', 'Event') + cfgsetup.get('RelativePaths', 'Data')
+
+    if len(obs_properties['loc']) > 1:
+        name1 = obs_properties['loc'][np.where(np.array(
+            [obs == cfgsetup.get('Observatories', 'Reference').lower()
+             for obs in observatories]) == True)[0][0]]
+        name1 = glob.glob(path + name1 + '.*')[0]
+    else:
+        name1 = glob.glob(path + obs_properties['loc'][0] + '.*')[0]
+
+
+    name2 = glob.glob(path + obs_properties['loc'][0] + '.*')[0]
+    try:
+        sTe, sEe, sNe, DsTe, DsEe, DsNe, sTs, sEs, sNs, DsTs, DsEs, DsNs = \
+            Ds(name1, name2, l, b,
+                    cfgsetup.getfloat('Modelling', 'tp'), cfgsetup)
+        if name1 != name2:
+            DsN = DsNs
+            DsE = DsEs
+        else:
+            DsN = DsNe
+            DsE = DsEe
+    except:
+        DsN = None
+        DsE = None
+
+    return DsN, DsE
+
+
 def Ds(ephearth, ephsat, l, b, tp, cfgsetup):
     ''' Compute Delta(s) of the Sun projected into the plane of the sky (T,E,N).
         Usage:
