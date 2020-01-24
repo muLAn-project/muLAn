@@ -8,16 +8,20 @@ from astropy.coordinates import SkyCoord
 import configparser as cp
 import glob
 import importlib
+from muLAn.data import Data
 import muLAn.iotools as iotools
+from muLAn.iotools import LensModel
 import muLAn.models as mulanmodels
 import muLAn.models.ephemeris as ephemeris
 from muLAn.packages.general_tools import *
+from muLAn.instruments import InstrumentsList
 import muLAn.packages.sortmodels as mulansort
 import muLAn.plottypes as mulanplots
 import numpy as np
 import pandas as pd
 import os
 import pickle
+import scipy
 import sys
 
 # ====================================================================
@@ -32,8 +36,12 @@ def run_sequence(path_event, options):
     text = "Load parameter files..."
     communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True)
 
+    # Deprecated:
     cfgobs = cp.ConfigParser()
     cfgobs.read(path_event + 'observatories.ini')
+    # Replaced by:
+    fname = "{:s}/observatories.ini".format(path_event)
+    instruments = InstrumentsList(fname)
 
     # Add the path to the configuration
     cfgsetup.set('FullPaths', 'Event', path_event)
@@ -633,24 +641,173 @@ def run_sequence(path_event, options):
             model2load = list_input[1]
             infile.close()
 
+        # Identify which quantities must be fit
+        # -------------------------------------
+        params = {
+            't0' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        't0').split(',')]),\
+            'u0' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        'u0').split(',')]),\
+            'tE' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        'tE').split(',')]),\
+            'rho' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        'rho').split(',')]),\
+            'gamma' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        'gamma').split(',')]),\
+            'piEE' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        'piEE').split(',')]),\
+            'piEN' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        'piEN').split(',')]),\
+            's' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        's').split(',')]),\
+            'q' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        'q').split(',')]),\
+            'alpha' : np.array([a.strip() for a in cfgsetup.get('Modelling',
+                        'alpha').split(',')]),\
+            'dadt': np.array([a.strip() for a in cfgsetup.get('Modelling', 'dadt').split(',')]),\
+            'dsdt': np.array([a.strip() for a in cfgsetup.get('Modelling', 'dsdt').split(',')])\
+            }
+        
+        constp = dict()
+        fitp = dict()
+        result = np.array([])
+        if params['t0'][0]!="fit":
+            if params['t0'][0]=="gri":
+                constp.update({'t0': node['t0']})
+            else:
+                constp.update({'t0': params['t0'][3].astype(np.float64)})
+        else:
+            fitp.update({'t0': params['t0'][3].astype(np.float64)})
+            result = np.append(result, fitp['t0'])
+        if params['u0'][0]!="fit":
+            if params['u0'][0]=="gri":
+                constp.update({'u0': node['u0']})
+            else:
+                constp.update({'u0': params['u0'][3].astype(np.float64)})
+        else:
+            fitp.update({'u0': params['u0'][3].astype(np.float64)})
+            result = np.append(result, fitp['u0'])
+        if params['tE'][0]!="fit":
+            if params['tE'][0]=="gri":
+                constp.update({'tE': node['tE']})
+            else:
+                constp.update({'tE': params['tE'][3].astype(np.float64)})
+        else:
+            fitp.update({'tE': params['tE'][3].astype(np.float64)})
+            result = np.append(result, fitp['tE'])
+        if params['rho'][0]!="fit":
+            if params['rho'][0]=="gri":
+                constp.update({'rho': node['rho']})
+            else:
+                constp.update({'rho': params['rho'][3].astype(np.float64)})
+        else:
+            fitp.update({'rho': params['rho'][3].astype(np.float64)})
+            result = np.append(result, fitp['rho'])
+        if params['gamma'][0]!="fit":
+            if params['gamma'][0]=="gri":
+                constp.update({'gamma': node['gamma']})
+            else:
+                constp.update({'gamma': params['gamma'][3].astype(np.float64)})
+        else:
+            fitp.update({'gamma': params['gamma'][3].astype(np.float64)})
+            result = np.append(result, fitp['gamma'])
+        if params['piEE'][0]!="fit":
+            if params['piEE'][0]=="gri":
+                constp.update({'piEE': node['piEE']})
+            else:
+                constp.update({'piEE': params['piEE'][3].astype(np.float64)})
+        else:
+            fitp.update({'piEE': params['piEE'][3].astype(np.float64)})
+            result = np.append(result, fitp['piEE'])
+        if params['piEN'][0]!="fit":
+            if params['piEN'][0]=="gri":
+                constp.update({'piEN': node['piEN']})
+            else:
+                constp.update({'piEN': params['piEN'][3].astype(np.float64)})
+        else:
+            fitp.update({'piEN': params['piEN'][3].astype(np.float64)})
+            result = np.append(result, fitp['piEN'])
+        if params['s'][0]!="fit":
+            if params['s'][0]=="gri":
+                constp.update({'s': node['s']})
+            else:
+                constp.update({'s': params['s'][3].astype(np.float64)})
+        else:
+            fitp.update({'s': params['s'][3].astype(np.float64)})
+            result = np.append(result, fitp['s'])
+        if params['q'][0]!="fit":
+            if params['q'][0]=="gri":
+                constp.update({'q': node['q']})
+            else:
+                constp.update({'q': params['q'][3].astype(np.float64)})
+        else:
+            fitp.update({'q': params['q'][3].astype(np.float64)})
+            result = np.append(result, fitp['q'])
+        if params['alpha'][0]!="fit":
+            if params['alpha'][0]=="gri":
+                constp.update({'alpha': node['alpha']})
+            else:
+                constp.update({'alpha': params['alpha'][3].astype(np.float64)})
+        else:
+            fitp.update({'alpha': params['alpha'][3].astype(np.float64)})
+            result = np.append(result, fitp['alpha'])
+        if params['dadt'][0]!="fit":
+            if params['dadt'][0]=="gri":
+                constp.update({'dadt': node['dadt']})
+            else:
+                constp.update({'dadt': params['dadt'][3].astype(np.float64)})
+        else:
+            fitp.update({'dadt': params['dadt'][3].astype(np.float64)})
+            result = np.append(result, fitp['dadt'])
+        if params['dsdt'][0]!="fit":
+            if params['dsdt'][0]=="gri":
+                constp.update({'dsdt': node['dsdt']})
+            else:
+                constp.update({'dsdt': params['dsdt'][3].astype(np.float64)})
+        else:
+            fitp.update({'dsdt': params['dsdt'][3].astype(np.float64)})
+            result = np.append(result, fitp['dsdt'])
+
+        constp.update({'tb': cfgsetup.getfloat('Modelling', 'tb')})
+        constp.update({'tb': cfgsetup.getfloat('Modelling', 'tp')})
+
+        fitp = pd.Series(fitp)
+        constp = pd.Series(constp)
+
         # Load models of magnification
         # ----------------------------
-        models_modules = dict()
-        if(len(model2load)) > 0:
-            for i in range(len(model2load)):
-                text = 'muLAn.models.{:s}'.format(model2load[i])
-                importlib.import_module(text)
-                models_modules.update({model2load[i]: getattr(mulanmodels, model2load[i])})
+        model_names = np.unique(model2load)
+        models_address = dict()
+        for i in range(len(model_names)):
+            name = 'muLAn.models.{:s}'.format(model_names[i])
+            models_address.update({model_names[i]: importlib.import_module(name)})
 
-        # Load minimization algorithms
-        # ----------------------------
-        modules_mini = np.array([cfgsetup.get('Modelling', 'Method')])
-        minim_algo = np.array([])
-        if len(modules_mini) > 0:
-            for i in range(len(modules_mini)):
-                text = 'muLAn.models.{:s}'.format(modules_mini[i])
-                importlib.import_module(text)
-                minim_algo = np.append(minim_algo, getattr(mulanmodels, modules_mini[i]))
+        # Save objects before optimization
+        # --------------------------------
+        # This is done because some optimization packages works faster with
+        # global variables.
+
+        if cfgsetup.getboolean('Modelling', 'Fit'):
+
+            args = dict()
+            args.update({'data': pd.DataFrame().from_dict(time_serie)})
+            args.update({'fit_params': fitp})
+            args.update({'const_params': constp})
+            args.update({'instruments': constp})
+            args.update({'const_params': constp})
+            #args.update({'model_library': pd.DataFrame().from_dict(models_address)})
+
+            # Save file in HDF5 format
+            fname = f'args.h5'
+            for key, val in args.items():
+                val.to_hdf(fname, key=key)
+
+            optimization_names = np.array([cfgsetup.get('Modelling', 'Method')])
+            optimization_address = list()
+            for i in range(len(optimization_names)):
+                name = 'muLAn.models.{:s}'.format(optimization_names[i])
+                optimization_address.append(importlib.import_module(name))
+
 
         # ------------------------------------------------------------------
         #   Explore the parameters space
@@ -660,12 +817,18 @@ def run_sequence(path_event, options):
             text = "Start minimization..."
             communicate(cfgsetup, 1, text, opts=[printoption.level0], prefix=True, newline=True, tab=False)
 
-            text = minim_algo[0].help()
+            text = optimization_address[0].help()
             communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=True, tab=True)
 
-            minim_algo[0].search(cfgsetup=cfgsetup, models=models_modules,
+            try:
+                optimization_address[0].search(cfgsetup=cfgsetup, models=models_address,
                                  model_param=model_params, time_serie=time_serie, \
                                  model2load=model2load, interpol_method=interpol_method)
+                if os.path.exists(fname): os.remove(fname)
+            except:
+                if os.path.exists(fname): os.remove(fname)
+
+    if os.path.exists(fname): os.remove(fname)
 
     # ----------------------------------------------------------------------
     #   Without Data
@@ -939,17 +1102,62 @@ def run_sequence(path_event, options):
                 'tS': " {:.3f}".format,
                 }
 
-        txt = "Best models preview\n"
+        txt = "Best models preview"
         communicate(cfgsetup, 3, txt, opts=[printoption.level1], prefix=False, newline=True, tab=False)
         txt = summary.samples.head(5).to_string(columns=cols, header=colnames, index=False, formatters=format, max_rows=15, line_width=79)
         txt = '   {:s}'.format(txt.replace('\n', '\n   '))
         communicate(cfgsetup, 3, txt, opts=False, prefix=False, newline=False, tab=False)
 
-        txt = "Worst models preview\n"
+        txt = "Worst models preview"
         communicate(cfgsetup, 3, txt, opts=[printoption.level1], prefix=False, newline=True, tab=False)
         txt = summary.samples.tail(5).to_string(columns=cols, header=colnames, index=False, formatters=format, max_rows=15, line_width=79)
         txt = '   {:s}'.format(txt.replace('\n', '\n   '))
         communicate(cfgsetup, 3, txt, opts=False, prefix=False, newline=False, tab=False)
+
+    # Compute specified model information
+    # ===================================
+    # Store data in a new class
+    data = Data(time_serie)
+
+    # Select two best models
+    x = summary.samples[summary.samples['fullid']<4]
+    fname = "{:s}/{:s}.h5".format(
+            cfgsetup.get('RelativePaths', 'Archives'),
+            cfgsetup.get('Controls', 'Archive'))
+    lenses = LensModel(archive=fname)
+    lenses.compute(data=data, models=x, magnification=True, lib=models_modules, parser=cfgsetup)
+
+    data_to_plot_models = pd.DataFrame()
+    data_to_plot_models['dates'] = np.linspace(5740, 5820, 5000)
+    name = 'Models_' + obs_properties['loc'][0]
+    models_temp = model_params[name]
+    name = 'DateRanges_' + obs_properties['loc'][0]
+    dates_temp = model_params[name]
+
+    data_to_plot_models['model'] = 'PSPL'
+
+    for j in range(len(models_temp)):
+        model2load = np.append(model2load, models_temp[j])
+        tmin = float((dates_temp[j]).split('-')[0].strip())
+        tmax = float((dates_temp[j]).split('-')[1].strip())
+
+        mask = (data_to_plot_models['dates'] > tmin) & (data_to_plot_models['dates'] <= tmax)
+        data_to_plot_models.loc[mask, 'model'] = models_temp[j]
+
+    # Calculations from ephemeris for parallax
+    DsN, DsE = ephemeris.dsndse(l, b, cfgsetup, obs_properties, observatories)
+
+    if (DsN == None) | (DsE == None):
+        data_to_plot_models['DsN'] = DsN 
+        data_to_plot_models['DsE'] = DsE
+    else:
+        data_to_plot_models['DsN'] = DsN(data_to_plot_models['dates'].values)
+        data_to_plot_models['DsE'] = DsE(data_to_plot_models['dates'].values)
+
+    lenses.magnification_model(epochs=data_to_plot_models, models=x, lib=models_modules)
+
+    sys.exit()
+    # Next step is to select only mmodels required for this computation. And then add caustic, residuals etc.
 
     # ----------------------------------------------------------------------
     #   Plots
