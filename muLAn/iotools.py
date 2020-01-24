@@ -162,6 +162,8 @@ class FitResults:
             samples = pd.DataFrame(samples_file)
             samples['dchi2'] = samples['chi2'] - np.min(samples['chi2'])
             samples = samples.sort_values(['dchi2', 'fullid'], ascending=[1, 0])
+            samples['fs_ref'] = 0.0
+            samples['fb_ref'] = 0.0
 
             # Add physical quantities
             if not 'tS' in samples:
@@ -314,10 +316,23 @@ class LensModel:
 
         """
 
+        # - magnification of data
+        # - flux of data
+        # - aligned data
+        # - residual of data (in flux and magnitude and in sigmas for both)
+        # - source trajectory
+        # - magnification at some points to plot the model
+
+
+
         table = data.table.copy(deep=True)
 
         instrument = np.unique(table['obs'])
         algo = np.unique(table['model'])
+
+        obs_ref = parser.items('Observatories')[0][0]
+        fs_ref = 0.0
+        fb_ref = 0.0
 
         midx = models.index
         for k in range(len(midx)):
@@ -345,10 +360,18 @@ class LensModel:
 
                         table.loc[mask,'amp'] = mag
 
-                fs, fb = algebra.fsfbwsig(table, None, blending=True)
+                fs, fb = algebra.fsfbwsig(table[mask1], None, blending=True)
                 table.loc[mask1,'fs'] = fs
                 table.loc[mask1,'fb'] = fb
 
+                if instrument[j] == obs_ref:
+                    fs_ref = fs
+                    fb_ref = fb
+
+            table['flux_model'] = table['fs'] * table['amp'] + table['fb']
+            table['amp_data'] = (table['flux'] - table['fb']) / table['fs']
+            table['normalized_flux'] = table['amp_data'] * fs_ref + fb_ref
+            table['normalized_flux_err'] = table['err_flux'] * fs_ref / table['flux']
      
             if save:
                 try:
@@ -356,6 +379,56 @@ class LensModel:
                     key = ''.join(key[:-1])
                     key = '{:s}_{:d}_data'.format(key, params['fullid'])
                     table.to_hdf(self.archive, key=key, mode='a')
+                except tables.exceptions.HDF5ExtError as e:
+                    txt = '\n\nSomething is wrong with the file {:s}.'.format(self.archive)
+                    txt = '{:s}\nPlease check if the file is not used by another software.'.format(txt)
+                    print(e, txt)
+                    sys.exit()
+
+
+    def magnification_model(self, epochs=None, models=None, lib=None, save=True):
+        """Method computing the magnification
+
+        Args:
+            lib
+            models
+            data
+            parser
+            magnification
+
+        """
+
+        algo = np.unique(epochs['model'])
+
+        midx = models.index
+        for k in range(len(midx)):
+            params = models.loc[midx[k]].to_dict()
+            tb = models.loc[midx[k], 'tb']
+
+            for i in range(algo.shape[0]):
+                mask = epochs['model'] == algo[i]
+
+                if mask.sum() > 0:
+                    dates = epochs.loc[mask, 'dates'].values
+                    DsN = epochs.loc[mask, 'DsN'].values
+                    DsE = epochs.loc[mask, 'DsE'].values
+                    Ds = dict({'N': DsN, 'E': DsE})
+
+                    try:
+                        kwargs_method = dict(parser.items(algo[i]))
+                    except:
+                        kwargs_method = dict()
+
+                    mag = lib[algo[i]].magnifcalc(dates, params, Ds=Ds, tb=tb, **kwargs_method)
+
+                    epochs.loc[mask,'amp'] = mag
+
+            if save:
+                try:
+                    key = self.archive.split('/')[-1].split('.h5')
+                    key = ''.join(key[:-1])
+                    key = '{:s}_{:d}_model'.format(key, params['fullid'])
+                    epochs.to_hdf(self.archive, key=key, mode='a')
                 except tables.exceptions.HDF5ExtError as e:
                     txt = '\n\nSomething is wrong with the file {:s}.'.format(self.archive)
                     txt = '{:s}\nPlease check if the file is not used by another software.'.format(txt)
