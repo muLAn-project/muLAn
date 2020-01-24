@@ -85,7 +85,10 @@ install_requires = setuptools_args['install_requires'] = [
                                                           'pandas>=0.18.1',
                                                           'pbr>=0.11',
                                                           'PyAstronomy>=0.10.1',
-                                                          'scipy>=0.18.1'
+                                                          'scipy>=0.18.1',
+                                                          'tables',
+                                                          'h5py',
+                                                          'tqdm'
 ]
 
 extras_require = setuptools_args['extras_require'] = {
