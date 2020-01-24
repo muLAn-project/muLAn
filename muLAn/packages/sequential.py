@@ -820,6 +820,7 @@ def run_sequence(path_event, options):
             text = optimization_address[0].help()
             communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=True, tab=True)
 
+            fname = f'args.h5'
             try:
                 optimization_address[0].search(cfgsetup=cfgsetup, models=models_address,
                                  model_param=model_params, time_serie=time_serie, \
@@ -828,6 +829,7 @@ def run_sequence(path_event, options):
             except:
                 if os.path.exists(fname): os.remove(fname)
 
+    fname = f'args.h5'
     if os.path.exists(fname): os.remove(fname)
 
     # ----------------------------------------------------------------------
