@@ -130,8 +130,8 @@ def magnifcalc_wrap(**kwargs):
     piEE = params['piEE']
     alpha0 = params['alpha']
     s0 = params['s']
-    dalpha = params['dalpha']
-    ds = params['ds']
+    dalpha = params['dadt']
+    ds = params['dsdt']
 
     # Correction of the separation/angle due to lens orbital motion
     alpha, s = lens_rotation(alpha0, s0, dalpha, ds, t, tb)

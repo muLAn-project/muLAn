@@ -22,8 +22,8 @@ def magnifcalc(t, param, Ds=None, tb=None):
     piEE = param['piEE']
     alpha0 = param['alpha']
     s0 = param['s']
-    dalpha = param['dalpha']
-    ds = param['ds']
+    dalpha = param['dadt']
+    ds = param['dsdt']
 ### Lens orbital motion
     alpha, s = lens_rotation(alpha0, s0, dalpha, ds, t, tb)
 ### Parallax
