@@ -64,6 +64,8 @@ setup_args = dict(
         'Programming Language :: Python',
         'Programming Language :: Python :: 3.8',
                        ],
+    ext_modules = cythonize(extensions, language_level=3),
+    data_files=[('lib/python3.8/site-packages/muLAn/models/espl_inputs', ['muLAn/models/espl_inputs/tab_Bo.p', 'muLAn/models/espl_inputs/tab_B1.p'])],
 )
 
 if 'develop' in sys.argv or any(a.startswith('bdist') for a in sys.argv):
