@@ -768,6 +768,10 @@ def run_sequence(path_event, options):
             fitp.update({'dsdt': params['dsdt'][3].astype(np.float64)})
             result = np.append(result, fitp['dsdt'])
 
+        # Add flux in fitp
+        [fitp.update({f"fs_{a}": 1.0}) for a in observatories]
+        [fitp.update({f"fb_{a}": 1.0}) for a in observatories]
+
         constp.update({'tb': cfgsetup.getfloat('Modelling', 'tb')})
         constp.update({'tb': cfgsetup.getfloat('Modelling', 'tp')})
 
@@ -821,13 +825,18 @@ def run_sequence(path_event, options):
             communicate(cfgsetup, 3, text, opts=False, prefix=False, newline=True, tab=True)
 
             fname = f'args.h5'
+#            optimization_address[0].search(cfgsetup=cfgsetup, models=models_address,
+#                             model_param=model_params, time_serie=time_serie, \
+#                             model2load=model2load, interpol_method=interpol_method)
             try:
                 optimization_address[0].search(cfgsetup=cfgsetup, models=models_address,
                                  model_param=model_params, time_serie=time_serie, \
                                  model2load=model2load, interpol_method=interpol_method)
                 if os.path.exists(fname): os.remove(fname)
-            except:
+            except ValueError as err :
                 if os.path.exists(fname): os.remove(fname)
+                txt = "MCMC failed."
+                print(err, txt)
 
     fname = f'args.h5'
     if os.path.exists(fname): os.remove(fname)
