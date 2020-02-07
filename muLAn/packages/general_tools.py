@@ -92,10 +92,10 @@ def prompt(path, name):
     filename = path + name + '.zip'
     if os.path.exists(filename):
         text = 'The archive:\n   ' + filename + '\ndoes exist. \033[44m\033[97m\033[1mDo you want to overwrite it? [y/N]\033[0m '
-        x = raw_input(text)
+        x = input(text)
         if (x == 'N') | (x == 'n') | (x == ''):
             text = '\033[44m\033[97m\033[1mPlease enter a new filename (without extension): [ARCHIVE]\033[0m '
-            y = raw_input(text)
+            y = input(text)
             if (y == ''): y = 'ARCHIVE'
             name = prompt(path, y)
             return name
