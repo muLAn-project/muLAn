@@ -157,20 +157,24 @@ def logprob(theta, cfg):
 def ini_chains_gene(cfg):
 
     nwalkers = cfg.getint('AIMC', 'walkers')
+    ninstr = len(instrument)
 
     result = []
     j = 0
     while(j<nwalkers):
         table = np.array([])
         for i in range(ndim):
-            l = cfg.get('Modelling', fitpn[i])
-            a = abs(float(l.split(',')[1]))
-            b = abs(float(l.split(',')[2]))
-            c = float(l.split(',')[3])
-            aa = c-a
-            bb = c+b
-            x = (bb - aa) * np.random.random_sample() + aa
-            table = np.append(table, x)
+            if i < ndim - 2*ninstr:
+                l = cfg.get('Modelling', fitpn[i])
+                a = abs(float(l.split(',')[1]))
+                b = abs(float(l.split(',')[2]))
+                c = float(l.split(',')[3])
+                aa = c-a
+                bb = c+b
+                x = (bb - aa) * np.random.random_sample() + aa
+                table = np.append(table, x)
+            else:
+                table = np.append(table, np.random.random_sample())
         result.append(table)
         j+=1
 
@@ -197,6 +201,12 @@ def search(**kwargs):
     nwalkers = cfgsetup.getint('AIMC', 'walkers')
     length = cfgsetup.getint('AIMC', 'length')
     ncpu = cfgsetup.getint('AIMC', 'cpu')
+
+    if nwalkers < 2*ndim:
+        nwalkers = 2*ndim
+        cfgsetup.set('AIMC', 'walkers', f"{nwalkers}")
+        txt = "{ndim} parameters will be fit (including the flux)."
+        txt = "{txt}\n The number of walkers increased to 2*nb_params."
 
     # Create a file to check if user wants to stop MCMC
     fn_lock = cfgsetup.get('FullPaths', 'Event') + '.lock'
