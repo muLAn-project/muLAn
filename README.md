@@ -35,8 +35,8 @@ pip install --user muLAn/
 
 We however recommend to use an [Anaconda](https://anaconda.org) user environment:
 ```
-conda create -n muLAn-0.8 python=3.8
-source activate muLAn-0.8
+conda create -n muLAn python=3.8
+source activate muLAn
 pip install muLAn/
 ```
 
